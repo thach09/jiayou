@@ -23,6 +23,10 @@ class JiayouBootstrapGuardTest {
         p.put("JIAYOU_TARGET_ID", TARGET);
         p.put("JIAYOU_BOOTSTRAP_MODE", mode);
         p.put("JIAYOU_BOOTSTRAP_AUTHORIZATION", mode + ":Jiayou:production:" + TARGET);
+        if(mode.equals("upgrade")) {
+            p.put("JIAYOU_UPGRADE_FROM_VERSION","1");p.put("JIAYOU_UPGRADE_TO_VERSION","2");
+            p.put("JIAYOU_BOOTSTRAP_AUTHORIZATION","upgrade:Jiayou:production:"+TARGET+":1->2");
+        }
         p.put("JIAYOU_DATABASE_URL", url);
         p.put("JIAYOU_DATABASE_HOST", uri.getHost());
         p.put("JIAYOU_DATABASE_PORT", String.valueOf(uri.getPort()));
@@ -64,6 +68,17 @@ class JiayouBootstrapGuardTest {
     @Test
     void validExplicitConfigurationPassesWithoutOpeningADatabase() {
         assertThatCode(() -> JiayouBootstrapGuard.validateEnvironment(environment(valid()))).doesNotThrowAnyException();
+    }
+
+    @Test void upgradeNeedsExactVersionAndTargetAuthorization() {
+        var p=settings("jdbc:postgresql://127.0.0.1:54321/jiayou_unit","upgrade");
+        assertThatCode(()->JiayouBootstrapGuard.validateEnvironment(environment(p))).doesNotThrowAnyException();
+        for(String key:new String[]{"JIAYOU_UPGRADE_FROM_VERSION","JIAYOU_UPGRADE_TO_VERSION","JIAYOU_BOOTSTRAP_AUTHORIZATION"}){
+            var bad=new LinkedHashMap<>(p);bad.put(key,"unexpected");
+            assertThatThrownBy(()->JiayouBootstrapGuard.validateEnvironment(environment(bad))).isInstanceOf(IllegalStateException.class);
+        }
+        var implicit=valid();implicit.put("JIAYOU_UPGRADE_FROM_VERSION","1");
+        assertThatThrownBy(()->JiayouBootstrapGuard.validateEnvironment(environment(implicit))).hasMessageContaining("explicit upgrade");
     }
 
     @Test

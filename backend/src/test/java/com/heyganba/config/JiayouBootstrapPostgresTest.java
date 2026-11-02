@@ -18,6 +18,32 @@ import static org.assertj.core.api.Assertions.*;
 /** Explicitly opt-in; every URL checked before opening a connection. No shared DBs. */
 @EnabledIfSystemProperty(named = "jiayou.bootstrap.rehearsal", matches = "true")
 class JiayouBootstrapPostgresTest {
+    @Test void reviewedV1UpgradeIsExplicitAtomicAndRestartIsReadOnly() throws Exception {
+        // Build an old Jiayou installation in this opt-in disposable fixture only.
+        assertThat(scalar("upgrade","SELECT count(*) FROM pg_tables WHERE schemaname='public'")).isEqualTo("0");
+        Flyway.configure().configuration(flyway("upgrade").getConfiguration()).target("1").load().migrate();
+        sql("upgrade", "INSERT INTO users(email,password_hash,full_name,role_id) SELECT 'upgrade-fixture@jiayou.test','not-a-login-credential','Preserved fixture',id FROM roles WHERE name='ROLE_USER'");
+        sql("upgrade", "INSERT INTO streaks(user_id,current_streak,longest_streak,last_active_date) SELECT id,12,15,DATE '2026-10-31' FROM users WHERE email='upgrade-fixture@jiayou.test'");
+        sql("upgrade", "INSERT INTO study_activities(user_id,activity_date,source,item_count,correct_count) SELECT id,DATE '2026-10-31','GRAMMAR',10,8 FROM users WHERE email='upgrade-fixture@jiayou.test'");
+        var v1=snapshot("upgrade");
+        assertThatThrownBy(()->run("upgrade","validate")).hasMessageContaining("upgrade required");
+        assertThat(snapshot("upgrade")).isEqualTo(v1);
+        startApplication("upgrade","upgrade");
+        assertThat(scalar("upgrade","SELECT count(*) FROM jiayou_schema_history")).isEqualTo("2");
+        assertThat(scalar("upgrade","SELECT count(*) FROM streak_restorations")).isEqualTo("0");
+        assertThat(scalar("upgrade","SELECT count(*) FROM streak_restored_days")).isEqualTo("0");
+        assertThat(scalar("upgrade","SELECT current_streak || ':' || longest_streak || ':' || last_active_date FROM streaks")).isEqualTo("12:15:2026-10-31");
+        assertThat(scalar("upgrade","SELECT item_count || ':' || correct_count FROM study_activities")).isEqualTo("10:8");
+        assertThat(scalar("upgrade","SELECT full_name FROM users WHERE email='upgrade-fixture@jiayou.test'")).isEqualTo("Preserved fixture");
+        var v2=snapshot("upgrade");startApplication("upgrade","validate");
+        assertThat(snapshot("upgrade")).isEqualTo(v2);
+        assertThatThrownBy(()->run("upgrade","upgrade")).hasMessageContaining("unknown migration history");
+        assertThat(snapshot("upgrade")).isEqualTo(v2);
+        sql("upgrade","UPDATE jiayou_schema_history SET version='99' WHERE version='2'");
+        var foreign=snapshot("upgrade");
+        assertThatThrownBy(()->run("upgrade","validate")).hasMessageContaining("unknown migration history");
+        assertThat(snapshot("upgrade")).isEqualTo(foreign);
+    }
     private String url(String suffix) {
         String base = System.getProperty("jiayou.bootstrap.url", "");
         assertThat(base).matches("^jdbc:postgresql://127\\.0\\.0\\.1:[0-9]+/jiayou_bootstrap_[a-z0-9]+_a$");
@@ -104,6 +130,26 @@ class JiayouBootstrapPostgresTest {
                 }
                 assertThatThrownBy(() -> s.execute("UPDATE vocabulary SET review_status='APPROVED'")).isInstanceOf(java.sql.SQLException.class);
             } finally { c.rollback(); }
+        }
+        // SQL constraints enforce quota slots and owner binding independently of the API.
+        try (var c=connection("a")) {
+            c.setAutoCommit(false);
+            try(var s=c.createStatement()) {
+                s.execute("INSERT INTO users(email,password_hash,full_name,role_id) SELECT 'ledger-fixture@jiayou.test','TEST_ONLY','Fixture',id FROM roles WHERE name='ROLE_USER'");
+                String owner;try(var r=s.executeQuery("SELECT id FROM users WHERE email='ledger-fixture@jiayou.test'")){r.next();owner=r.getString(1);}
+                s.execute("INSERT INTO users(email,password_hash,full_name,role_id) SELECT 'other-ledger-fixture@jiayou.test','TEST_ONLY','Other fixture',id FROM roles WHERE name='ROLE_USER'");
+                String other;try(var r=s.executeQuery("SELECT id FROM users WHERE email='other-ledger-fixture@jiayou.test'")){r.next();other=r.getString(1);}
+                s.execute("INSERT INTO streak_restorations(user_id,request_key,gap_token,charge_month,restored_count,created_at) VALUES ("+owner+",'00000000-0000-0000-0000-000000000001',repeat('a',64),DATE '2026-11-01',5,CURRENT_TIMESTAMP)");
+                String event;try(var r=s.executeQuery("SELECT id FROM streak_restorations")){r.next();event=r.getString(1);}
+                String insert="INSERT INTO streak_restored_days(user_id,restoration_id,restored_date,charge_month,credit_slot) VALUES (";
+                for(int slot=1;slot<=5;slot++)s.execute(insert+owner+","+event+",DATE '2026-10-20'+"+slot+",DATE '2026-11-01',"+slot+")");
+                for(String bad:new String[]{
+                        insert+owner+","+event+",DATE '2026-10-30',DATE '2026-11-01',6)",
+                        insert+other+","+event+",DATE '2026-10-30',DATE '2026-11-01',1)",
+                        insert+owner+","+event+",DATE '2026-10-30',DATE '2026-11-02',1)"}) {
+                    var save=c.setSavepoint();assertThatThrownBy(()->s.execute(bad)).isInstanceOf(java.sql.SQLException.class);c.rollback(save);
+                }
+            } finally {c.rollback();}
         }
         Map<String, List<String>> before = snapshot("a");
         startApplication("a", "validate");

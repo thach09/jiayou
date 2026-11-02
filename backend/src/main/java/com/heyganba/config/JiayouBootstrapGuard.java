@@ -24,6 +24,8 @@ public final class JiayouBootstrapGuard {
     static final String LOCATION = "classpath:db/jiayou-production";
     static final String SCRIPT = "V1__jiayou_schema_only.sql";
     static final String LINEAGE = "jiayou-schema-only-v1";
+    static final String STREAK_SCRIPT = "V2__streak_restoration_ledger.sql";
+    static final String STREAK_SHA256 = "337726488e821b538312c4e351afdeea9a31f87f085e1aec697a0956fe4ca13c";
     static final String SCHEMA_SHA256 = "0db6d6081357696b38526659833a24091c2861e7b1d71540857dfd9e16a96bfb";
     private final Environment environment;
 
@@ -53,8 +55,14 @@ public final class JiayouBootstrapGuard {
         String id = value(e, "JIAYOU_TARGET_ID");
         require(UUID.fromString(id).toString().equals(id), "canonical UUID target identity");
         String mode = value(e, "JIAYOU_BOOTSTRAP_MODE");
-        require(Set.of("initialize", "validate").contains(mode), "explicit initialize or validate mode");
-        require(value(e, "JIAYOU_BOOTSTRAP_AUTHORIZATION").equals(mode + ":Jiayou:production:" + id), "target-bound authorization");
+        require(Set.of("initialize", "validate", "upgrade").contains(mode), "explicit initialize, validate or upgrade mode");
+        String authorization=mode+":Jiayou:production:"+id;
+        if(mode.equals("upgrade")) {
+            require(value(e,"JIAYOU_UPGRADE_FROM_VERSION").equals("1") && value(e,"JIAYOU_UPGRADE_TO_VERSION").equals("2"), "only reviewed version 1 to 2 upgrade");
+            authorization+=":1->2";
+        } else require(e.getProperty("JIAYOU_UPGRADE_FROM_VERSION", "").isBlank()
+                && e.getProperty("JIAYOU_UPGRADE_TO_VERSION", "").isBlank(), "upgrade inputs require explicit upgrade mode");
+        require(value(e, "JIAYOU_BOOTSTRAP_AUTHORIZATION").equals(authorization), "target-bound authorization");
         String url = value(e, "JIAYOU_DATABASE_URL");
         require(url.startsWith("jdbc:postgresql://"), "explicit PostgreSQL URL");
         URI uri = uri(url.substring(5));
@@ -130,12 +138,14 @@ public final class JiayouBootstrapGuard {
                     flyway.migrate();
                 } else {
                     verifyIdentity(connection);
-                    require(query(connection, "SELECT count(*) FROM public.jiayou_schema_history WHERE version='1' AND script='" + SCRIPT + "' AND success").equals("1")
-                            && query(connection, "SELECT count(*) FROM public.jiayou_schema_history").equals("1"), "unknown migration history");
+                    boolean upgrade=value(environment,"JIAYOU_BOOTSTRAP_MODE").equals("upgrade");
+                    verifyHistory(connection,upgrade?1:2);
                     require(query(connection, "SELECT count(*) FROM public.users WHERE email='admin@heyganba.vn'").equals("0"), "public seed administrator forbidden");
-                    flyway.validate(); // Restarts cannot apply pending SQL or callbacks.
+                    if(upgrade)flyway.migrate(); // Applied checksum validation precedes the sole pinned V2.
+                    else flyway.validate(); // Restarts cannot apply pending SQL or callbacks.
                 }
                 verifyIdentity(connection);
+                verifyHistory(connection,2);
             } finally {
                 query(connection, "SELECT pg_advisory_unlock(74196534012001)");
             }
@@ -148,10 +158,15 @@ public final class JiayouBootstrapGuard {
     private static void verifyManifest() {
         try {
             Resource[] resources = new PathMatchingResourcePatternResolver().getResources("classpath*:db/jiayou-production/**/*");
-            require(resources.length == 1 && SCRIPT.equals(resources[0].getFilename()), "unapproved migration/content/callback resource");
-            String sql = resources[0].getContentAsString(StandardCharsets.UTF_8).replace("\r\n", "\n");
-            require(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(sql.getBytes(StandardCharsets.UTF_8)))
-                    .equals(SCHEMA_SHA256), "unreviewed schema/content manifest");
+            Map<String,String> approved=Map.of(SCRIPT,SCHEMA_SHA256,STREAK_SCRIPT,STREAK_SHA256);
+            require(resources.length == approved.size(), "unapproved migration/content/callback resource");
+            Set<String> seen=new java.util.HashSet<>();
+            for(Resource resource:resources) {
+                require(approved.containsKey(resource.getFilename()) && seen.add(resource.getFilename()),"unapproved migration/content/callback resource");
+                String sql=resource.getContentAsString(StandardCharsets.UTF_8).replace("\r\n","\n");
+                require(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(sql.getBytes(StandardCharsets.UTF_8)))
+                        .equals(approved.get(resource.getFilename())),"unreviewed schema/content manifest");
+            }
         } catch (java.io.IOException | java.security.NoSuchAlgorithmException ex) {
             throw new IllegalStateException("Jiayou bootstrap blocked: manifest unreadable");
         }
@@ -164,6 +179,12 @@ public final class JiayouBootstrapGuard {
             require(query(connection, "SELECT count(*) FROM " + catalog + " o JOIN pg_namespace n ON n.oid=o." + (catalog.equals("pg_type") ? "typnamespace" : catalog.equals("pg_proc") ? "pronamespace" : "relnamespace") + " WHERE " + userNamespace).equals("0"), "nonempty database, including legacy history");
         }
         require(query(connection, "SELECT count(*) FROM pg_extension WHERE extname <> 'plpgsql'").equals("0"), "nonempty extension inventory");
+    }
+
+    private static void verifyHistory(Connection connection,int version) throws java.sql.SQLException {
+        require(query(connection,"SELECT count(*) FROM public.jiayou_schema_history").equals(String.valueOf(version)),"unknown migration history or explicit upgrade required");
+        require(query(connection,"SELECT count(*) FROM public.jiayou_schema_history WHERE version='1' AND script='"+SCRIPT+"' AND success").equals("1"),"unknown migration history");
+        if(version==2)require(query(connection,"SELECT count(*) FROM public.jiayou_schema_history WHERE version='2' AND script='"+STREAK_SCRIPT+"' AND success").equals("1"),"unknown migration history");
     }
 
     private void verifyIdentity(Connection connection) throws java.sql.SQLException {

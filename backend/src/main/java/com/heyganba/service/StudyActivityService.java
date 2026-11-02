@@ -38,6 +38,8 @@ public class StudyActivityService {
     private final StreakRepository streakRepository;
     private final StreakService streakService;
     private final StreakPolicy streakPolicy;
+    private final com.heyganba.repository.UserRepository users;
+    private final com.heyganba.repository.StreakRestoredDayRepository restoredDays;
 
     /** Cộng dồn hoạt động trong ngày (theo múi giờ cấu hình ở {@link StreakService}). */
     @Transactional
@@ -45,6 +47,10 @@ public class StudyActivityService {
         if (itemCount <= 0) {
             return;
         }
+
+        // Same owner lock as restore: qualification and ledger decisions cannot race.
+        users.findLockedById(user.getId()).orElseThrow(() ->
+                new com.heyganba.common.exception.ResourceNotFoundException("Người dùng","id",user.getId()));
 
         LocalDate activityDate = streakService.today(now);
         StudyActivity activity = studyActivityRepository
@@ -113,16 +119,22 @@ public class StudyActivityService {
 
         Map<LocalDate, int[]> totals = new LinkedHashMap<>();
         for (StudyActivity activity : activities) {
-            int[] sums = totals.computeIfAbsent(activity.getActivityDate(), key -> new int[2]);
+            int[] sums = totals.computeIfAbsent(activity.getActivityDate(), key -> new int[5]);
             sums[0] += activity.getItemCount();
             sums[1] += activity.getCorrectCount();
+            int index=switch(activity.getSource()){case SOURCE_FLASHCARD->2;case SOURCE_EXAM->3;case SOURCE_GRAMMAR->4;default->-1;};
+            if(index>=0)sums[index]+=activity.getItemCount();
         }
+
+        var protectedDates=restoredDays.findByUserId(userId).stream()
+                .map(com.heyganba.model.entity.StreakRestoredDay::getRestoredDate).collect(java.util.stream.Collectors.toSet());
 
         List<StudyActivityDayResponse> heatmap = new ArrayList<>(resolvedDays);
         for (int offset = 0; offset < resolvedDays; offset += 1) {
             LocalDate date = start.plusDays(offset);
-            int[] sums = totals.getOrDefault(date, new int[2]);
-            heatmap.add(new StudyActivityDayResponse(date, sums[0], sums[1]));
+            int[] sums = totals.getOrDefault(date, new int[5]);
+            heatmap.add(new StudyActivityDayResponse(date, sums[0], sums[1],protectedDates.contains(date),
+                    streakPolicy.qualifies(sums[2],sums[3],sums[4])));
         }
         return heatmap;
     }

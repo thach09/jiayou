@@ -41,7 +41,7 @@ class StreakServiceTest {
             holder.set(saved);
             return saved;
         });
-        return new StreakService(repository, zone);
+        return new StreakService(repository, zone, mock(com.heyganba.repository.StreakRestoredDayRepository.class));
     }
 
     @Test
@@ -92,7 +92,7 @@ class StreakServiceTest {
     void defaultZoneIsVietnam() {
         assertEquals("Asia/Ho_Chi_Minh", StreakService.DEFAULT_ZONE);
 
-        StreakService service = new StreakService(null, StreakService.DEFAULT_ZONE);
+        StreakService service = new StreakService(null, StreakService.DEFAULT_ZONE, null);
         assertEquals("Asia/Ho_Chi_Minh", service.zone().getId());
         // 18:00Z ngày 26/09 = 01:00 ngày 27/09 giờ VN
         assertEquals(LocalDate.of(2026, 9, 27), service.today(Instant.parse("2026-09-26T18:00:00Z")));
@@ -133,28 +133,28 @@ class StreakServiceTest {
     @Test
     @DisplayName("calculateEffectiveCurrentStreak: trả về 0 nếu user đã bỏ lỡ ngày hôm qua")
     void effectiveStreakCalculatesZeroWhenYesterdayWasMissed() {
-        StreakService service = new StreakService(null, "UTC");
+        StreakService service = new StreakService(null, "UTC", mock(com.heyganba.repository.StreakRestoredDayRepository.class));
         LocalDate today = LocalDate.of(2026, 9, 30);
 
         // streak null hoặc chưa từng học
         assertEquals(0, service.calculateEffectiveCurrentStreak(null, today));
         assertEquals(0, service.calculateEffectiveCurrentStreak(
-                Streak.builder().currentStreak(5).lastActiveDate(null).build(), today));
+                Streak.builder().user(user()).currentStreak(5).lastActiveDate(null).build(), today));
 
         // Đã học hôm nay
         assertEquals(5, service.calculateEffectiveCurrentStreak(
-                Streak.builder().currentStreak(5).lastActiveDate(today).build(), today));
+                Streak.builder().user(user()).currentStreak(5).lastActiveDate(today).build(), today));
 
         // Đã học hôm qua (hôm nay chưa học nhưng streak vẫn còn sống)
         assertEquals(5, service.calculateEffectiveCurrentStreak(
-                Streak.builder().currentStreak(5).lastActiveDate(today.minusDays(1)).build(), today));
+                Streak.builder().user(user()).currentStreak(5).lastActiveDate(today.minusDays(1)).build(), today));
 
         // Nghỉ học từ 2 ngày trước → streak bị đứt về 0
         assertEquals(0, service.calculateEffectiveCurrentStreak(
-                Streak.builder().currentStreak(5).lastActiveDate(today.minusDays(2)).build(), today));
+                Streak.builder().user(user()).currentStreak(5).lastActiveDate(today.minusDays(2)).build(), today));
 
         // Nghỉ học lâu ngày (10 ngày) → 0
         assertEquals(0, service.calculateEffectiveCurrentStreak(
-                Streak.builder().currentStreak(10).lastActiveDate(today.minusDays(10)).build(), today));
+                Streak.builder().user(user()).currentStreak(10).lastActiveDate(today.minusDays(10)).build(), today));
     }
 }
