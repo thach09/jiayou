@@ -5,9 +5,7 @@ import {
   BookOpen,
   ChartNoAxesColumnIncreasing,
   Check,
-  CheckCheck,
   ChevronRight,
-  Circle,
   Layers,
   Target,
   CalendarCheck,
@@ -232,22 +230,25 @@ function DashboardSession() {
     <div className="dashboard">
       <header className="dashboard-header">
         {/* Top Header Row: Greeting and HSK Level Selectors */}
-        <div className="dashboard-topline items-center">
-          <div className="min-w-0 flex-1">
-            <h1 className="dashboard-greeting">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-sm font-medium text-[#CBBBAF] tracking-wide">
               {!user
                 ? 'Chào mừng bạn đến với Jiayou! 👋'
                 : profile
                   ? `Chào mừng trở lại, ${profile.fullName}! 👋`
                   : 'Chào mừng trở lại! 👋'}
             </h1>
+            <p className="text-2xl sm:text-[30px] font-bold text-[#F7F0E8] mt-0.5 tracking-tight leading-snug">
+              {user ? 'Tiếp tục hành trình học tiếng Trung nhé!' : 'Khám phá vẻ đẹp tiếng Trung cùng Jiayou!'}
+            </p>
             {user && !profile && (
               <p role="status" className="dashboard-subtle text-xs mt-1">
                 {profileError || 'Đang tải tên tài khoản…'}
                 {profileError && (
                   <button
                     onClick={() => void loadProfile()}
-                    className="ml-2 underline text-[#FF8C74]"
+                    className="ml-2 underline text-[#FF8D73]"
                   >
                     Thử lại
                   </button>
@@ -258,59 +259,57 @@ function DashboardSession() {
           {tabs}
         </div>
 
-        {/* Weekly Streak Section */}
-        <WeeklyStreak />
-
         {/* Sub-bar: Focus Target & Action Shortcuts */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 bg-[#24201F]/70 border border-[#49403D]/60 rounded-[16px] px-4 sm:px-5 py-3.5 backdrop-blur-sm shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-0.5">
           <div className="dashboard-focus flex items-center gap-3.5 flex-wrap sm:flex-nowrap flex-1 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#FF8C74]/15 border border-[#FF8C74]/30 text-[#FF8C74]">
-              <Target size={18} aria-hidden="true" />
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#FF8D73]/15 border border-[#FF8D73]/30 text-[#FF8D73]">
+              <Target size={15} aria-hidden="true" />
             </div>
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="text-sm font-medium text-[#F5F0E9]">
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-sm font-medium text-[#CBBBAF]">
                 {user ? 'Đang học:' : 'Đang khám phá:'}{' '}
-                <strong className="text-[#FF8C74] font-bold">HSK {target}</strong>
+                <strong className="text-[#FF8D73] font-bold">HSK {target}</strong>
               </span>
 
-              {user && selectedPercent !== null && (
-                <div className="flex items-center gap-2.5">
-                  <div
-                    className="dashboard-track w-24 sm:w-36 h-2 bg-[#2E2C28] rounded-full overflow-hidden"
-                    role="progressbar"
-                    aria-label={`Tiến độ nhóm chọn lọc ${target}`}
-                    aria-valuenow={selectedPercent}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  >
-                    <span
-                      style={{ width: `${selectedPercent}%` }}
-                      className="h-full bg-gradient-to-r from-[#FF8C74] to-[#FF9B86] rounded-full block shadow-[0_0_8px_rgba(255,140,116,0.3)]"
-                    />
-                  </div>
-                  <span className="dashboard-subtle text-xs font-medium">
-                    {selectedPercent}% hoàn thành
-                  </span>
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="dashboard-track w-28 sm:w-48 h-2 bg-[#2A2223] rounded-full overflow-hidden"
+                  role="progressbar"
+                  aria-label={`Tiến độ nhóm chọn lọc ${target}`}
+                  aria-valuenow={user && selectedPercent !== null ? selectedPercent : 24}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <span
+                    style={{ width: `${user && selectedPercent !== null ? selectedPercent : 24}%` }}
+                    className="h-full bg-gradient-to-r from-[#FF8D73] to-[#FF9B7A] rounded-full block shadow-[0_0_8px_rgba(255,141,115,0.35)]"
+                  />
                 </div>
-              )}
+                <span className="text-xs font-medium text-[#CBBBAF]">
+                  {user && selectedPercent !== null ? selectedPercent : 24}% hoàn thành
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0 w-full sm:w-auto">
+          <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">
             <Link
-              className="dashboard-action primary text-xs !min-h-[38px] px-4 font-semibold rounded-xl flex items-center justify-center gap-1.5 shadow-[0_2px_10px_rgba(255,140,116,0.25)] flex-1 sm:flex-initial"
+              className="dashboard-action primary text-xs !min-h-[34px] px-3.5 font-semibold rounded-xl flex items-center justify-center gap-1.5 shadow-[0_2px_10px_rgba(255,141,115,0.25)]"
               to={`/vocabulary?level=HSK${target}`}
             >
-              Tiếp tục học <ArrowRight size={14} />
+              Tiếp tục học <ArrowRight size={13} />
             </Link>
             <Link
-              className="dashboard-action text-xs !min-h-[38px] px-3.5 font-medium rounded-xl text-[#F5F0E9] border-[#49403D] hover:border-[#82736B] hover:bg-white/[0.04] flex items-center justify-center flex-1 sm:flex-initial"
+              className="dashboard-action text-xs !min-h-[34px] px-3 font-medium rounded-xl text-[#F7F0E8] border-[#49403D]/70 hover:border-[#82736B] hover:bg-white/[0.04] flex items-center justify-center"
               to="/vocabulary?mode=srs"
             >
               Ôn tập đến hạn
             </Link>
           </div>
         </div>
+
+        {/* Weekly Streak Section */}
+        <WeeklyStreak />
       </header>
 
       {/* The Three Primary Balanced Cards Row */}
@@ -339,19 +338,25 @@ function DashboardSession() {
             <div className="mt-3.5 space-y-2.5 flex-1">
               <ul className="space-y-2">
                 {[
-                  { desc: 'Học 10 từ vựng mới', exp: 20 },
-                  { desc: 'Luyện nghe phát âm 5 phút', exp: 15 },
-                  { desc: 'Luyện tập 1 bài', exp: 25 },
+                  { desc: 'Học 10 từ vựng mới', exp: 20, done: true },
+                  { desc: 'Luyện nghe 5 phút', exp: 15, done: false },
+                  { desc: 'Luyện tập 1 bài', exp: 25, done: false },
                 ].map((m, i) => (
                   <li
                     key={i}
-                    className="flex items-center justify-between gap-2.5 p-2.5 rounded-xl border border-[#49403D]/50 bg-black/20"
+                    className="flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl border border-[#49403D]/50 bg-black/25"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <Circle size={17} className="text-[#82736B] shrink-0" aria-hidden="true" />
-                      <span className="text-[13px] text-[#F5F0E9]/90 truncate">{m.desc}</span>
+                      {m.done ? (
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#4FC28D] text-[#120E10]">
+                          <Check size={12} strokeWidth={3} aria-hidden="true" />
+                        </div>
+                      ) : (
+                        <div className="h-5 w-5 shrink-0 rounded-full border border-[#82736B]/60" />
+                      )}
+                      <span className="text-[13px] text-[#F7F0E8] truncate font-normal">{m.desc}</span>
                     </div>
-                    <span className="quest-reward shrink-0 text-xs font-medium text-[#E9BC78] bg-black/30 border border-[#E9BC78]/25 px-2.5 py-0.5 rounded-full">
+                    <span className="quest-reward shrink-0 text-xs font-semibold text-[#E8B15C] bg-black/40 border border-[#E8B15C]/25 px-2.5 py-0.5 rounded-full">
                       +{m.exp} EXP
                     </span>
                   </li>
@@ -370,25 +375,29 @@ function DashboardSession() {
                     key={q.code}
                     className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border transition-all ${
                       q.claimed
-                        ? 'border-[#7DDAB0]/40 bg-[#7DDAB0]/10'
-                        : 'border-[#49403D]/60 bg-black/20'
+                        ? 'border-[#67D2A0]/40 bg-[#67D2A0]/10'
+                        : 'border-[#49403D]/60 bg-black/25'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      {q.claimed ? (
-                        <CheckCheck size={18} className="text-[#91E4C0] shrink-0" aria-label="Đã nhận thưởng" />
-                      ) : q.progress >= q.target ? (
-                        <Check size={18} className="text-[#91E4C0] shrink-0" aria-label="Đã hoàn thành" />
+                      {q.claimed || q.progress >= q.target ? (
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#4FC28D] text-[#120E10]">
+                          <Check
+                            size={12}
+                            strokeWidth={3}
+                            aria-label={q.claimed ? 'Đã nhận thưởng' : 'Đã hoàn thành'}
+                          />
+                        </div>
                       ) : (
-                        <Circle size={18} className="text-[#82736B] shrink-0" aria-hidden="true" />
+                        <div className="h-5 w-5 shrink-0 rounded-full border border-[#82736B]/60" />
                       )}
-                      <span className="text-[13px] text-[#F5F0E9] truncate font-normal">
+                      <span className="text-[13px] text-[#F7F0E8] truncate font-normal">
                         {q.description}
                       </span>
                       {!q.claimed &&
                         (q.progress >= q.target ? (
                           <button
-                            className="underline text-[#91E4C0] text-xs font-semibold shrink-0 ml-1 hover:text-[#7DDAB0]"
+                            className="underline text-[#67D2A0] text-xs font-semibold shrink-0 ml-1 hover:text-[#89E0B8]"
                             disabled={claiming}
                             onClick={() => void claim(q.code)}
                           >
@@ -396,14 +405,14 @@ function DashboardSession() {
                           </button>
                         ) : (
                           <Link
-                            className="underline text-[#B9B0AA] text-xs shrink-0 ml-1 hover:text-[#F5F0E9]"
+                            className="underline text-[#CBBBAF] text-xs shrink-0 ml-1 hover:text-[#F7F0E8]"
                             to={q.route}
                           >
                             Học ngay
                           </Link>
                         ))}
                     </div>
-                    <span className="quest-reward shrink-0 text-xs font-medium text-[#E9BC78] bg-black/30 border border-[#E9BC78]/25 px-2.5 py-0.5 rounded-full">
+                    <span className="quest-reward shrink-0 text-xs font-semibold text-[#E8B15C] bg-black/40 border border-[#E8B15C]/25 px-2.5 py-0.5 rounded-full">
                       +{q.exp} EXP
                     </span>
                   </li>
@@ -437,27 +446,27 @@ function DashboardSession() {
               <div className="flex items-center justify-around gap-4 flex-wrap">
                 <div
                   className="dashboard-donut"
-                  style={{ '--progress': '18%' } as CSSProperties}
+                  style={{ '--progress': '24%' } as CSSProperties}
                   role="img"
                   aria-label="HSK 1 Khởi đầu"
                 >
                   <div>
-                    <strong className="text-xl font-bold text-[#F5F0E9]">HSK 1</strong>
-                    <span className="dashboard-subtle text-[11px] font-medium">Khởi đầu</span>
+                    <strong className="text-2xl font-bold text-[#F7F0E8]">24%</strong>
+                    <span className="dashboard-subtle text-[11px] font-medium">Hoàn thành</span>
                   </div>
                 </div>
-                <dl className="space-y-2.5 text-xs">
-                  <div className="flex items-center gap-2 text-[#F5F0E9]">
-                    <BookOpen className="text-[#E9BC78] shrink-0" size={17} />
-                    <span>150 từ vựng nền tảng</span>
+                <dl className="space-y-3 text-xs">
+                  <div className="flex items-center gap-2.5 text-[#F7F0E8]">
+                    <BookOpen className="text-[#E8B15C] shrink-0" size={18} />
+                    <span className="text-[#CBBBAF]"><strong className="font-bold text-sm text-[#F7F0E8] mr-1.5">12</strong> bài đã học</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[#F5F0E9]">
-                    <Layers className="text-[#E9BC78] shrink-0" size={17} />
-                    <span>45 điểm ngữ pháp</span>
+                  <div className="flex items-center gap-2.5 text-[#F7F0E8]">
+                    <Layers className="text-[#E8B15C] shrink-0" size={18} />
+                    <span className="text-[#CBBBAF]"><strong className="font-bold text-sm text-[#F7F0E8] mr-1.5">86</strong> từ vựng</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[#F5F0E9]">
-                    <CheckCircle2 className="text-[#E9BC78] shrink-0" size={17} />
-                    <span>6 bài luyện tập</span>
+                  <div className="flex items-center gap-2.5 text-[#F7F0E8]">
+                    <CheckCircle2 className="text-[#E8B15C] shrink-0" size={18} />
+                    <span className="text-[#CBBBAF]"><strong className="font-bold text-sm text-[#F7F0E8] mr-1.5">6</strong> bài luyện tập</span>
                   </div>
                 </dl>
               </div>
@@ -480,7 +489,7 @@ function DashboardSession() {
                   }
                 >
                   <div>
-                    <strong className="text-2xl font-bold text-[#F5F0E9]">
+                    <strong className="text-2xl font-bold text-[#F7F0E8]">
                       {overall === null ? '—' : `${overall}%`}
                     </strong>
                     <span className="dashboard-subtle text-[11px] font-medium">
@@ -490,24 +499,24 @@ function DashboardSession() {
                 </div>
 
                 <dl className="space-y-3 text-xs">
-                  <div className="flex items-center gap-2.5 text-[#F5F0E9]">
-                    <BookOpen className="text-[#E9BC78] shrink-0" size={18} />
-                    <dt className="text-[#F5F0E9] font-medium">
-                      <strong className="font-bold text-sm mr-1.5">{totals.practiced > 0 ? totals.practiced : 12}</strong>
+                  <div className="flex items-center gap-2.5 text-[#F7F0E8]">
+                    <BookOpen className="text-[#E8B15C] shrink-0" size={18} />
+                    <dt className="text-[#CBBBAF] font-normal">
+                      <strong className="font-bold text-sm text-[#F7F0E8] mr-1.5">{totals.practiced > 0 ? totals.practiced : 12}</strong>
                       bài đã học
                     </dt>
                   </div>
-                  <div className="flex items-center gap-2.5 text-[#F5F0E9]">
-                    <Layers className="text-[#E9BC78] shrink-0" size={18} />
-                    <dt className="text-[#F5F0E9] font-medium">
-                      <strong className="font-bold text-sm mr-1.5">{totals.learned > 0 ? totals.learned : 86}</strong>
+                  <div className="flex items-center gap-2.5 text-[#F7F0E8]">
+                    <Layers className="text-[#E8B15C] shrink-0" size={18} />
+                    <dt className="text-[#CBBBAF] font-normal">
+                      <strong className="font-bold text-sm text-[#F7F0E8] mr-1.5">{totals.learned > 0 ? totals.learned : 86}</strong>
                       từ vựng
                     </dt>
                   </div>
-                  <div className="flex items-center gap-2.5 text-[#F5F0E9]">
-                    <CheckCircle2 className="text-[#E9BC78] shrink-0" size={18} />
-                    <dt className="text-[#F5F0E9] font-medium">
-                      <strong className="font-bold text-sm mr-1.5">{Math.max(1, Math.round((totals.practiced || 12) / 2))}</strong>
+                  <div className="flex items-center gap-2.5 text-[#F7F0E8]">
+                    <CheckCircle2 className="text-[#E8B15C] shrink-0" size={18} />
+                    <dt className="text-[#CBBBAF] font-normal">
+                      <strong className="font-bold text-sm text-[#F7F0E8] mr-1.5">{Math.max(1, Math.round((totals.practiced || 12) / 2))}</strong>
                       bài luyện tập
                     </dt>
                   </div>

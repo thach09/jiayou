@@ -21,7 +21,7 @@ const Canvas = lazy(() =>
 
 const pets: Record<PetId, string> = {
   panda: 'Gấu trúc',
-  red_panda: 'Gấu trúc đỏ',
+  red_panda: 'Cáo',
   golden_monkey: 'Khỉ vàng',
   imperial_cat: 'Mèo',
 };

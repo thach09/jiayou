@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 
 /**
  * OrientalDecorBackground:
- * Authentic Chinese Imperial Night Sky Atmosphere from the approved dashboard design.
+ * Authentic Chinese Imperial Night Sky & Citadel Atmosphere matching the approved reference design.
  * Features:
- * 1. Warm glowing hanging lantern (Khổng Minh Đăng - 孔明灯) dangling with radiant amber light.
- * 2. Drifting distant lanterns softly illuminated in the upper sky.
- * 3. Blooming vermilion cherry blossom branch (Cành Đào Son) in the top-right corner.
- * 4. Three Kingdoms / ancient Chinese temple & pagoda silhouette along the bottom misty horizon.
- * 5. Ambient warm lighting gradients behind content.
+ * 1. Warm glowing hanging lanterns (Khổng Minh Đăng - 孔明灯) with radiant amber glow & gentle sway.
+ * 2. Ancient Chinese imperial citadel / palace / capital silhouette (Hoàng Thành & Môn Lâu) in top-right.
+ * 3. Blooming vermilion cherry blossom branches (Cành Đào Son) in top-right with drifting petals.
+ * 4. Layered Three Kingdoms mountain pass & illuminated ancient pagoda on the misty horizon.
+ * 5. Multi-layer ambient warm lighting gradients (#120E10, #181214, #FF8D73).
  */
 export function OrientalDecorBackground() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -27,59 +27,103 @@ export function OrientalDecorBackground() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none"
     >
-      {/* 1. Ambient Warm Lighting Radiance */}
+      {/* 1. Multi-Layer Ambient Warm Lighting Radiance */}
       <div
-        className="absolute -top-24 right-[-5%] w-[680px] h-[520px] rounded-full pointer-events-none"
+        className="absolute -top-24 right-[-5%] w-[740px] h-[560px] rounded-full pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 65% 35%, rgba(255, 140, 116, 0.16) 0%, rgba(233, 188, 120, 0.09) 30%, transparent 70%)',
-          filter: 'blur(32px)',
+            'radial-gradient(circle at 65% 35%, rgba(255, 141, 115, 0.18) 0%, rgba(243, 193, 111, 0.10) 32%, transparent 70%)',
+          filter: 'blur(36px)',
         }}
       />
       <div
-        className="absolute bottom-[-10%] right-[-5%] w-[700px] h-[450px] rounded-full pointer-events-none"
+        className="absolute bottom-[-10%] right-[-5%] w-[760px] h-[480px] rounded-full pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 70% 70%, rgba(233, 188, 120, 0.08) 0%, rgba(255, 140, 116, 0.05) 35%, transparent 70%)',
-          filter: 'blur(40px)',
+            'radial-gradient(circle at 70% 70%, rgba(243, 193, 111, 0.09) 0%, rgba(255, 141, 115, 0.06) 35%, transparent 70%)',
+          filter: 'blur(42px)',
         }}
       />
 
-      {/* 2. Top-Right Blooming Cherry Blossom Branch (Cành Hoa Đào Son) */}
+      {/* 2. Top-Right Imperial Citadel / Palace Silhouette (Hoàng Thành & Lầu Gác Cổ Đại) */}
+      <div className="absolute top-0 right-0 w-[620px] max-w-[55vw] h-[260px] pointer-events-none opacity-[0.22]">
+        <svg
+          viewBox="0 0 620 260"
+          fill="none"
+          className="w-full h-full text-[#1C1618]"
+        >
+          {/* Main Citadel Battlement Wall */}
+          <path
+            d="M 280 260 L 290 190 L 620 170 L 620 260 Z"
+            fill="currentColor"
+          />
+          {/* Wall Crenels / Battlements */}
+          {[300, 330, 360, 390, 420, 450, 480, 510, 540, 570, 600].map((x) => (
+            <rect key={x} x={x} y="162" width="16" height="12" fill="currentColor" />
+          ))}
+
+          {/* Grand Palace Watchtower Pavilion (Lầu Gác Cung Đình) */}
+          <g fill="currentColor">
+            {/* Lower Tier Building Body */}
+            <rect x="410" y="105" width="130" height="60" />
+            {/* Windows with warm glowing lantern light */}
+            <rect x="430" y="125" width="14" height="22" rx="2" fill="#F3C16F" opacity="0.85" />
+            <rect x="468" y="125" width="14" height="22" rx="2" fill="#F3C16F" opacity="0.85" />
+            <rect x="506" y="125" width="14" height="22" rx="2" fill="#F3C16F" opacity="0.85" />
+
+            {/* Middle Sweeping Curved Eaves Roof */}
+            <path d="M 370 108 Q 475 92 580 108 L 590 100 Q 475 78 360 100 Z" />
+
+            {/* Upper Tier Pavilion */}
+            <rect x="435" y="65" width="80" height="36" />
+            <rect x="455" y="75" width="12" height="16" rx="2" fill="#F3C16F" opacity="0.9" />
+            <rect x="483" y="75" width="12" height="16" rx="2" fill="#F3C16F" opacity="0.9" />
+
+            {/* Top Imperial Double-Curved Eaves Roof */}
+            <path d="M 395 68 Q 475 52 555 68 L 565 60 Q 475 40 385 60 Z" />
+
+            {/* Central Spire & Roof Beast Finial (Chi-wen / Tích Thứ) */}
+            <line x1="475" y1="46" x2="475" y2="24" stroke="#F3C16F" strokeWidth="2.5" />
+            <circle cx="475" cy="24" r="3" fill="#F3C16F" />
+          </g>
+        </svg>
+      </div>
+
+      {/* 3. Top-Right Blooming Cherry Blossom Branch (Cành Hoa Đào Son) */}
       <div className="absolute -top-3 right-0 w-[540px] max-w-[65vw] h-[220px] pointer-events-none">
         <svg
           viewBox="0 0 540 220"
           fill="none"
-          className="w-full h-full drop-shadow-[0_4px_12px_rgba(255,140,116,0.25)]"
+          className="w-full h-full drop-shadow-[0_4px_14px_rgba(255,141,115,0.3)]"
         >
           {/* Main Gnarled Branches */}
           <path
             d="M 545 0 Q 420 50 320 25 Q 240 5 180 38 Q 140 60 110 50"
-            stroke="#5A3A31"
+            stroke="#4A2F27"
             strokeWidth="5"
             strokeLinecap="round"
           />
           <path
             d="M 440 28 Q 380 90 320 85 Q 270 80 230 110"
-            stroke="#5A3A31"
+            stroke="#4A2F27"
             strokeWidth="3.5"
             strokeLinecap="round"
           />
           <path
             d="M 330 27 Q 290 60 250 55"
-            stroke="#5A3A31"
+            stroke="#4A2F27"
             strokeWidth="2.5"
             strokeLinecap="round"
           />
           <path
             d="M 245 10 Q 210 32 180 26"
-            stroke="#5A3A31"
+            stroke="#4A2F27"
             strokeWidth="2"
             strokeLinecap="round"
           />
           <path
             d="M 490 15 Q 460 70 410 75"
-            stroke="#5A3A31"
+            stroke="#4A2F27"
             strokeWidth="2.5"
             strokeLinecap="round"
           />
@@ -115,35 +159,35 @@ export function OrientalDecorBackground() {
                   rx="4.2"
                   ry="6.5"
                   transform={`rotate(${angle})`}
-                  fill={pIdx % 2 === 0 ? '#E04F42' : '#FF8C74'}
-                  opacity="0.92"
+                  fill={pIdx % 2 === 0 ? '#E04F42' : '#FF8D73'}
+                  opacity="0.94"
                 />
               ))}
               {/* Center Stamen & Golden Core */}
-              <circle cx="0" cy="0" r="2.8" fill="#FFF275" opacity="0.95" />
+              <circle cx="0" cy="0" r="2.8" fill="#FFF275" opacity="0.96" />
               <circle cx="0" cy="0" r="1.4" fill="#B45309" />
             </g>
           ))}
 
-          {/* Falling Flower Petals drifting gracefully */}
+          {/* Drifting Petals with subtle motion */}
           {[
-            { x: 420, y: 115, rot: 25, s: 0.9 },
-            { x: 350, y: 140, rot: 70, s: 0.8 },
-            { x: 260, y: 150, rot: 45, s: 0.85 },
-            { x: 190, y: 120, rot: 80, s: 0.75 },
+            { x: 410, y: 115, rot: 25, s: 0.9 },
+            { x: 340, y: 140, rot: 70, s: 0.8 },
+            { x: 250, y: 155, rot: 45, s: 0.85 },
+            { x: 180, y: 125, rot: 80, s: 0.75 },
           ].map((petal, idx) => (
             <path
               key={idx}
               d="M 0 -5 C 3 -2, 3 3, 0 5 C -3 3, -3 -2, 0 -5 Z"
-              fill="#FF8C74"
-              opacity="0.8"
+              fill="#FF8D73"
+              opacity="0.82"
               transform={`translate(${petal.x} ${petal.y}) scale(${petal.s}) rotate(${petal.rot})`}
             />
           ))}
         </svg>
       </div>
 
-      {/* 3. Floating Kongming Lanterns (Khổng Minh Đăng - 孔明灯) */}
+      {/* 4. Floating Kongming Lanterns (Khổng Minh Đăng - 孔明灯) */}
       <div
         data-lanterns
         className={`absolute inset-x-0 top-0 h-[480px] pointer-events-none transition-opacity duration-300 motion-reduce:transition-none ${
@@ -152,25 +196,25 @@ export function OrientalDecorBackground() {
       >
         {/* Prominent Hanging Lantern 1 (Top Center-Right, exactly like the reference mockup) */}
         <div
-          className="absolute right-[5.5%] top-0 z-10"
-          style={{ animationDuration: '6s' }}
+          className="absolute right-[5.5%] top-0 z-10 animate-lantern-sway"
+          style={{ animationDuration: '6.5s' }}
         >
           {/* Hanging string */}
-          <div className="w-[1.5px] h-9 bg-gradient-to-b from-stone-600 to-[#E9BC78] mx-auto opacity-70" />
+          <div className="w-[1.5px] h-9 bg-gradient-to-b from-stone-600 to-[#F3C16F] mx-auto opacity-70" />
           <div className="relative w-14 h-20 -mt-0.5">
             {/* Outer Radiant Glow */}
             <div
               className="absolute inset-[-14px] rounded-full pointer-events-none"
               style={{
                 background:
-                  'radial-gradient(circle, rgba(245, 158, 11, 0.45) 0%, rgba(255, 140, 116, 0.25) 45%, transparent 75%)',
+                  'radial-gradient(circle, rgba(243, 193, 111, 0.48) 0%, rgba(255, 141, 115, 0.28) 45%, transparent 75%)',
                 filter: 'blur(10px)',
               }}
             />
             <svg
               viewBox="0 0 56 72"
               fill="none"
-              className="w-full h-full drop-shadow-[0_0_20px_rgba(245,158,11,0.65)]"
+              className="w-full h-full drop-shadow-[0_0_22px_rgba(243,193,111,0.7)]"
             >
               {/* Outer Lantern Silk Shell */}
               <path
@@ -242,14 +286,14 @@ export function OrientalDecorBackground() {
                 strokeWidth="1.5"
                 opacity="0.8"
               />
-              <circle cx="28" cy="70" r="2" fill="#E9BC78" />
+              <circle cx="28" cy="70" r="2" fill="#F3C16F" />
             </svg>
           </div>
         </div>
 
         {/* Lantern 2 - Mid distance, soft drift */}
         <div
-          className="absolute right-[28%] top-5 opacity-75"
+          className="absolute right-[28%] top-5 opacity-80"
           style={{ animationDuration: '8s', animationDelay: '-1.5s' }}
         >
           <div className="w-[1px] h-6 bg-stone-600 mx-auto opacity-50" />
@@ -258,19 +302,19 @@ export function OrientalDecorBackground() {
               className="absolute inset-[-8px] rounded-full pointer-events-none"
               style={{
                 background:
-                  'radial-gradient(circle, rgba(245, 158, 11, 0.35) 0%, transparent 70%)',
+                  'radial-gradient(circle, rgba(243, 193, 111, 0.38) 0%, transparent 70%)',
                 filter: 'blur(6px)',
               }}
             />
             <svg
               viewBox="0 0 48 64"
               fill="none"
-              className="w-full h-full drop-shadow-[0_0_12px_rgba(245,158,11,0.45)]"
+              className="w-full h-full drop-shadow-[0_0_12px_rgba(243,193,111,0.5)]"
             >
               <path
                 d="M 12 8 Q 24 4 36 8 L 40 48 Q 24 54 8 48 Z"
                 fill="url(#lantern-main-grad)"
-                opacity="0.9"
+                opacity="0.92"
               />
               <ellipse
                 cx="24"
@@ -278,7 +322,7 @@ export function OrientalDecorBackground() {
                 rx="6"
                 ry="7"
                 fill="#FEF08A"
-                opacity="0.9"
+                opacity="0.92"
               />
               <rect
                 x="18"
@@ -304,14 +348,14 @@ export function OrientalDecorBackground() {
 
         {/* Lantern 3 - Far distance, tiny gentle glow */}
         <div
-          className="absolute right-[44%] top-8 opacity-50"
+          className="absolute right-[44%] top-8 opacity-55"
           style={{ animationDuration: '10s', animationDelay: '-4s' }}
         >
           <div className="relative w-6 h-8">
             <svg viewBox="0 0 48 64" fill="none" className="w-full h-full">
               <path
                 d="M 12 8 Q 24 4 36 8 L 40 48 Q 24 54 8 48 Z"
-                fill="#F59E0B"
+                fill="#F3C16F"
                 opacity="0.85"
               />
               <ellipse cx="24" cy="40" rx="5" ry="5" fill="#FEF08A" />
@@ -321,7 +365,7 @@ export function OrientalDecorBackground() {
 
         {/* Lantern 4 - Distant Left Sky */}
         <div
-          className="hidden sm:block absolute left-[16%] top-7 opacity-35"
+          className="hidden sm:block absolute left-[16%] top-7 opacity-40"
           style={{ animationDuration: '9s', animationDelay: '-3s' }}
         >
           <div className="relative w-7 h-10">
@@ -341,7 +385,7 @@ export function OrientalDecorBackground() {
           <defs>
             <linearGradient id="lantern-main-grad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#EA580C" stopOpacity="0.85" />
-              <stop offset="45%" stopColor="#F59E0B" stopOpacity="0.95" />
+              <stop offset="45%" stopColor="#F3C16F" stopOpacity="0.95" />
               <stop offset="85%" stopColor="#FEF08A" stopOpacity="0.98" />
               <stop offset="100%" stopColor="#B91C1C" stopOpacity="0.9" />
             </linearGradient>
@@ -349,7 +393,7 @@ export function OrientalDecorBackground() {
         </svg>
       </div>
 
-      {/* 4. Bottom Horizon: Misty Mountain Silhouette & Illuminated Ancient Temple/Pagoda */}
+      {/* 5. Bottom Horizon: Misty Mountain Silhouette & Illuminated Ancient Pagoda */}
       <div className="absolute bottom-0 inset-x-0 h-[220px] pointer-events-none select-none">
         <svg
           className="w-full h-full"
@@ -360,60 +404,60 @@ export function OrientalDecorBackground() {
           {/* Distant mountain layer */}
           <path
             d="M 0 220 L 0 130 Q 180 80 380 125 T 820 90 Q 1060 60 1260 110 T 1600 80 L 1600 220 Z"
-            fill="#12100F"
-            opacity="0.65"
+            fill="#0B090A"
+            opacity="0.75"
           />
 
           {/* Midground mountain layer */}
           <path
             d="M 0 220 L 0 160 Q 240 120 480 155 T 980 125 Q 1240 95 1420 140 T 1600 120 L 1600 220 Z"
-            fill="#191615"
-            opacity="0.85"
+            fill="#120E10"
+            opacity="0.88"
           />
 
           {/* Near ground misty layer */}
           <path
             d="M 0 220 L 0 185 Q 360 160 720 180 T 1440 165 L 1600 175 L 1600 220 Z"
-            fill="#161413"
-            opacity="0.95"
+            fill="#181214"
+            opacity="0.96"
           />
 
           {/* Ancient Pagoda / Temple Silhouette on the Right Hill (Bảo Tháp Hoàng Hôn) */}
           <g transform="translate(1470, 75)" opacity="0.95">
             {/* Pagoda Base Pavilion */}
-            <rect x="-24" y="80" width="48" height="26" fill="#0E0C0B" />
+            <rect x="-24" y="80" width="48" height="26" fill="#0B090A" />
             {/* Warm glowing interior windows in Pagoda Base */}
-            <rect x="-18" y="88" width="8" height="12" rx="1" fill="#FEF08A" opacity="0.85" />
-            <rect x="-4" y="88" width="8" height="12" rx="1" fill="#FEF08A" opacity="0.85" />
-            <rect x="10" y="88" width="8" height="12" rx="1" fill="#FEF08A" opacity="0.85" />
+            <rect x="-18" y="88" width="8" height="12" rx="1" fill="#FEF08A" opacity="0.9" />
+            <rect x="-4" y="88" width="8" height="12" rx="1" fill="#FEF08A" opacity="0.9" />
+            <rect x="10" y="88" width="8" height="12" rx="1" fill="#FEF08A" opacity="0.9" />
 
             {/* Tier 1 Roof with upturned curved eaves */}
             <path
               d="M -34 80 Q 0 74 34 80 L 38 75 Q 0 65 -38 75 Z"
-              fill="#0E0C0B"
+              fill="#0B090A"
             />
             {/* Tier 1 Body */}
-            <rect x="-18" y="56" width="36" height="20" fill="#0E0C0B" />
+            <rect x="-18" y="56" width="36" height="20" fill="#0B090A" />
             <rect x="-12" y="62" width="6" height="10" rx="1" fill="#FEF08A" opacity="0.9" />
             <rect x="6" y="62" width="6" height="10" rx="1" fill="#FEF08A" opacity="0.9" />
 
             {/* Tier 2 Roof */}
             <path
               d="M -28 56 Q 0 51 28 56 L 31 52 Q 0 43 -31 52 Z"
-              fill="#0E0C0B"
+              fill="#0B090A"
             />
             {/* Tier 2 Body */}
-            <rect x="-13" y="36" width="26" height="16" fill="#0E0C0B" />
+            <rect x="-13" y="36" width="26" height="16" fill="#0B090A" />
             <rect x="-4" y="41" width="8" height="8" rx="1" fill="#FEF08A" opacity="0.95" />
 
             {/* Tier 3 Roof */}
             <path
               d="M -21 36 Q 0 32 21 36 L 24 33 Q 0 25 -24 33 Z"
-              fill="#0E0C0B"
+              fill="#0B090A"
             />
             {/* Tier 3 Spire / Finial */}
-            <line x1="0" y1="26" x2="0" y2="8" stroke="#E9BC78" strokeWidth="2" />
-            <circle cx="0" cy="8" r="2.5" fill="#E9BC78" />
+            <line x1="0" y1="26" x2="0" y2="8" stroke="#F3C16F" strokeWidth="2" />
+            <circle cx="0" cy="8" r="2.5" fill="#F3C16F" />
 
             {/* Pagoda Halo / Warm Ambient Aura */}
             <circle
@@ -421,16 +465,16 @@ export function OrientalDecorBackground() {
               cy="60"
               r="45"
               fill="url(#pagoda-glow)"
-              opacity="0.45"
+              opacity="0.5"
               style={{ mixBlendMode: 'screen' }}
             />
           </g>
 
           <defs>
             <radialGradient id="pagoda-glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.6" />
-              <stop offset="40%" stopColor="#F59E0B" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#161413" stopOpacity="0" />
+              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.65" />
+              <stop offset="40%" stopColor="#F3C16F" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#120E10" stopOpacity="0" />
             </radialGradient>
           </defs>
         </svg>

@@ -3,6 +3,7 @@ import type { ElementType } from 'react';
 import {
   BookOpen,
   ChevronLeft,
+  ChevronRight,
   Home,
   Layers,
   Shield,
@@ -62,12 +63,10 @@ function HanziIcon({ className }: { className?: string }) {
       className={className || 'w-5 h-5 shrink-0'}
       aria-hidden="true"
     >
-      {/* 宀 */}
       <path d="M12 3V5.5" />
       <path d="M4.5 8H19.5" />
       <path d="M5.5 8.5V11" />
       <path d="M18.5 8.5V11" />
-      {/* 子 */}
       <path d="M7 12.5H16.5L12 16" />
       <path d="M11.8 11V20.5" />
       <path d="M8 15.5H16.5" />
@@ -135,7 +134,7 @@ export function Sidebar({
       ref={aside}
       aria-label="Thanh điều hướng chính"
       inert={isOverlay && !isOpen ? true : undefined}
-      className={`app-sidebar fixed inset-y-0 left-0 z-20 flex w-[228px] flex-col overflow-visible px-4 pb-6 pt-6 transition-transform duration-150 max-[900px]:z-[100] max-[900px]:w-[min(280px,82vw)] ${
+      className={`app-sidebar fixed inset-y-0 left-0 z-20 flex w-[228px] flex-col overflow-visible px-4 pb-5 pt-6 transition-transform duration-150 max-[900px]:z-[100] max-[900px]:w-[min(280px,82vw)] ${
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
@@ -150,7 +149,7 @@ export function Sidebar({
           aria-label={
             isOpen ? 'Thu gọn thanh điều hướng' : 'Mở thanh điều hướng'
           }
-          className="absolute -right-6 top-7 z-40 flex h-10 w-6 items-center justify-center rounded-r-md border border-l-0 border-[#49403D] bg-[#24201F] text-[#B9B0AA] hover:text-[#F5F0E9] hover:bg-[#2C2725] transition-colors"
+          className="absolute -right-6 top-7 z-40 flex h-10 w-6 items-center justify-center rounded-r-md border border-l-0 border-[rgba(255,180,140,0.18)] bg-[#1E1718] text-[#CBBBAF] hover:text-[#F7F0E8] hover:bg-[#251D1F] transition-colors"
         >
           <ChevronLeft size={14} className={isOpen ? '' : 'rotate-180'} />
         </button>
@@ -175,7 +174,7 @@ export function Sidebar({
               ref={close}
               onClick={onClose}
               aria-label="Đóng thanh điều hướng"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-[#B9B0AA] hover:text-[#F5F0E9] hover:bg-white/[0.05]"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-[#CBBBAF] hover:text-[#F7F0E8] hover:bg-white/[0.05]"
             >
               <X size={18} />
             </button>
@@ -184,7 +183,7 @@ export function Sidebar({
 
         {/* Navigation list */}
         <nav
-          className="mt-7 flex flex-col gap-1.5"
+          className="mt-6 flex flex-col gap-1.5"
           aria-label="Các mục chính"
         >
           {[
@@ -199,10 +198,10 @@ export function Sidebar({
                 end={to === '/'}
                 onClick={onNavigate}
                 className={({ isActive }) =>
-                  `app-nav-link flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-[14.5px] transition-all duration-150 ${
+                  `app-nav-link flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-[14px] transition-all duration-150 ${
                     isActive
-                      ? 'bg-gradient-to-r from-[rgba(255,140,116,0.18)] to-[rgba(255,140,116,0.06)] border border-[rgba(255,140,116,0.35)] text-[#F5F0E9] font-medium shadow-[0_0_12px_rgba(255,140,116,0.12)]'
-                      : 'text-[#B9B0AA] hover:text-[#F5F0E9] hover:bg-white/[0.04] border border-transparent'
+                      ? 'bg-gradient-to-r from-[rgba(255,141,115,0.20)] to-[rgba(255,141,115,0.06)] border border-[rgba(255,141,115,0.38)] text-[#F7F0E8] font-medium shadow-[0_0_14px_rgba(255,141,115,0.15)]'
+                      : 'text-[#CBBBAF] hover:text-[#F7F0E8] hover:bg-white/[0.04] border border-transparent'
                   }`
                 }
               >
@@ -210,7 +209,7 @@ export function Sidebar({
                   <>
                     <Icon
                       className={`w-5 h-5 shrink-0 transition-colors ${
-                        isActive ? 'text-[#FF8C74]' : 'text-[#B9B0AA]'
+                        isActive ? 'text-[#FF8D73]' : 'text-[#CBBBAF]'
                       }`}
                     />
                     <span className="truncate">{label}</span>
@@ -221,19 +220,48 @@ export function Sidebar({
           ))}
         </nav>
 
-        {/* Bottom controls: clean and integrated */}
-        <div className="mt-auto flex items-center justify-between gap-2 border-t border-[#49403D]/40 pt-4 px-1">
-          {!user && onOpenAuthModal ? (
-            <button
-              onClick={onOpenAuthModal}
-              className="dashboard-action primary text-xs !min-h-[36px] !py-1.5 !px-3.5 rounded-lg"
+        {/* Bottom account block matching approved reference design */}
+        <div className="mt-auto pt-4 border-t border-[rgba(255,180,140,0.14)] flex flex-col gap-2.5">
+          {user ? (
+            <Link
+              to="/toi"
+              onClick={onNavigate}
+              aria-label="Tài khoản cá nhân"
+              className="flex items-center justify-between gap-2.5 p-2 rounded-xl border border-[rgba(255,180,140,0.18)] bg-[rgba(34,25,27,0.92)] hover:border-[rgba(255,180,140,0.35)] hover:bg-white/[0.04] transition-all group"
             >
-              Đăng nhập
-            </button>
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-black/40 text-base border border-[rgba(255,180,140,0.18)]">
+                  🐼
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-semibold text-[#F7F0E8] truncate leading-tight">
+                    Tài khoản
+                  </p>
+                  <p className="text-[11px] text-[#CBBBAF] truncate">
+                    {user.fullName || 'Người học'}
+                  </p>
+                </div>
+              </div>
+              <ChevronRight size={14} className="text-[#CBBBAF] group-hover:text-[#F7F0E8] group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
           ) : (
-            <div />
+            <div className="flex items-center justify-between gap-2">
+              {onOpenAuthModal && (
+                <button
+                  onClick={onOpenAuthModal}
+                  className="dashboard-action primary text-xs !min-h-[36px] !py-1.5 !px-3.5 rounded-xl font-semibold flex-1 flex items-center justify-center gap-1.5"
+                >
+                  <span className="text-sm" aria-hidden="true">🐼</span>
+                  <span>Đăng nhập</span>
+                </button>
+              )}
+            </div>
           )}
-          <ThemeToggle />
+
+          <div className="flex items-center justify-between px-1">
+            <span className="text-[11px] text-[#9E8F86]">Chế độ màu</span>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </aside>
