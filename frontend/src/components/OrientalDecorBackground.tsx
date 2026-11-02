@@ -4,12 +4,130 @@ import { useEffect, useState } from 'react';
  * OrientalDecorBackground:
  * Authentic Chinese Imperial Night Sky & Citadel Atmosphere matching the approved reference design.
  * Features:
- * 1. Warm glowing hanging lanterns (Khổng Minh Đăng - 孔明灯) with radiant amber glow & gentle sway.
+ * 1. Traditional Chinese Palace Lanterns (Cung Đăng - 宫灯) with radiant amber glow & gentle sway.
  * 2. Ancient Chinese imperial citadel / palace / capital silhouette (Hoàng Thành & Môn Lâu) in top-right.
  * 3. Blooming vermilion cherry blossom branches (Cành Đào Son) in top-right with drifting petals.
  * 4. Layered Three Kingdoms mountain pass & illuminated ancient pagoda on the misty horizon.
  * 5. Multi-layer ambient warm lighting gradients (#120E10, #181214, #FF8D73).
  */
+interface LanternProps {
+  width?: number;
+  height?: number;
+  stringHeight?: number;
+  glowInset?: number;
+  glowBlur?: number;
+  glowOpacity?: number;
+}
+
+function ChinesePalaceLantern({
+  width = 38,
+  height = 60,
+  stringHeight = 22,
+  glowInset = -16,
+  glowBlur = 14,
+  glowOpacity = 0.55,
+}: LanternProps) {
+  return (
+    <div className="relative flex flex-col items-center select-none">
+      {/* Hanging silk cord */}
+      <div
+        className="w-[1.2px] bg-gradient-to-b from-[#78716C] via-[#B45309] to-[#F59E0B] opacity-80"
+        style={{ height: `${stringHeight}px` }}
+      />
+      <div
+        className="relative"
+        style={{ width: `${width}px`, height: `${height}px`, marginTop: '-2px' }}
+      >
+        {/* Layer 1: Intense Inner Amber Halo */}
+        <div
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            inset: `${glowInset}px`,
+            background: `radial-gradient(circle, rgba(251, 191, 36, ${glowOpacity}) 0%, rgba(249, 115, 22, ${glowOpacity * 0.6}) 40%, rgba(220, 38, 38, ${glowOpacity * 0.22}) 65%, transparent 80%)`,
+            filter: `blur(${glowBlur}px)`,
+          }}
+        />
+        {/* Layer 2: Soft Atmospheric Night Room Glow */}
+        <div
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            inset: `${glowInset * 1.8}px`,
+            background: `radial-gradient(circle, rgba(255, 141, 115, ${glowOpacity * 0.35}) 0%, rgba(243, 193, 111, ${glowOpacity * 0.2}) 45%, transparent 75%)`,
+            filter: `blur(${glowBlur * 1.7}px)`,
+          }}
+        />
+
+        <svg
+          viewBox="0 0 48 76"
+          fill="none"
+          className="w-full h-full drop-shadow-[0_0_14px_rgba(251,191,36,0.65)]"
+        >
+          <defs>
+            <radialGradient id="lantern-body-grad" cx="50%" cy="46%" r="52%">
+              <stop offset="0%" stopColor="#FFFFFF" />
+              <stop offset="16%" stopColor="#FEF08A" />
+              <stop offset="42%" stopColor="#FBBF24" />
+              <stop offset="68%" stopColor="#F97316" />
+              <stop offset="86%" stopColor="#DC2626" />
+              <stop offset="100%" stopColor="#881337" />
+            </radialGradient>
+            <linearGradient id="lantern-cap-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#6B1D1D" />
+              <stop offset="100%" stopColor="#2D0606" />
+            </linearGradient>
+            <filter id="lantern-flame-blur" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="2" />
+            </filter>
+          </defs>
+
+          {/* Top suspension loop */}
+          <circle cx="24" cy="2.5" r="2" stroke="#B45309" strokeWidth="0.9" fill="none" />
+
+          {/* Top Cap (Mahogany / Oxblood wooden lid with gold accent) */}
+          <rect x="13" y="4" width="22" height="3.2" rx="1.2" fill="url(#lantern-cap-grad)" />
+          <line x1="14" y1="4.6" x2="34" y2="4.6" stroke="#FBBF24" strokeWidth="0.6" opacity="0.8" />
+
+          {/* Traditional Chinese Barrel Silk Body */}
+          <path
+            d="M 14 7 Q 24 6.2 34 7 Q 38 28 34 49 Q 24 49.8 14 49 Q 10 28 14 7 Z"
+            fill="url(#lantern-body-grad)"
+          />
+
+          {/* Vertical Bamboo Ribs (Nan tre dọc 3D) */}
+          <line x1="24" y1="7" x2="24" y2="49" stroke="#78350F" strokeWidth="0.8" opacity="0.65" />
+          <path d="M 19 7 Q 15 28 19 49" stroke="#78350F" strokeWidth="0.75" fill="none" opacity="0.55" />
+          <path d="M 29 7 Q 33 28 29 49" stroke="#78350F" strokeWidth="0.75" fill="none" opacity="0.55" />
+          <path d="M 14 7 Q 10 28 14 49" stroke="#991B1B" strokeWidth="0.85" fill="none" opacity="0.5" />
+          <path d="M 34 7 Q 38 28 34 49" stroke="#991B1B" strokeWidth="0.85" fill="none" opacity="0.5" />
+
+          {/* Horizontal Structural Rings (Nan vành ngang lụa) */}
+          <path d="M 11.8 19 Q 24 21.5 36.2 19" stroke="#9A3412" strokeWidth="0.65" fill="none" opacity="0.5" />
+          <path d="M 10 28 Q 24 31 38 28" stroke="#9A3412" strokeWidth="0.65" fill="none" opacity="0.5" />
+          <path d="M 11.8 37 Q 24 39.5 36.2 37" stroke="#9A3412" strokeWidth="0.65" fill="none" opacity="0.5" />
+
+          {/* Glowing Candle Flame Core */}
+          <ellipse cx="24" cy="27" rx="8" ry="10.5" fill="#FEF08A" opacity="0.85" filter="url(#lantern-flame-blur)" />
+          <ellipse cx="24" cy="27" rx="4" ry="6" fill="#FFFFFF" opacity="0.95" />
+
+          {/* Bottom Cap (Mahogany / Oxblood collar with gold accent) */}
+          <rect x="13" y="48.8" width="22" height="3.2" rx="1.2" fill="url(#lantern-cap-grad)" />
+          <line x1="14" y1="51.4" x2="34" y2="51.4" stroke="#FBBF24" strokeWidth="0.6" opacity="0.8" />
+
+          {/* Golden Bead (Hạt ngọc hoàng kim) */}
+          <line x1="24" y1="52" x2="24" y2="54.5" stroke="#B91C1C" strokeWidth="1.2" />
+          <circle cx="24" cy="56" r="2.2" fill="#FBBF24" stroke="#D97706" strokeWidth="0.5" />
+
+          {/* Flowing Red Silk Tassel (Tua rua lụa đỏ - 流苏) */}
+          <path d="M 22.8 58.2 L 25.2 58.2 L 25.8 72.5 L 24 75 L 22.2 72.5 Z" fill="#DC2626" opacity="0.95" />
+          <line x1="23.2" y1="58.5" x2="22.6" y2="72.5" stroke="#B91C1C" strokeWidth="0.75" opacity="0.85" />
+          <line x1="24.8" y1="58.5" x2="25.4" y2="72.5" stroke="#B91C1C" strokeWidth="0.75" opacity="0.85" />
+          <line x1="24" y1="58.5" x2="24" y2="74" stroke="#F87171" strokeWidth="0.85" opacity="0.9" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 export function OrientalDecorBackground() {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -61,7 +179,7 @@ export function OrientalDecorBackground() {
       </div>
 
       {/* 3. Top-Right Blooming Cherry Blossom Branch (Cành Hoa Đào Son) */}
-      <div className="absolute -top-3 right-0 w-[460px] max-w-[48vw] h-[190px] pointer-events-none">
+      <div className="absolute -top-3 right-0 w-[520px] max-w-[50vw] h-[210px] pointer-events-none">
         <svg
           viewBox="0 0 540 220"
           fill="none"
@@ -158,210 +276,42 @@ export function OrientalDecorBackground() {
         </svg>
       </div>
 
-      {/* 4. Floating Kongming Lanterns (Khổng Minh Đăng - 孔明灯) */}
+      {/* 4. Authentic Chinese Hanging Palace Lanterns (Cung Đăng - 宫灯) */}
       <div
         data-lanterns
         className={`absolute inset-x-0 top-0 h-[480px] pointer-events-none transition-opacity duration-300 motion-reduce:transition-none ${
           isScrolled ? 'opacity-0' : 'opacity-100'
         }`}
       >
-        {/* Prominent Hanging Lantern 1 (Top Center-Right, exactly like the reference mockup) */}
+        {/* Lantern 2: Prominent Blossom Lantern (hanging from cherry blossom branch above HSK tabs) */}
         <div
-          className="absolute right-[5.5%] top-0 z-10 animate-lantern-sway"
-          style={{ animationDuration: '6.5s' }}
+          className="absolute right-[27.5%] top-0 z-10 animate-lantern-sway"
+          style={{ animationDuration: '7s' }}
         >
-          {/* Hanging string */}
-          <div className="w-[1.5px] h-9 bg-gradient-to-b from-stone-600 to-[#F3C16F] mx-auto opacity-70" />
-          <div className="relative w-14 h-20 -mt-0.5">
-            {/* Outer Radiant Glow */}
-            <div
-              className="absolute inset-[-14px] rounded-full pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(circle, rgba(243, 193, 111, 0.48) 0%, rgba(255, 141, 115, 0.28) 45%, transparent 75%)',
-                filter: 'blur(10px)',
-              }}
-            />
-            <svg
-              viewBox="0 0 56 72"
-              fill="none"
-              className="w-full h-full drop-shadow-[0_0_22px_rgba(243,193,111,0.7)]"
-            >
-              {/* Outer Lantern Silk Shell */}
-              <path
-                d="M 14 10 Q 28 6 42 10 L 46 54 Q 28 62 10 54 Z"
-                fill="url(#lantern-main-grad)"
-                opacity="0.96"
-              />
-              {/* Bamboo Ribs */}
-              <line
-                x1="28"
-                y1="8"
-                x2="28"
-                y2="58"
-                stroke="#78350F"
-                strokeWidth="0.9"
-                opacity="0.6"
-              />
-              <line
-                x1="19"
-                y1="9"
-                x2="17"
-                y2="55"
-                stroke="#78350F"
-                strokeWidth="0.7"
-                opacity="0.5"
-              />
-              <line
-                x1="37"
-                y1="9"
-                x2="39"
-                y2="55"
-                stroke="#78350F"
-                strokeWidth="0.7"
-                opacity="0.5"
-              />
-              {/* Inner Glowing Candle / Flame Core */}
-              <ellipse
-                cx="28"
-                cy="46"
-                rx="8"
-                ry="9"
-                fill="#FEF08A"
-                opacity="0.95"
-              />
-              <ellipse
-                cx="28"
-                cy="46"
-                rx="4"
-                ry="5"
-                fill="#FFFFFF"
-                opacity="0.98"
-              />
-              {/* Bottom Vermilion Wooden Collar & Tassel Ring */}
-              <rect
-                x="20"
-                y="56"
-                width="16"
-                height="4"
-                rx="2"
-                fill="#991B1B"
-                opacity="0.9"
-              />
-              <line
-                x1="28"
-                y1="60"
-                x2="28"
-                y2="70"
-                stroke="#B91C1C"
-                strokeWidth="1.5"
-                opacity="0.8"
-              />
-              <circle cx="28" cy="70" r="2" fill="#F3C16F" />
-            </svg>
-          </div>
+          <ChinesePalaceLantern
+            width={38}
+            height={60}
+            stringHeight={24}
+            glowInset={-16}
+            glowBlur={14}
+            glowOpacity={0.55}
+          />
         </div>
 
-        {/* Lantern 2 - Mid distance, soft drift */}
+        {/* Lantern 1: Central Sky Lantern (hanging above the greeting / HSK 1 level selector) */}
         <div
-          className="absolute right-[28%] top-5 opacity-80"
-          style={{ animationDuration: '8s', animationDelay: '-1.5s' }}
+          className="hidden sm:block absolute right-[50.5%] top-0 z-10 animate-lantern-sway"
+          style={{ animationDuration: '8.5s', animationDelay: '-2.5s' }}
         >
-          <div className="w-[1px] h-6 bg-stone-600 mx-auto opacity-50" />
-          <div className="relative w-9 h-12">
-            <div
-              className="absolute inset-[-8px] rounded-full pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(circle, rgba(243, 193, 111, 0.38) 0%, transparent 70%)',
-                filter: 'blur(6px)',
-              }}
-            />
-            <svg
-              viewBox="0 0 48 64"
-              fill="none"
-              className="w-full h-full drop-shadow-[0_0_12px_rgba(243,193,111,0.5)]"
-            >
-              <path
-                d="M 12 8 Q 24 4 36 8 L 40 48 Q 24 54 8 48 Z"
-                fill="url(#lantern-main-grad)"
-                opacity="0.92"
-              />
-              <ellipse
-                cx="24"
-                cy="40"
-                rx="6"
-                ry="7"
-                fill="#FEF08A"
-                opacity="0.92"
-              />
-              <rect
-                x="18"
-                y="50"
-                width="12"
-                height="3"
-                rx="1.5"
-                fill="#B91C1C"
-                opacity="0.8"
-              />
-              <line
-                x1="24"
-                y1="53"
-                x2="24"
-                y2="61"
-                stroke="#B91C1C"
-                strokeWidth="1"
-                opacity="0.7"
-              />
-            </svg>
-          </div>
+          <ChinesePalaceLantern
+            width={32}
+            height={50}
+            stringHeight={18}
+            glowInset={-13}
+            glowBlur={11}
+            glowOpacity={0.48}
+          />
         </div>
-
-        {/* Lantern 3 - Far distance, tiny gentle glow */}
-        <div
-          className="absolute right-[44%] top-8 opacity-55"
-          style={{ animationDuration: '10s', animationDelay: '-4s' }}
-        >
-          <div className="relative w-6 h-8">
-            <svg viewBox="0 0 48 64" fill="none" className="w-full h-full">
-              <path
-                d="M 12 8 Q 24 4 36 8 L 40 48 Q 24 54 8 48 Z"
-                fill="#F3C16F"
-                opacity="0.85"
-              />
-              <ellipse cx="24" cy="40" rx="5" ry="5" fill="#FEF08A" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Lantern 4 - Distant Left Sky */}
-        <div
-          className="hidden sm:block absolute left-[16%] top-7 opacity-40"
-          style={{ animationDuration: '9s', animationDelay: '-3s' }}
-        >
-          <div className="relative w-7 h-10">
-            <svg viewBox="0 0 48 64" fill="none" className="w-full h-full">
-              <path
-                d="M 12 8 Q 24 4 36 8 L 40 48 Q 24 54 8 48 Z"
-                fill="url(#lantern-main-grad)"
-                opacity="0.8"
-              />
-              <ellipse cx="24" cy="40" rx="5" ry="6" fill="#FEF08A" opacity="0.85" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Gradients */}
-        <svg className="absolute w-0 h-0" aria-hidden="true">
-          <defs>
-            <linearGradient id="lantern-main-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#EA580C" stopOpacity="0.85" />
-              <stop offset="45%" stopColor="#F3C16F" stopOpacity="0.95" />
-              <stop offset="85%" stopColor="#FEF08A" stopOpacity="0.98" />
-              <stop offset="100%" stopColor="#B91C1C" stopOpacity="0.9" />
-            </linearGradient>
-          </defs>
-        </svg>
       </div>
 
       {/* 5. Bottom Horizon: Panoramic Misty Mountains & Second Illuminated Imperial Pagoda / City */}
