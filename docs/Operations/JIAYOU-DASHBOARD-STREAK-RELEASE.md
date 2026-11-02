@@ -177,6 +177,9 @@ integration included restoring an already protected date, heatmap distinction,
 retained activity panels, final evolution progress and resource cleanup. A final
 regression test also verifies that a delayed status GET cannot overwrite a confirmed
 restoration response; restore now cancels that obsolete GET (312 frontend tests).
+The repository's design detector found no remaining dashboard/companion issue
+after removing a width transition. Its components scan still flags the unchanged
+RedSealStamp bounce easing; that unrelated legacy component was preserved.
 
 ## Warnings and remaining limits
 
