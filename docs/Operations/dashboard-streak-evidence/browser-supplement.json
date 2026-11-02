@@ -1,0 +1,21 @@
+{
+  "realBackend": true,
+  "realPostgres": true,
+  "mockedHttp": false,
+  "checks": [
+    "development: expanded historical activity retains restored zero-count distinction",
+    "development: all seven full-date accessible labels",
+    "development: no overflow with expanded activity",
+    "production-preview: expanded historical activity retains restored zero-count distinction",
+    "production-preview: all seven full-date accessible labels",
+    "production-preview: no overflow with expanded activity",
+    "supplement has no uncaught JavaScript errors"
+  ],
+  "screenshots": [
+    "development-activity-expanded.png",
+    "production-preview-activity-expanded.png"
+  ],
+  "pageErrors": [],
+  "consoleDiagnostics": [],
+  "result": "PASS"
+}

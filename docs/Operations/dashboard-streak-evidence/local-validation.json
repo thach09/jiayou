@@ -1,0 +1,50 @@
+{
+  "acceptance-h2": {
+    "tests": 555,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 8
+  },
+  "ux-postgres": {
+    "tests": 555,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 8
+  },
+  "ux-rehearsal": {
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "ux-bootstrap": {
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "node": "24.21.0",
+  "frontend": {
+    "vitest": 311,
+    "nodeTests": 9,
+    "lint": 0,
+    "build": 0,
+    "audit": 0,
+    "auditOmitDev": 0
+  },
+  "runtimeAudit": {
+    "dependencies": 104,
+    "exit": 0,
+    "existingReachabilityExceptions": [
+      "GHSA-j9f9-w8pj-32f8",
+      "GHSA-pc63-qcmh-9cmg"
+    ]
+  },
+  "browser": {
+    "realApiPostgres": true,
+    "primaryChecks": 51,
+    "supplementChecks": 7,
+    "result": "PASS"
+  },
+  "historicalSqlModified": false
+}

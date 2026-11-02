@@ -1,6 +1,6 @@
 # Jiayou — sự thật sản phẩm
 
-Cập nhật 31/10/2026. **Jiayou (加油)** là nền tảng học tiếng Trung cho người Việt trên desktop và điện thoại. Ganbarou là sản phẩm riêng tại heyganba.site. Luật thị giác duy nhất: `frontend/DESIGN.md`. README và `docs/HANDOVER.md` là điểm vào vận hành.
+Cập nhật 02/11/2026. **Jiayou (加油)** là nền tảng học tiếng Trung cho người Việt trên desktop và điện thoại. Ganbarou là sản phẩm riêng tại heyganba.site. Luật thị giác duy nhất: `frontend/DESIGN.md`. README và `docs/HANDOVER.md` là điểm vào vận hành.
 
 ## Phạm vi bản bàn giao
 
@@ -18,9 +18,13 @@ Thi thử là bài luyện nội bộ: cấp 1–2 chấm Nghe/Đọc, tổng 20
 
 ## Tiến độ và phần thưởng
 
-Dashboard dùng hoạt động thật cho heatmap 24 tuần, tuần từ thứ Hai và biểu đồ 30 ngày. Tiến độ sáu cấp đếm từ riêng đã có lần ôn nhớ và điểm ngữ pháp đã trả lời đúng; không suy ra năng lực được chứng nhận.
+Dashboard hiển thị tuần hiện tại từ thứ Hai đến Chủ nhật theo Asia/Ho_Chi_Minh. Heatmap 24 tuần và biểu đồ 30 ngày dùng hoạt động thật, được giữ trong mục mở rộng “Xem hoạt động học chi tiết”. Tiến độ sáu cấp đếm từ riêng đã có lần ôn nhớ và điểm ngữ pháp đã trả lời đúng; không suy ra năng lực được chứng nhận.
 
 EXP: đúng bài tập +10 theo cấu hình, mỗi 10 lượt SRS tích luỹ +50, thi thử 100 × tỷ lệ điểm. Nhiệm vụ mỗi ngày theo Asia/Ho_Chi_Minh: 10 lượt SRS (30 EXP/2 măng), 3 lượt viết đúng (25/2), đúng 5 câu ngữ pháp hoặc nộp 1 đề (50/3). Server kiểm tra điều kiện và chỉ nhận một lần/ngày. Ví măng gắn tài khoản, khởi tạo 6 măng, cho ăn tốn 1 và cộng 25 điểm thân thiết. Hoạt ảnh linh vật là phản hồi giao diện, không tự cộng tiền từ localStorage.
+
+Chuỗi học đủ điều kiện khi ôn 10 thẻ SRS, nộp 1 bài luyện hoặc làm 10 câu ngữ pháp trong ngày. Mỗi tài khoản có tối đa 5 ngày bảo vệ chuỗi trong tháng dương lịch theo giờ Việt Nam; mỗi ngày được khôi phục trừ 1 lượt của tháng thực hiện, không cộng dồn tháng sau. Chỉ khôi phục trọn khoảng nghỉ trong 7 ngày trước hôm nay khi người dùng chủ động xác nhận; không tự trừ lượt. Ngày bảo vệ nối chuỗi nhưng không tăng số ngày thực học, EXP hay nhiệm vụ. Ledger ở server bảo đảm sở hữu, chống trừ lặp và chống vượt hạn mức đồng thời.
+
+Linh vật dùng danh xưng Ấu Thú cho đến tiến hóa cuối ở level 10 / 900 EXP thân thiết, sau đó là Đại Hiệp. Chỉ một mục điều hướng “Tôi”; mã lớp là dữ liệu/API tương thích cũ, không còn biểu mẫu chọn mã lớp.
 
 ## Xuất bản và vận hành
 
