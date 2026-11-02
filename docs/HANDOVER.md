@@ -7,8 +7,9 @@ handover. Jiayou has no selected domain and must use its own hostname and stack.
 
 ## Source and build contract
 
-The repository is https://github.com/thach09/jiayou. For the current brand/account
-acceptance workflow read `docs/Operations/LOCAL-UX-AND-ACCOUNT-QA.md`. Also read
+The repository is https://github.com/thach09/jiayou. For current dashboard, streak
+and account acceptance read `docs/Operations/JIAYOU-DASHBOARD-STREAK-RELEASE.md`.
+The earlier brand/account baseline is `docs/Operations/LOCAL-UX-AND-ACCOUNT-QA.md`. Also read
 `docs/Operations/FINAL-ENGINEERING-AUDIT.md` and its evidence index for the reviewed
 release; verify the current main SHA with Git, not an uncommitted research worktree.
 Frontend lives in frontend/, backend in
@@ -35,7 +36,9 @@ created; review-status constraints block APPROVED publication in this initial li
 
 Read [the full contract](Operations/jiayou-independent-bootstrap.md) before bootstrap.
 One-time initialize requires an explicitly approved empty new target and acknowledgement;
-later starts validate only. No repair/baseline/clean, legacy history import or arbitrary
+it installs pinned V1 + V2. An existing Jiayou V1 needs the explicitly authorized,
+target/version-bound 1→2 upgrade; ordinary starts remain validate-only and refuse
+to upgrade implicitly. No repair/baseline/clean, legacy history import or arbitrary
 content SQL is authorized. PR48's source-history checker remains available as an explicit
 read-only manual CI check; it is not a first-bootstrap or live-schema authorization.
 

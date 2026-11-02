@@ -8,6 +8,21 @@ production database operation or curriculum publication is included.
 
 ## Integration receipt
 
+Pull request: [#60](https://github.com/thach09/jiayou/pull/60).
+Implementation candidate: `5ad717233513dc4b0262406d864364c5231364d1`.
+Its completed checks all passed:
+
+- [CI #203](https://github.com/thach09/jiayou/actions/runs/41396656544): H2,
+  PostgreSQL/Flyway including three explicit schema rehearsals, frontend lint,
+  build, 311 + 9 tests and zero-vulnerability npm audit.
+- [Isolated bootstrap #17](https://github.com/thach09/jiayou/actions/runs/41396656531):
+  26 guard/PostgreSQL tests, no skips, including retained V1 user/streak/activity.
+- [Container validation #14](https://github.com/thach09/jiayou/actions/runs/41396656497):
+  builds, private Compose contract, Nginx and expected fail-closed startup.
+
+The final documentation commit and eventual main must pass their own check runs;
+the PR checks tab and final receipt identify those exact commits.
+
 The final main SHA, pull request and its check runs are recorded in the completed
 GitHub merge receipt and delivery message. This document cannot contain its own
 eventual merge SHA. Local validation below describes the implemented candidate;
@@ -166,9 +181,16 @@ retained activity panels, final evolution progress and resource cleanup.
 - Runtime audit still reports existing Spring MVC 6.2.19 advisories
   `GHSA-j9f9-w8pj-32f8` and `GHSA-pc63-qcmh-9cmg` as not reachable because SSE view
   fragments and XsltView are disabled; regression guards remain. No waiver added.
-- CI legacy Japanese fixture rehearsal and production migration preflight have
-  their own conditional behavior; final CI receipt must disclose skips/warnings.
+- CI's retained Japanese fixture rehearsal ran 24 tests with one conditional
+  `DictionaryPilotPostgresRehearsalTest` skip. Production Migration Preflight was
+  intentionally skipped: it runs only on explicitly requested manual dispatch.
   Source-history checks do not attest a live production database.
+- CI logs warn about Actions v4 targeting Node 20 (forced to Node 24), deprecated
+  setup-java v4, `punycode`/`url.parse`, existing Spring deprecated APIs and the
+  explicit AuthenticationProvider/UserDetailsService configuration. Disposable
+  Alpine PostgreSQL reports no usable system locales and local trust initialization.
+  Bootstrap's intentional SQL violations confirm publication, slot-six, ownership
+  and first-of-month constraints; they are not failed test cases.
 - Browser acceptance used Windows Chrome/software WebGL. Safari, Firefox,
   physical-device GPU behavior and native voice quality are not certified.
 - Monthly/clock edge cases use deterministic server integration tests; real-browser
@@ -183,7 +205,9 @@ retained activity panels, final evolution progress and resource cleanup.
 The original 138 entries were previously archived, not discarded. Recheck all 1,031
 baseline hashes, 31 originally untracked migrations, original branch tips and clean
 registered worktrees after commits. Preserve archive branches and unfinished content.
-Final preservation and exact merge receipts are retained with the handover evidence.
+The [preservation summary](dashboard-streak-evidence/preservation-summary.json)
+records the post-commit check. Final preservation and exact merge receipts are
+retained with the handover evidence.
 
 Before pushing, live Vercel repository lookup returned zero connected projects;
 Render main/develop auto-deploy and PR previews were off. GitHub has no webhooks and
