@@ -25,7 +25,7 @@
   },
   "node": "24.21.0",
   "frontend": {
-    "vitest": 311,
+    "vitest": 312,
     "nodeTests": 9,
     "lint": 0,
     "build": 0,

@@ -9,7 +9,7 @@ production database operation or curriculum publication is included.
 ## Integration receipt
 
 Pull request: [#60](https://github.com/thach09/jiayou/pull/60).
-Implementation candidate: `5ad717233513dc4b0262406d864364c5231364d1`.
+Initial fully checked candidate: `5ad717233513dc4b0262406d864364c5231364d1`.
 Its completed checks all passed:
 
 - [CI #203](https://github.com/thach09/jiayou/actions/runs/41396656544): H2,
@@ -143,7 +143,7 @@ are sanitized; credentials and tokens remain outside Git.
 | Check | Result |
 | --- | --- |
 | Node 24.21.0 `npm ci`, lint, production build | PASS |
-| Frontend Vitest / Node tests | 311 / 9 PASS |
+| Frontend Vitest / Node tests | 312 / 9 PASS |
 | Full npm audit and `--omit=dev` audit | Exit 0, zero vulnerabilities |
 | Maven clean verify / H2 | 555 tests, 0 failures/errors, 8 opt-in skips |
 | PostgreSQL full API suite / Flyway | 555 tests, 0 failures/errors, same 8 opt-in skips |
@@ -174,7 +174,9 @@ transaction order, lock sharing, SQL constraints, upgrade/history checks, API/UI
 contracts, auth transitions, lazy activity preservation, accessibility and disposal.
 It is not a claim of external human/second-agent approval. Findings fixed before
 integration included restoring an already protected date, heatmap distinction,
-retained activity panels, final evolution progress and resource cleanup.
+retained activity panels, final evolution progress and resource cleanup. A final
+regression test also verifies that a delayed status GET cannot overwrite a confirmed
+restoration response; restore now cancels that obsolete GET (312 frontend tests).
 
 ## Warnings and remaining limits
 
