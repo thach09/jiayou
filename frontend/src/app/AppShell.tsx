@@ -206,7 +206,7 @@ export function AppShell() {
       {/* Main Content Area */}
       <div
         className={`flex min-h-screen min-w-0 flex-1 flex-col transition-[margin] duration-150 ${
-          isSidebarOpen ? 'ml-[216px] max-[900px]:ml-0' : 'ml-0'
+          isSidebarOpen ? 'ml-[228px] max-[900px]:ml-0' : 'ml-0'
         }`}
       >
         <main
