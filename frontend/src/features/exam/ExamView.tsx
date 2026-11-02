@@ -6,7 +6,7 @@ import type { HeatmapDay } from '../progress/types';
 import type { ExamQuestion, ExamDto, ExamResultDto, ExamHistoryDto, StreakDto, LeaderboardDto } from './types';
 import { useAuth } from '../../app/useAuth';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Play, Users, Volume2, BookOpen } from 'lucide-react';
+import { Play, Volume2, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import { FeedbackAlert } from '../../components/FeedbackAlert';
@@ -14,8 +14,6 @@ import type { FeedbackType } from '../../components/FeedbackAlert';
 import { SubmitButton } from '../../components/SubmitButton';
 import { MascotBadge } from '../../components/MascotBadge';
 import { RedSealStamp } from '../../components/RedSealStamp';
-import { updateClassCode } from '../account/api';
-import type { AuthResponse } from '../../lib/api/types';
 import { speakChinese } from '../../services/chineseSpeech';
 import { Modal } from '../../components/Modal';
 import { learningKeyboardBlocked } from '../../lib/learningKeyboard';
@@ -63,7 +61,7 @@ const heatLevel = (count: number) => {
 };
 
 export const ExamView: React.FC = () => {
-  const { user, requireLogin: onRequireLogin, updateProfile } = useAuth();
+  const { user, requireLogin: onRequireLogin } = useAuth();
   const userId = user?.userId;
   const navigate = useNavigate();
   const { run, cancel } = useRequestScope(user?.userId);
@@ -91,10 +89,6 @@ export const ExamView: React.FC = () => {
   const [helpOpen, setHelpOpen] = useState(false);
   const helpHeading = useRef<HTMLHeadingElement>(null);
   const [feedback, setFeedback] = useState<{ type: FeedbackType; title: string; message: string } | null>(null);
-  const [classCodeInput, setClassCodeInput] = useState(user?.classCode ?? '');
-  const [classFilterActive, setClassFilterActive] = useState(false);
-  const [classSaving, setClassSaving] = useState(false);
-  const [classMessage, setClassMessage] = useState<string | null>(null);
 
   const checkpointAttempt = useCallback((attempt: ExamDto, selected: Record<number, string>, position: number) => {
     if (userId) setStorageWarning(!saveActiveAttempt(userId, { examId: attempt.examId, answers: selected, activeIndex: position }));
@@ -105,14 +99,13 @@ export const ExamView: React.FC = () => {
       return;
     }
 
-    const activeClassCode = classFilterActive && classCodeInput.trim() ? classCodeInput.trim() : null;
 
     const loaded = await run('ExamView-load', (signal) =>
       Promise.all([
         examApi.history({ signal }),
         progressApi.streak({ signal }),
         progressApi.heatmap(HEATMAP_DAYS, { signal }),
-        examApi.leaderboard(activeClassCode, { signal }),
+        examApi.leaderboard(null, { signal }),
       ])
     );
 
@@ -122,7 +115,7 @@ export const ExamView: React.FC = () => {
     if (s.success && s.data) setStreak(s.data);
     if (m.success && m.data) setHeatmap(m.data);
     if (l.success && l.data) setLeaderboard(l.data);
-  }, [userId, classFilterActive, classCodeInput, run]);
+  }, [userId, run]);
 
   useEffect(() => {
     if (!userId) {
@@ -203,33 +196,6 @@ export const ExamView: React.FC = () => {
     window.addEventListener('beforeunload', warn);
     return () => window.removeEventListener('beforeunload', warn);
   }, [phase]);
-
-  const saveOwnClassCode = async () => {
-    if (!user) {
-      return;
-    }
-
-    setClassSaving(true);
-    setClassMessage(null);
-
-    const profile = await run('class-code', (signal) =>
-      updateClassCode(classCodeInput.trim(), signal)
-    );
-
-    setClassSaving(false);
-
-    if (!profile) {
-      setClassMessage('Không lưu được mã lớp, vui lòng thử lại.');
-      return;
-    }
-
-    const updatedUser: AuthResponse = { ...user, classCode: profile.classCode };
-    updateProfile(updatedUser);
-    setClassCodeInput(profile.classCode ?? '');
-    setClassFilterActive(Boolean(profile.classCode));
-    setClassMessage(profile.classCode ? `Đã lưu lớp ${profile.classCode}.` : 'Đã xoá mã lớp.');
-    void loadProgress();
-  };
 
   /** Play question audio via browser Mandarin TTS */
   const playQuestionAudio = (question: ExamQuestion, event: React.MouseEvent, slow = false) => {
@@ -537,14 +503,14 @@ export const ExamView: React.FC = () => {
             </section>
 
             <section>
-              <h3 className={sectionTitleClass}>Streak heatmap ({heatmap.length} ngày gần nhất)</h3>
+              <h3 className={sectionTitleClass}>Lịch hoạt động ({heatmap.length} ngày gần nhất)</h3>
               <div className="mt-4 flex flex-wrap gap-[3px]">
                 {heatmap.map((day) => (
                   <span
                     key={day.date}
-                    className="h-[12px] w-[12px] bg-fg"
+                    className={`h-[12px] w-[12px] bg-fg ${day.restored?'protected-heat-cell':''}`}
                     style={{ opacity: HEAT_OPACITY[heatLevel(day.itemCount)] }}
-                    title={`${day.date}: ${day.itemCount} hoạt động, ${day.correctCount} câu đúng`}
+                    title={`${day.date}: ${day.itemCount} hoạt động, ${day.correctCount} câu đúng${day.restored?' · Ngày bảo vệ chuỗi, không cộng hoạt động học':''}`}
                   />
                 ))}
               </div>
@@ -604,33 +570,7 @@ export const ExamView: React.FC = () => {
               </table>
             </div>
 
-            <div className="mt-5 flex flex-wrap items-center gap-2.5">
-              <div className="relative">
-                <Users size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-fg-38" />
-                <input
-                  type="text"
-                  maxLength={50}
-                  placeholder="Mã lớp của bạn (VD: HSK1-K1)"
-                  value={classCodeInput}
-                  onChange={(event) => setClassCodeInput(event.target.value)}
-                  aria-label="Mã lớp của bạn"
-                  className="h-10 w-full min-w-[240px] border border-rule-strong bg-transparent pl-9 pr-3 text-[12.5px] text-fg outline-none transition-colors placeholder:text-fg-38 focus:border-fg"
-                />
-              </div>
-              <SubmitButton variant="secondary" onClick={saveOwnClassCode} loading={classSaving}>
-                Lưu lớp
-              </SubmitButton>
-              <SubmitButton
-                variant="secondary"
-                onClick={() => setClassFilterActive((previous) => !previous)}
-                disabled={!classCodeInput.trim()}
-              >
-                {classFilterActive ? 'Xem toàn bộ' : 'Chỉ lớp của tôi'}
-              </SubmitButton>
-            </div>
-            <p className="mt-3 text-[11.5px] leading-[1.8] text-fg-38">
-              Mã lớp dùng để lọc bảng xếp hạng theo nhóm học tập. {classMessage ?? ''}
-            </p>
+
           </section>
 
           {/* Exam History */}

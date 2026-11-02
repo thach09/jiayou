@@ -37,7 +37,7 @@ test('ordinary and anonymous users cannot mount the admin station', () => {
 test('restores an admin profile and allows the admin route', async () => {
   localStorage.setItem('heyganba_user', JSON.stringify({ ...profile, role: 'ROLE_ADMIN' }));
   mount('/admin');
-  expect(screen.getByText('Local learner')).toBeTruthy();
+  expect(screen.getByRole('link',{name:'Quản trị'})).toBeTruthy();
   expect(await screen.findByText('Admin station')).toBeTruthy();
 });
 test('require-login opens the modal and successful login updates the shell', async () => {
@@ -47,7 +47,10 @@ test('require-login opens the modal and successful login updates the shell', asy
   fireEvent.change(dialog.querySelector('#auth-email')!, { target: { value: 'learner@example.invalid' } });
   fireEvent.change(dialog.querySelector('#auth-password')!, { target: { value: 'local-test-password' } });
   fireEvent.submit(dialog.querySelector('form')!);
-  await waitFor(() => expect(screen.getByText('Local learner')).toBeTruthy());
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  expect(JSON.parse(localStorage.getItem('heyganba_user')!).fullName).toBe('Local learner');
+  fireEvent.click(screen.getByRole('link',{name:'Tôi'}));
+  expect(await screen.findByText('Local learner')).toBeTruthy();
   expect(screen.queryByRole('dialog')).toBeNull();
   expect(JSON.parse(localStorage.getItem('heyganba_user')!)).not.toHaveProperty('accessToken');
 });
@@ -86,6 +89,7 @@ test('logout network failure retains the profile and offers a retry', async () =
   mount('/toi');
   fireEvent.click(await screen.findByRole('button', { name: 'Đăng xuất' }));
   await screen.findByText(/Chưa đăng xuất được/);
-  expect(screen.getByText('Local learner')).toBeTruthy();
+  expect(screen.getByRole('button',{name:'Đăng xuất'})).toBeTruthy();
+  expect(JSON.parse(localStorage.getItem('heyganba_user')!).fullName).toBe('Local learner');
   expect(localStorage.getItem('heyganba_user')).not.toBeNull();
 });

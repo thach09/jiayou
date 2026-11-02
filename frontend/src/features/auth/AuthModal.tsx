@@ -1,7 +1,7 @@
 import { useRequestScope } from '../../lib/hooks/useRequestScope';
 import { authApi } from './api';
 import React, { useState } from 'react';
-import { Lock, Mail, User as UserIcon, Users } from 'lucide-react';
+import { Lock, Mail, User as UserIcon } from 'lucide-react';
 import { saveTokens, saveUser } from '../../lib/api/session';
 import type { AuthResponse } from '../../lib/api/types';
 import { SubmitButton } from '../../components/SubmitButton';
@@ -29,7 +29,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [classCode, setClassCode] = useState('');
   const [requireTwoFactor, setRequireTwoFactor] = useState(false);
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,7 +43,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     try {
       const body = isRegister
-        ? { email, password, fullName, classCode: classCode.trim() || null }
+        ? { email, password, fullName }
         : { email, password, twoFactorCode: twoFactorCode.trim() || undefined };
 
       const res = await run('auth-submit', signal => (isRegister ? authApi.register : authApi.login)({ signal,
@@ -112,24 +111,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
               </div>
 
-              <div className="mt-4">
-                <label htmlFor="auth-class-code" className={fieldLabel}>
-                  Mã lớp (không bắt buộc)
-                </label>
-                <div className="relative">
-                  <Users size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-fg-38" />
-                  <input
-                    id="auth-class-code"
-                    type="text"
-                    maxLength={50}
-                    placeholder="Mã lớp (nếu có)"
-                    value={classCode}
-                    onChange={(e) => setClassCode(e.target.value)}
-                    title="Bạn có thể bổ sung mã lớp sau trong mục Tôi."
-                    className={`${inputClass} pl-9`}
-                  />
-                </div>
-              </div>
             </>
           )}
 

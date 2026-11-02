@@ -64,7 +64,7 @@ export function Companion3DCanvas({
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.set(0, 1.25, 4.2);
+    camera.position.set(0, 1.25, 3.7);
     camera.lookAt(0, 0.9, 0);
 
     let renderer: THREE.WebGLRenderer;
@@ -170,16 +170,19 @@ export function Companion3DCanvas({
 
     // 5. Animation Loop
     let animId: number | undefined;
+    let inView = true;
+    let disposed = false;
     const animationStart = performance.now();
 
     function animate() {
+      if (disposed || document.hidden || !inView) { animId = undefined; return; }
       animId = reducedMotion ? undefined : requestAnimationFrame(animate);
       const elapsed = (performance.now() - animationStart) / 1000;
 
       // Smooth Rotation Damping
       if (!isDragging && !reducedMotion) {
-        // Slow gentle idle auto-turn
-        targetRotationY += 0.003;
+        // A small front-facing sway, never an endless spin exposing the mascot's back.
+        targetRotationY = 0.25 + Math.sin(elapsed * 0.65) * 0.12;
       }
       rotationY = reducedMotion ? targetRotationY : rotationY + (targetRotationY - rotationY) * 0.08;
       petModelGroup.rotation.y = rotationY;
@@ -222,13 +225,28 @@ export function Companion3DCanvas({
       animate();
     };
     motion?.addEventListener('change', changeMotion);
+    const visibilityChanged = () => {
+      if (disposed) return;
+      if (animId !== undefined) cancelAnimationFrame(animId);
+      animId = undefined;
+      if (!document.hidden && inView) animate();
+    };
+    document.addEventListener('visibilitychange', visibilityChanged);
+    const observer = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
+      inView = entries.some(entry => entry.isIntersecting);
+      visibilityChanged();
+    }) : null;
+    observer?.observe(container);
 
     animate();
 
     // Cleanup
     return () => {
+      disposed = true;
       if (animId !== undefined) cancelAnimationFrame(animId);
       motion?.removeEventListener('change', changeMotion);
+      document.removeEventListener('visibilitychange', visibilityChanged);
+      observer?.disconnect();
       dom.removeEventListener('mousedown', onPointerDown);
       window.removeEventListener('mousemove', onPointerMove);
       window.removeEventListener('mouseup', onPointerUp);

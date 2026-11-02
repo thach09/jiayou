@@ -14,7 +14,7 @@ test('server profile is read-only, Vietnamese-first and contains no auth metadat
  signIn();state.get.mockResolvedValue({success:true,data:{...profile,passwordHash:'MUST_NOT_RENDER',accessToken:'SECRET_TEST_ONLY'}});render(<AccountView/>);
  expect(await screen.findByText(profile.fullName)).toBeTruthy();expect(screen.getByText('Học viên')).toBeTruthy();expect(screen.getByText('31/10/2026')).toBeTruthy();expect(screen.getByText(profile.email)).toBeTruthy();expect(screen.queryByText('MUST_NOT_RENDER')).toBeNull();expect(screen.queryByText('SECRET_TEST_ONLY')).toBeNull();expect(screen.queryByText(state.user.fullName)).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'Đổi mật khẩu'}));expect(state.password).toHaveBeenCalledOnce();
- fireEvent.change(screen.getByLabelText('Mã lớp'),{target:{value:' LỚP-02 '}});fireEvent.click(screen.getByRole('button',{name:'Lưu mã lớp'}));await screen.findByText('Đã lưu mã lớp.');expect(state.save.mock.calls[0][0]).toBe('LỚP-02');
+ expect(screen.queryByLabelText('Mã lớp')).toBeNull();expect(screen.queryByRole('button',{name:'Lưu mã lớp'})).toBeNull();expect(state.save).not.toHaveBeenCalled();
 });
 test('profile with another owner is rejected even if the API reports success',async()=>{
  signIn();state.get.mockResolvedValue({success:true,data:{...profile,id:32,email:'other@jiayou.test'}});render(<AccountView/>);await screen.findByRole('button',{name:'Thử lại'});expect(screen.queryByText('other@jiayou.test')).toBeNull();expect(screen.queryByLabelText('Mã lớp')).toBeNull();

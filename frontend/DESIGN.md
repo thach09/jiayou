@@ -1,6 +1,24 @@
 # Design — Học tiếng Trung
 
-Hệ thị giác "mực trên giấy", đảo tối. Chữ Hán là nhân vật chính, chữ Việt là sàn đọc, Pinyin là chúu thích.
+Hệ thị giác "mực trên giấy", đảo tối. Chữ Hán là nhân vật chính, chữ Việt là sàn đọc, Pinyin là chú thích.
+
+## Owner 02/11/2026 — dashboard được duyệt
+
+`docs/Design/Jiayou_Approved_Dashboard_Reference.png` là chuẩn bố cục mới: sidebar có
+icon, thẻ bo 20px, viền ấm, khoảng cách 24px, ba thẻ đồng hành/nhiệm vụ/tiến độ cùng
+hàng trên desktop, sáu ô lộ trình gọn. Thay slogan lớn bằng lịch streak bảy ô chữ nhật.
+Một mục Tôi duy nhất, không có shortcut tài khoản phía dưới hoặc điều khiển mã lớp.
+Các số/khóa học trong ảnh chỉ minh họa; dùng dữ liệu backend hoặc trạng thái trống.
+
+Palette tối cập nhật theo ảnh: nền `#161413`, thẻ `#24201F`, chữ `#F5F0E9`, phụ
+`#B9B0AA`, viền `#49403D`, viền điều khiển `#82736B`, coral `#FF8C74` và chữ coral
+`#FF9B86`, jade `#7DDAB0`/`#91E4C0`, vàng `#E9BC78`. Palette sáng giữ bảng giấy
+bên dưới. Mọi mã màu nằm ở theme.css, component dùng token. Nền có ánh sáng coral
+nhẹ, tranh SVG cũ và nhánh hoa SVG tĩnh theo góc phải của ảnh, không hiệu ứng rơi
+hoặc chuyển động nền liên tục.
+Tiêu đề/nội dung dashboard dùng Be Vietnam Pro; Noto Serif SC dành cho học liệu.
+Linh vật giữ mô hình/fallback cũ; tiêu đề chính chỉ Ấu Thú cho tới adult (cấp 10),
+sau đó Đại Hiệp. Không hiện tên/phương châm/badge cạnh tranh với trạng thái này.
 
 ## Cập nhật owner 31/10/2026 — thương hiệu và điều hướng
 

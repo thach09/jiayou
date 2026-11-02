@@ -32,6 +32,11 @@ export function OrientalDecorBackground() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none"
     >
+      {/* Static blossom silhouette from the approved dashboard's atmosphere. No falling particles. */}
+      <svg viewBox="0 0 580 120" className="absolute -top-2 right-0 h-28 w-[480px] max-w-[70vw] text-cinnabar-ink opacity-25" fill="none">
+        <path d="M590 0 Q450 60 310 12 Q235 0 170 16 M460 28 Q405 65 350 63 M327 16 Q285 42 245 38" stroke="currentColor" strokeWidth="4"/>
+        {[[540,12],[493,26],[455,34],[408,49],[357,60],[328,18],[279,27],[243,37],[197,14]].map(([x,y],n)=><g key={x} transform={`translate(${x} ${y}) rotate(${n*17})`} fill="currentColor">{[0,1,2,3,4].map(i=><ellipse key={i} cy="-5" rx="3" ry="5" transform={`rotate(${i*72})`}/>)}<circle r="1.5" fill="var(--paper-gold)"/></g>)}
+      </svg>
       {/* 1. Floating Kongming Lanterns (Khổng Minh Đăng - 孔明灯) in the Upper Night Sky */}
       <div
         data-lanterns
@@ -41,10 +46,10 @@ export function OrientalDecorBackground() {
       >
         {/* Lantern 1 - Top right margin, clear of content */}
         <div
-          className="absolute right-[4%] top-4 animate-lantern-sway"
+          className="absolute right-[4%] top-4"
           style={{ animationDuration: '7s' }}
         >
-          <div className="relative w-12 h-16 animate-lantern-glow">
+          <div className="relative w-12 h-16">
             {/* Lantern Body */}
             <svg viewBox="0 0 48 64" fill="none" className="w-full h-full drop-shadow-[0_0_16px_rgba(245,158,11,0.45)]">
               {/* Outer Glow & Shell */}
@@ -70,7 +75,7 @@ export function OrientalDecorBackground() {
 
         {/* Lantern 2 - Upper center-right, mid distance */}
         <div
-          className="absolute right-[28%] top-4 animate-lantern-sway opacity-60"
+          className="absolute right-[28%] top-4 opacity-60"
           style={{ animationDuration: '9s', animationDelay: '-2s' }}
         >
           <div className="relative w-8 h-11">
@@ -88,7 +93,7 @@ export function OrientalDecorBackground() {
 
         {/* Lantern 3 - Far distance, small drift */}
         <div
-          className="absolute right-[42%] top-6 animate-lantern-sway opacity-40"
+          className="absolute right-[42%] top-6 opacity-40"
           style={{ animationDuration: '11s', animationDelay: '-5s' }}
         >
           <div className="relative w-5 h-7">
@@ -105,7 +110,7 @@ export function OrientalDecorBackground() {
 
         {/* Lantern 4 - Top left drift (hidden on mobile to keep header clean) */}
         <div
-          className="hidden sm:block absolute left-[12%] top-6 animate-lantern-sway opacity-40"
+          className="hidden sm:block absolute left-[12%] top-6 opacity-40"
           style={{ animationDuration: '8.5s', animationDelay: '-3.5s' }}
         >
           <div className="relative w-7 h-10">

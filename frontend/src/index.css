@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./theme.css";
+@import "./features/dashboard/dashboard.css";
 
 /* Imperial Forbidden City & Three Kingdoms (Cung Đình Hoàng Gia & Tam Quốc) Dark Palette Tokens */
 @theme inline {

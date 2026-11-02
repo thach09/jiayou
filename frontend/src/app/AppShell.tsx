@@ -162,7 +162,7 @@ export function AppShell() {
   return (
     <div className="relative z-[1] flex min-h-screen">
       {/* Authentic Guochao Chinese Background Decor */}
-      <OrientalDecorBackground />
+      <div className="dashboard-atmosphere" aria-hidden="true"/><OrientalDecorBackground />
 
       {/* Menu backdrop: only rendered while the sidebar is open as a mobile overlay */}
       {isSidebarOverlay && (
@@ -211,7 +211,7 @@ export function AppShell() {
       >
         <main
           inert={isSidebarOverlay ? true : undefined}
-          className="relative z-[1] w-full min-w-0 flex-1 px-14 pb-14 pt-20 max-[900px]:px-5 max-[900px]:pb-10 max-[900px]:pt-20"
+          className="relative z-[1] w-full min-w-0 flex-1 px-8 pb-10 pt-12 max-[900px]:px-5 max-[900px]:pb-10 max-[900px]:pt-20"
         >
           {backendHealthy === false && (
             <div className="mb-5 border-l-2 border-l-red bg-tint px-4 py-3 text-[12.5px] leading-[1.8] text-fg-60">
