@@ -35,7 +35,7 @@ jobs:
           cache: maven
       - name: Create disposable fixtures in this job's PostgreSQL service
         run: |
-          for suffix in a legacy nonempty wrong schema function tampered manifest; do
+          for suffix in a legacy nonempty wrong schema function tampered manifest upgrade; do
             docker exec ${{ job.services.postgres.id }} createdb -U postgres jiayou_bootstrap_ci_${suffix}
           done
       - name: Verify bootstrap guards, Hibernate validation and restart invariance

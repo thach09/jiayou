@@ -131,12 +131,12 @@ class PostgresSchemaStagingRehearsalTest {
 
         var result = flyway.migrate();
         assertThat(result.success).isTrue();
-        assertThat(result.migrationsExecuted).isEqualTo(3);
+        assertThat(result.migrationsExecuted).isEqualTo(4); // V1,V2,V3 and additive schema V12.
 
         try (Connection conn = DriverManager.getConnection(urlA, user, pass);
              Statement stmt = conn.createStatement()) {
 
-            // 1. flyway_schema_history has V1, V2, V3 and no V4 or V5
+            // Active schema includes V12 without loading staging curriculum V4..V11.
             try (ResultSet rs = stmt.executeQuery("SELECT version, success FROM flyway_schema_history ORDER BY installed_rank")) {
                 assertThat(rs.next()).isTrue();
                 assertThat(rs.getString("version")).isEqualTo("1");
@@ -150,7 +150,10 @@ class PostgresSchemaStagingRehearsalTest {
                 assertThat(rs.getString("version")).isEqualTo("3");
                 assertThat(rs.getBoolean("success")).isTrue();
 
-                assertThat(rs.next()).isFalse(); // Absolutely NO V4 or V5
+                assertThat(rs.next()).isTrue();
+                assertThat(rs.getString("version")).isEqualTo("12");
+                assertThat(rs.getBoolean("success")).isTrue();
+                assertThat(rs.next()).isFalse(); // No staging curriculum.
             }
 
             // 2. Lessons table does NOT contain staging lessons (M2.1, M2.2, V6, V7)
@@ -189,7 +192,7 @@ class PostgresSchemaStagingRehearsalTest {
 
         var result = flyway.migrate();
         assertThat(result.success).isTrue();
-        assertThat(result.migrationsExecuted).isEqualTo(11); // V1 through V11
+        assertThat(result.migrationsExecuted).isEqualTo(12); // V1 through V12
 
         try (Connection conn = DriverManager.getConnection(urlB, user, pass);
              Statement stmt = conn.createStatement()) {

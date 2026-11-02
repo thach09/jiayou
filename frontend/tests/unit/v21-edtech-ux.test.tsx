@@ -242,7 +242,7 @@ describe('v2.1 EdTech UX & Stability Improvements', () => {
       );
 
       // Default is HSK 1
-      expect(screen.getByRole('heading', { level: 2, name: 'Mục tiêu hiện tại: HSK 1' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'HSK 1', pressed: true })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'HSK 1', pressed: true })).toBeInTheDocument();
 
       // Click HSK 3 selector button
@@ -251,12 +251,12 @@ describe('v2.1 EdTech UX & Stability Improvements', () => {
 
       // Assert state updated and saved to localStorage
       expect(localStorage.getItem('heyganba_target_hsk')).toBe('3');
-      expect(screen.getByRole('heading', { level: 2, name: 'Mục tiêu hiện tại: HSK 3' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'HSK 3', pressed: true })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'HSK 3', pressed: true })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'HSK 1', pressed: false })).toBeInTheDocument();
 
       // Check Smart Resume link points to /vocabulary?level=HSK3
-      const smartResumeLink = screen.getByRole('link', { name: 'Học nhóm chọn lọc đang có' });
+      const smartResumeLink = screen.getByRole('link', { name: 'Tiếp tục học' });
       expect(smartResumeLink.getAttribute('href')).toBe('/vocabulary?level=HSK3');
     });
 

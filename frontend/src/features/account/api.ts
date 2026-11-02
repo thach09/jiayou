@@ -3,6 +3,7 @@ import type { UserProfileResponse } from '../../lib/api/types';
 
 export const getMyProfile=(signal?:AbortSignal)=>apiRequest<UserProfileResponse>('/users/me',{signal});
 
+/** Internal legacy compatibility; no Jiayou account, onboarding or exam UI consumes this. */
 export async function updateClassCode(classCode: string, signal?: AbortSignal): Promise<UserProfileResponse | null> {
   const result = await apiRequest<UserProfileResponse>('/users/me/class-code', {
     method: 'PUT', signal, body: JSON.stringify({ classCode }),

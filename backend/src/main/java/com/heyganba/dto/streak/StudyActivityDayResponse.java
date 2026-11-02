@@ -6,6 +6,11 @@ import java.time.LocalDate;
 public record StudyActivityDayResponse(
         LocalDate date,
         int itemCount,
-        int correctCount
+        int correctCount,
+        boolean restored,
+        boolean qualified
 ) {
+    public StudyActivityDayResponse(LocalDate date,int itemCount,int correctCount) {
+        this(date,itemCount,correctCount,false,false);
+    }
 }

@@ -27,10 +27,13 @@ public class StreakService {
     public static final String DEFAULT_ZONE = "Asia/Ho_Chi_Minh";
 
     private final StreakRepository streakRepository;
+    private final com.heyganba.repository.StreakRestoredDayRepository restoredDays;
     private final ZoneId zone;
 
-    public StreakService(StreakRepository streakRepository, @Value("${app.streak.zone:" + DEFAULT_ZONE + "}") String zoneId) {
+    public StreakService(StreakRepository streakRepository, @Value("${app.streak.zone:" + DEFAULT_ZONE + "}") String zoneId,
+                         com.heyganba.repository.StreakRestoredDayRepository restoredDays) {
         this.streakRepository = streakRepository;
+        this.restoredDays = restoredDays;
         this.zone = ZoneId.of(zoneId);
     }
 
@@ -55,13 +58,14 @@ public class StreakService {
             return 0;
         }
         LocalDate lastActive = streak.getLastActiveDate();
-        if (lastActive.equals(today) || lastActive.equals(today.minusDays(1))) {
+        if (!lastActive.isAfter(today) && protectedBetween(streak.getUser().getId(),lastActive.plusDays(1),today.minusDays(1))) {
             return streak.getCurrentStreak();
         }
         return 0;
     }
 
     /** Ghi nhận user có hoạt động học hôm nay và trả về streak sau khi cập nhật. */
+    @org.springframework.transaction.annotation.Transactional
     public Streak touch(User user, Instant now) {
         Streak streak = streakRepository.findByUserId(user.getId())
                 .orElseGet(() -> streakRepository.save(Streak.builder()
@@ -75,7 +79,7 @@ public class StreakService {
 
         if (lastActive == null) {
             streak.setCurrentStreak(1);
-        } else if (lastActive.equals(today.minusDays(1))) {
+        } else if (lastActive.isBefore(today) && protectedBetween(user.getId(),lastActive.plusDays(1),today.minusDays(1))) {
             streak.setCurrentStreak(streak.getCurrentStreak() + 1);
         } else if (!lastActive.equals(today)) {
             streak.setCurrentStreak(1);
@@ -85,5 +89,11 @@ public class StreakService {
         streak.setLongestStreak(Math.max(streak.getLongestStreak(), streak.getCurrentStreak()));
 
         return streakRepository.save(streak);
+    }
+
+    private boolean protectedBetween(Long userId,LocalDate from,LocalDate to) {
+        if(from.isAfter(to))return true;
+        return restoredDays.countByUserIdAndRestoredDateBetween(userId,from,to)
+                == java.time.temporal.ChronoUnit.DAYS.between(from,to)+1;
     }
 }

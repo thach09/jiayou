@@ -76,7 +76,7 @@ export function StudyPetCompanion({
           stage={growthStage}
           mood={currentMood}
           size={96}
-          showSpeechBubble={true}
+          showSpeechBubble={false}
           interactive={true}
           onPetClick={cheer}
         />

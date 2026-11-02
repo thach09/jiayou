@@ -1,0 +1,10 @@
+{
+  "originalStatusEntries": 138,
+  "verifiedHashes": 1031,
+  "mismatches": 0,
+  "originallyUntrackedMigrationResourcesRetained": 31,
+  "cleanRegisteredWorktreesAtCommit": 17,
+  "originalBranchTipsReachable": true,
+  "originalArchiveUnchanged": true,
+  "note": "Original changes were previously committed to preservation archives; current archive status is clean, not recreated as 138 dirty entries."
+}

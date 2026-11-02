@@ -9,6 +9,7 @@ its running services, database or Docker deployment.
 
 ## Start here
 
+- [Dashboard and streak acceptance](docs/Operations/JIAYOU-DASHBOARD-STREAK-RELEASE.md): current UI, monthly recovery rules, screenshots and safe V1→V2 upgrade.
 - [Developer handover](docs/HANDOVER.md): builds, validation and operator prerequisites.
 - [Independent bootstrap](docs/Operations/jiayou-independent-bootstrap.md).
 - [Shared-host checklist](docs/Operations/jiayou-shared-host-discovery.md).

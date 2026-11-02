@@ -1,6 +1,6 @@
 # Independent Jiayou production bootstrap
 
-This is an opt-in schema bootstrap, not a deployment, legacy upgrade, user-data
+This is an opt-in schema bootstrap and a narrowly authorized Jiayou V1-to-V2 schema upgrade, not a deployment, Ganbarou legacy upgrade, user-data
 transfer or content release. Ganbarou's hostname, database, migrations, credentials
 and provider settings must remain unchanged. The authoritative recovery context is
 the 30 October 2026 recovery report and independent-production architecture proposal,
@@ -64,8 +64,9 @@ by this implementation.
 | JIAYOU_DATABASE_USER / PASSWORD | Dedicated DB role/credential; actual current_user must match. No shared Ganbarou secret or environment group |
 | JIAYOU_JWT_SECRET | Independent Base64 key, at least 32 decoded bytes; development default forbidden |
 | JIAYOU_CORS_ALLOWED_ORIGINS | Explicit HTTPS origins; no wildcard or Ganbarou root/www; selected Jiayou hostname still requires owner approval |
-| JIAYOU_BOOTSTRAP_MODE | `initialize` for the first empty-target bootstrap; `validate` for all later starts |
-| JIAYOU_BOOTSTRAP_AUTHORIZATION | Exact `<mode>:Jiayou:production:<target UUID>` operator acknowledgement |
+| JIAYOU_BOOTSTRAP_MODE | `initialize` for the first empty target through V2; `validate` for normal starts; `upgrade` only for a reviewed Jiayou V1 target |
+| JIAYOU_BOOTSTRAP_AUTHORIZATION | Exact `<mode>:Jiayou:production:<target UUID>` for initialize/validate; `upgrade:Jiayou:production:<target UUID>:1->2` for upgrade |
+| JIAYOU_UPGRADE_FROM_VERSION / JIAYOU_UPGRADE_TO_VERSION | Exact `1` / `2` in upgrade mode; absent or blank otherwise |
 
 Authorization is a target-bound, testable acknowledgement, **not** a secret bearer
 token or proof of provider ownership. A database name/UUID cannot prove that an
@@ -91,12 +92,13 @@ not stop unrelated privileged clients: provision exclusively and withhold concur
 DDL access during bootstrap. The role and exact provider target still need operator
 verification; tests use only disposable loopback PostgreSQL.
 
-The packaged migration inventory must contain exactly the one reviewed SQL file,
-with a pinned normalized SHA-256. No extra callback or content-release file is
+The packaged migration inventory must contain exactly the two reviewed SQL files,
+each with a pinned normalized SHA-256. No extra callback or content-release file is
 accepted. Flyway uses public.jiayou_schema_history, baseline disabled, clean disabled,
 create-schemas disabled and transactional execution. Its V1 creates the schema,
 pending-content constraints, two role references and Jiayou/production/target/lineage
-marker. Hibernate validates the resulting entities; it never creates tables.
+marker. V2 adds only the restoration ledger and protected-day tables; no activity,
+EXP, users or curriculum are inserted. Hibernate validates the resulting entities; it never creates tables.
 
 Restart in `validate` mode verifies the marker and exact known history, rejects the
 public seed admin identity and calls Flyway.validate, not migrate. No pending release
@@ -104,18 +106,40 @@ is applied. Repeating initialize against even this known database is rejected. A
 failed/partially initialized target is not repaired or baselined automatically.
 Investigate it separately; do not remove objects to force this check through.
 
-This initial lineage intentionally cannot publish curriculum or apply a V2. A future
-schema/content release needs an independent reviewed migration inventory and scoped
-authorization path, including publication/provenance evidence and rollback analysis.
-Do not casually update the manifest hash or relax constraints to unblock content.
+### Explicit V1 → V2 upgrade (future operator action only)
+
+V1 remains byte-for-byte immutable. V2 is schema-only restoration persistence:
+
+- V1 normalized SHA-256: `0db6d6081357696b38526659833a24091c2861e7b1d71540857dfd9e16a96bfb`.
+- V2 normalized SHA-256: `337726488e821b538312c4e351afdeea9a31f87f085e1aec697a0956fe4ca13c`.
+
+A normal validate startup on V1 refuses with “upgrade required” and writes nothing.
+An operator must first verify the isolated target identity, take and rehearse a
+backup, stop concurrent application writes, and separately authorize this change.
+Invoke the reviewed image with `JIAYOU_BOOTSTRAP_MODE=upgrade`, exact version
+inputs `1` and `2`, and the target/version-bound acknowledgement shown above.
+Only the exact known V1 history/checksum is accepted. Flyway applies the sole pinned
+V2 transactionally; existing users, activity and streak summaries are retained.
+This is not a Ganbarou legacy migration path. No repair, baseline, clean or content
+publication is supported. A repeated upgrade on V2 refuses rather than changing it.
+
+After successful startup verification, stop that explicitly invoked instance,
+remove both version inputs, switch to validate mode and its acknowledgement, then
+restart normally. The current server is long-running: it is not an automatically
+exiting migration job. Compose remains hardwired validate-only and cannot perform
+initialization or upgrade as a side effect of an ordinary restart.
+
+Publication constraints remain unchanged. Any later schema/content release needs
+another reviewed inventory and scoped authorization path, including provenance and
+rollback analysis. Never relax the manifest or publication constraints as a shortcut.
 
 ## Local tests and CI
 
 `mvn -B clean verify` runs configuration guard tests and the existing backend suite.
 PostgreSQL bootstrap tests are explicitly opt-in and reject non-loopback URLs or
-database names outside `jiayou_bootstrap_<run>_*` **before connecting**. Create eight
+database names outside `jiayou_bootstrap_<run>_*` **before connecting**. Create nine
 fresh fixture databases in a dedicated disposable PostgreSQL16 container, with
-suffixes `a legacy nonempty wrong schema function tampered manifest`.
+suffixes `a legacy nonempty wrong schema function tampered manifest upgrade`.
 
 Run against that dedicated container's loopback port (substitute only its verified
 local port/run prefix; never a live URL):
@@ -134,7 +158,8 @@ prefix after a rehearsal; no repair/reset/clean/DB deletion is part of the test.
 The separate `Jiayou isolated bootstrap` Actions workflow runs these tests against
 its own PostgreSQL service for PRs, with read-only repository permission and no
 deployment jobs/secrets. Existing CI remains unchanged. Tests exercise actual Spring
-startup + Hibernate twice, immutable snapshots, wrong targets, legacy/unrelated
+startup + Hibernate, fresh V2 initialization, V1→V2 upgrade with retained user/streak/activity,
+validate-only restart, immutable snapshots, wrong targets, legacy/unrelated
 objects, unknown lineage/checksum, default admin, callback and content-file injection.
 
 ## Relationship to PR47 / PR48 and release prerequisites
@@ -159,8 +184,8 @@ No legacy user/account/progress/SRS/notebook/exam/reward transfer is included.
 
 The bootstrap profile is provider independent. A regression test accepts a private
 Compose DNS service name with an explicit database/port/role/target, without a public
-IP or hosting API. No Compose deployment file, network, volume, tunnel or production
-credential is created by this change. Arch Linux and existing Ganbarou/Tailscale are
+IP or hosting API. The repository has a separately reviewed validate-only Compose template. No network,
+volume, tunnel or production credential is provisioned by this schema change. Arch Linux and existing Ganbarou/Tailscale are
 confirmed; actual resource capacity, installed runtime/routing, datasource location,
 network/CGNAT conditions and Jiayou's hostname remain undiscovered. This is not an empty
 server. See the read-only checklist in `jiayou-shared-host-discovery.md` before proposing
