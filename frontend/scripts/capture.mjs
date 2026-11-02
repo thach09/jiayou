@@ -93,10 +93,16 @@ async function main() {
       await page.goto(url, { waitUntil: 'networkidle2' });
       await wait(1200); // let animations / ThreeJS render
       const screenshotPath = path.join(outDir, `v3-guest-${vp.name}.png`);
+      const v5ScreenshotPath = path.join(outDir, `v5-guest-${vp.name}.png`);
       await page.screenshot({ path: screenshotPath, fullPage: false });
+      fs.copyFileSync(screenshotPath, v5ScreenshotPath);
       console.log(`Captured guest screenshot: ${screenshotPath}`);
       const artifactGuestPath = `C:\\Users\\LENOVO\\.gemini\\antigravity\\brain\\0a82715b-8200-44cc-b555-d3e68b315a57\\v3-guest-${vp.name}.png`;
-      try { fs.copyFileSync(screenshotPath, artifactGuestPath); } catch {}
+      const artifactV5GuestPath = `C:\\Users\\LENOVO\\.gemini\\antigravity\\brain\\0a82715b-8200-44cc-b555-d3e68b315a57\\v5-guest-${vp.name}.png`;
+      try {
+        fs.copyFileSync(screenshotPath, artifactGuestPath);
+        fs.copyFileSync(screenshotPath, artifactV5GuestPath);
+      } catch {}
       await page.close();
     }
 
@@ -268,10 +274,16 @@ async function main() {
       await page.goto(url, { waitUntil: 'networkidle2' });
       await wait(1400); // let 3D canvas and animations settle
       const screenshotPath = path.join(outDir, `v3-auth-${vp.name}.png`);
+      const v5ScreenshotPath = path.join(outDir, `v5-auth-${vp.name}.png`);
       await page.screenshot({ path: screenshotPath, fullPage: false });
+      fs.copyFileSync(screenshotPath, v5ScreenshotPath);
       console.log(`Captured auth screenshot: ${screenshotPath}`);
       const artifactAuthPath = `C:\\Users\\LENOVO\\.gemini\\antigravity\\brain\\0a82715b-8200-44cc-b555-d3e68b315a57\\v3-auth-${vp.name}.png`;
-      try { fs.copyFileSync(screenshotPath, artifactAuthPath); } catch {}
+      const artifactV5AuthPath = `C:\\Users\\LENOVO\\.gemini\\antigravity\\brain\\0a82715b-8200-44cc-b555-d3e68b315a57\\v5-auth-${vp.name}.png`;
+      try {
+        fs.copyFileSync(screenshotPath, artifactAuthPath);
+        fs.copyFileSync(screenshotPath, artifactV5AuthPath);
+      } catch {}
       await page.close();
     }
 
