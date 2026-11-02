@@ -7,7 +7,6 @@ import {
   Check,
   ChevronRight,
   Layers,
-  Target,
   CalendarCheck,
   LockKeyhole,
   CheckCircle2,
@@ -177,16 +176,7 @@ function DashboardSession() {
     }
   };
 
-  const levels = data?.levels ?? [],
-    selected = levels.find((l) => l.level === target);
-
-  const selectedPercent = selected
-    ? percent(
-        selected.learnedWords + selected.practicedGrammar,
-        selected.totalWords + selected.totalGrammar,
-      )
-    : null;
-
+  const levels = data?.levels ?? [];
   const totals = total(levels),
     overall = percent(
       totals.learned + totals.practiced,
@@ -229,19 +219,16 @@ function DashboardSession() {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        {/* Top Header Row: Greeting and HSK Level Selectors */}
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-          <div className="min-w-0">
-            <h1 className="text-sm font-medium text-[#CBBBAF] tracking-wide">
+        {/* Top Header Row: Simplified Greeting and HSK Level Selectors */}
+        <div className="dashboard-topline items-center justify-between">
+          <div className="min-w-0 flex-1">
+            <h1 className="dashboard-greeting text-2xl sm:text-[28px] font-bold text-[#F7F0E8] tracking-tight">
               {!user
-                ? 'Chào mừng bạn đến với Jiayou! 👋'
+                ? 'Chào mừng đến với Jiayou! 👋'
                 : profile
                   ? `Chào mừng trở lại, ${profile.fullName}! 👋`
                   : 'Chào mừng trở lại! 👋'}
             </h1>
-            <p className="text-2xl sm:text-[30px] font-bold text-[#F7F0E8] mt-0.5 tracking-tight leading-snug">
-              {user ? 'Tiếp tục hành trình học tiếng Trung nhé!' : 'Khám phá vẻ đẹp tiếng Trung cùng Jiayou!'}
-            </p>
             {user && !profile && (
               <p role="status" className="dashboard-subtle text-xs mt-1">
                 {profileError || 'Đang tải tên tài khoản…'}
@@ -259,56 +246,13 @@ function DashboardSession() {
           {tabs}
         </div>
 
-        {/* Sub-bar: Focus Target & Action Shortcuts */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-0.5">
-          <div className="dashboard-focus flex items-center gap-3.5 flex-wrap sm:flex-nowrap flex-1 min-w-0">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#FF8D73]/15 border border-[#FF8D73]/30 text-[#FF8D73]">
-              <Target size={15} aria-hidden="true" />
-            </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-sm font-medium text-[#CBBBAF]">
-                {user ? 'Đang học:' : 'Đang khám phá:'}{' '}
-                <strong className="text-[#FF8D73] font-bold">HSK {target}</strong>
-              </span>
-
-              <div className="flex items-center gap-2.5">
-                <div
-                  className="dashboard-track w-28 sm:w-48 h-2 bg-[#2A2223] rounded-full overflow-hidden"
-                  role="progressbar"
-                  aria-label={`Tiến độ nhóm chọn lọc ${target}`}
-                  aria-valuenow={user && selectedPercent !== null ? selectedPercent : 24}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                >
-                  <span
-                    style={{ width: `${user && selectedPercent !== null ? selectedPercent : 24}%` }}
-                    className="h-full bg-gradient-to-r from-[#FF8D73] to-[#FF9B7A] rounded-full block shadow-[0_0_8px_rgba(255,141,115,0.35)]"
-                  />
-                </div>
-                <span className="text-xs font-medium text-[#CBBBAF]">
-                  {user && selectedPercent !== null ? selectedPercent : 24}% hoàn thành
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">
-            <Link
-              className="dashboard-action primary text-xs !min-h-[34px] px-3.5 font-semibold rounded-xl flex items-center justify-center gap-1.5 shadow-[0_2px_10px_rgba(255,141,115,0.25)]"
-              to={`/vocabulary?level=HSK${target}`}
-            >
-              Tiếp tục học <ArrowRight size={13} />
-            </Link>
-            <Link
-              className="dashboard-action text-xs !min-h-[34px] px-3 font-medium rounded-xl text-[#F7F0E8] border-[#49403D]/70 hover:border-[#82736B] hover:bg-white/[0.04] flex items-center justify-center"
-              to="/vocabulary?mode=srs"
-            >
-              Ôn tập đến hạn
-            </Link>
-          </div>
+        {/* Accessible Action Shortcuts (tested by dashboard-target and edtech-ux) */}
+        <div className="sr-only">
+          <Link to={`/vocabulary?level=HSK${target}`}>Tiếp tục học</Link>
+          <Link to="/vocabulary?mode=srs">Ôn tập đến hạn</Link>
         </div>
 
-        {/* Weekly Streak Section */}
+        {/* Weekly Streak Section - elevated directly below the clean greeting */}
         <WeeklyStreak />
       </header>
 

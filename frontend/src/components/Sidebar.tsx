@@ -8,7 +8,6 @@ import {
   Layers,
   Shield,
   Target,
-  UserRound,
   X,
 } from 'lucide-react';
 import { Link, NavLink } from 'react-router-dom';
@@ -102,7 +101,6 @@ const stations: readonly [string, string, ElementType][] = [
   ['/dictionary', 'Từ điển', DictionaryIcon],
   ['/grammar', 'Ngữ pháp', Layers],
   ['/exam', 'Luyện tập', Target],
-  ['/toi', 'Tôi', UserRound],
 ] as const;
 
 export function Sidebar({
@@ -226,7 +224,7 @@ export function Sidebar({
             <Link
               to="/toi"
               onClick={onNavigate}
-              aria-label="Tài khoản cá nhân"
+              aria-label="Tôi"
               className="flex items-center justify-between gap-2.5 p-2 rounded-xl border border-[rgba(255,180,140,0.18)] bg-[rgba(34,25,27,0.92)] hover:border-[rgba(255,180,140,0.35)] hover:bg-white/[0.04] transition-all group"
             >
               <div className="flex items-center gap-2.5 min-w-0">

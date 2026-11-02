@@ -45,48 +45,19 @@ export function OrientalDecorBackground() {
         }}
       />
 
-      {/* 2. Top-Right Imperial Citadel / Palace Silhouette (Hoàng Thành & Lầu Gác Cổ Đại) */}
-      <div className="absolute top-0 right-0 w-[620px] max-w-[55vw] h-[260px] pointer-events-none opacity-[0.22]">
-        <svg
-          viewBox="0 0 620 260"
-          fill="none"
-          className="w-full h-full text-[#1C1618]"
-        >
-          {/* Main Citadel Battlement Wall */}
-          <path
-            d="M 280 260 L 290 190 L 620 170 L 620 260 Z"
-            fill="currentColor"
-          />
-          {/* Wall Crenels / Battlements */}
-          {[300, 330, 360, 390, 420, 450, 480, 510, 540, 570, 600].map((x) => (
-            <rect key={x} x={x} y="162" width="16" height="12" fill="currentColor" />
-          ))}
-
-          {/* Grand Palace Watchtower Pavilion (Lầu Gác Cung Đình) */}
-          <g fill="currentColor">
-            {/* Lower Tier Building Body */}
-            <rect x="410" y="105" width="130" height="60" />
-            {/* Windows with warm glowing lantern light */}
-            <rect x="430" y="125" width="14" height="22" rx="2" fill="#F3C16F" opacity="0.85" />
-            <rect x="468" y="125" width="14" height="22" rx="2" fill="#F3C16F" opacity="0.85" />
-            <rect x="506" y="125" width="14" height="22" rx="2" fill="#F3C16F" opacity="0.85" />
-
-            {/* Middle Sweeping Curved Eaves Roof */}
-            <path d="M 370 108 Q 475 92 580 108 L 590 100 Q 475 78 360 100 Z" />
-
-            {/* Upper Tier Pavilion */}
-            <rect x="435" y="65" width="80" height="36" />
-            <rect x="455" y="75" width="12" height="16" rx="2" fill="#F3C16F" opacity="0.9" />
-            <rect x="483" y="75" width="12" height="16" rx="2" fill="#F3C16F" opacity="0.9" />
-
-            {/* Top Imperial Double-Curved Eaves Roof */}
-            <path d="M 395 68 Q 475 52 555 68 L 565 60 Q 475 40 385 60 Z" />
-
-            {/* Central Spire & Roof Beast Finial (Chi-wen / Tích Thứ) */}
-            <line x1="475" y1="46" x2="475" y2="24" stroke="#F3C16F" strokeWidth="2.5" />
-            <circle cx="475" cy="24" r="3" fill="#F3C16F" />
-          </g>
-        </svg>
+      {/* 2. Top-Right Imperial Palace Complex (Hoàng Thành & Điện Các Cung Đình) */}
+      <div className="absolute top-0 right-0 w-[860px] max-w-[65vw] h-[480px] pointer-events-none select-none overflow-hidden">
+        <img
+          src="/assets/decor/palace-top-right.jpg"
+          alt=""
+          className="w-full h-full object-cover object-top-right opacity-90 transition-opacity"
+          style={{
+            maskImage:
+              'radial-gradient(ellipse 95% 85% at 85% 15%, black 45%, rgba(0,0,0,0.6) 72%, transparent 100%)',
+            WebkitMaskImage:
+              'radial-gradient(ellipse 95% 85% at 85% 15%, black 45%, rgba(0,0,0,0.6) 72%, transparent 100%)',
+          }}
+        />
       </div>
 
       {/* 3. Top-Right Blooming Cherry Blossom Branch (Cành Hoa Đào Son) */}
@@ -393,91 +364,21 @@ export function OrientalDecorBackground() {
         </svg>
       </div>
 
-      {/* 5. Bottom Horizon: Misty Mountain Silhouette & Illuminated Ancient Pagoda */}
-      <div className="absolute bottom-0 inset-x-0 h-[220px] pointer-events-none select-none">
-        <svg
-          className="w-full h-full"
-          viewBox="0 0 1600 220"
-          fill="none"
-          preserveAspectRatio="none"
-        >
-          {/* Distant mountain layer */}
-          <path
-            d="M 0 220 L 0 130 Q 180 80 380 125 T 820 90 Q 1060 60 1260 110 T 1600 80 L 1600 220 Z"
-            fill="#0B090A"
-            opacity="0.75"
-          />
-
-          {/* Midground mountain layer */}
-          <path
-            d="M 0 220 L 0 160 Q 240 120 480 155 T 980 125 Q 1240 95 1420 140 T 1600 120 L 1600 220 Z"
-            fill="#120E10"
-            opacity="0.88"
-          />
-
-          {/* Near ground misty layer */}
-          <path
-            d="M 0 220 L 0 185 Q 360 160 720 180 T 1440 165 L 1600 175 L 1600 220 Z"
-            fill="#181214"
-            opacity="0.96"
-          />
-
-          {/* Ancient Pagoda / Temple Silhouette on the Right Hill (Bảo Tháp Hoàng Hôn) */}
-          <g transform="translate(1470, 75)" opacity="0.95">
-            {/* Pagoda Base Pavilion */}
-            <rect x="-24" y="80" width="48" height="26" fill="#0B090A" />
-            {/* Warm glowing interior windows in Pagoda Base */}
-            <rect x="-18" y="88" width="8" height="12" rx="1" fill="#FEF08A" opacity="0.9" />
-            <rect x="-4" y="88" width="8" height="12" rx="1" fill="#FEF08A" opacity="0.9" />
-            <rect x="10" y="88" width="8" height="12" rx="1" fill="#FEF08A" opacity="0.9" />
-
-            {/* Tier 1 Roof with upturned curved eaves */}
-            <path
-              d="M -34 80 Q 0 74 34 80 L 38 75 Q 0 65 -38 75 Z"
-              fill="#0B090A"
-            />
-            {/* Tier 1 Body */}
-            <rect x="-18" y="56" width="36" height="20" fill="#0B090A" />
-            <rect x="-12" y="62" width="6" height="10" rx="1" fill="#FEF08A" opacity="0.9" />
-            <rect x="6" y="62" width="6" height="10" rx="1" fill="#FEF08A" opacity="0.9" />
-
-            {/* Tier 2 Roof */}
-            <path
-              d="M -28 56 Q 0 51 28 56 L 31 52 Q 0 43 -31 52 Z"
-              fill="#0B090A"
-            />
-            {/* Tier 2 Body */}
-            <rect x="-13" y="36" width="26" height="16" fill="#0B090A" />
-            <rect x="-4" y="41" width="8" height="8" rx="1" fill="#FEF08A" opacity="0.95" />
-
-            {/* Tier 3 Roof */}
-            <path
-              d="M -21 36 Q 0 32 21 36 L 24 33 Q 0 25 -24 33 Z"
-              fill="#0B090A"
-            />
-            {/* Tier 3 Spire / Finial */}
-            <line x1="0" y1="26" x2="0" y2="8" stroke="#F3C16F" strokeWidth="2" />
-            <circle cx="0" cy="8" r="2.5" fill="#F3C16F" />
-
-            {/* Pagoda Halo / Warm Ambient Aura */}
-            <circle
-              cx="0"
-              cy="60"
-              r="45"
-              fill="url(#pagoda-glow)"
-              opacity="0.5"
-              style={{ mixBlendMode: 'screen' }}
-            />
-          </g>
-
-          <defs>
-            <radialGradient id="pagoda-glow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.65" />
-              <stop offset="40%" stopColor="#F3C16F" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#120E10" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-        </svg>
+      {/* 5. Bottom Horizon: Panoramic Misty Mountains & Second Illuminated Imperial Pagoda / City */}
+      <div className="absolute bottom-0 inset-x-0 h-[300px] pointer-events-none select-none overflow-hidden">
+        <img
+          src="/assets/decor/mountains-bottom.jpg"
+          alt=""
+          className="w-full h-full object-cover object-bottom opacity-85"
+          style={{
+            maskImage:
+              'linear-gradient(to top, black 50%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+            WebkitMaskImage:
+              'linear-gradient(to top, black 50%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+          }}
+        />
+        {/* Deep warm charcoal gradient at the very base for seamless blending */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#120E10] via-transparent to-transparent opacity-80" />
       </div>
     </div>
   );

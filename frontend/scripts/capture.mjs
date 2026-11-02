@@ -62,6 +62,7 @@ async function main() {
     const viewports = [
       { name: 'desktop-1672', width: 1672, height: 941 },
       { name: 'desktop-1440', width: 1440, height: 900 },
+      { name: 'tablet-768', width: 768, height: 1024 },
       { name: 'mobile-390', width: 390, height: 844, isMobile: true },
     ];
 
