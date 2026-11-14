@@ -19,6 +19,7 @@ public class LoginRequest {
     private String email;
 
     @NotBlank(message = "Password is required")
+    @com.heyganba.common.validation.BcryptPassword
     @jakarta.validation.constraints.Size(max=128)
     private String password;
 
