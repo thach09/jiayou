@@ -93,6 +93,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/hanzi", "/hanzi/{id}", "/kanji", "/kanji/{id}", "/grammar/rules", "/grammar/rules/{id}").permitAll()
                         .requestMatchers("/auth/password").authenticated()
+                        // Legacy notebook alias is private; it must precede public /vocab/**.
+                        .requestMatchers("/vocab/notebooks", "/vocab/notebooks/**").authenticated()
                         .requestMatchers(
                                 "/auth/**",
                                 "/dictionary/**",

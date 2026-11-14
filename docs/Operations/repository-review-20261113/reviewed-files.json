@@ -1,0 +1,115 @@
+{
+  "base": "acfd49e7de6bf0daf7983bfa1c66abc5b73e0e85",
+  "headBranch": "review/jiayou-master-audit-fixes",
+  "uncommitted": true,
+  "productionFilesMatchOriginalFix": "e812976",
+  "codeAndTestFiles": 13,
+  "manifestExcludesItself": true,
+  "files": [
+    {
+      "path": "backend/src/main/java/com/heyganba/common/validation/BcryptPassword.java",
+      "sha256": "0335aaca8aae3165c42fa2e26598b24871cd45a7e1bbcfb879a707013a509f2b",
+      "bytes": 667
+    },
+    {
+      "path": "backend/src/main/java/com/heyganba/common/validation/BcryptPasswordValidator.java",
+      "sha256": "c6b7529778f1809135dac6371b568d1544d77ce63271572803f7c76d0b860fc1",
+      "bytes": 478
+    },
+    {
+      "path": "backend/src/main/java/com/heyganba/config/SecurityConfig.java",
+      "sha256": "1c3e639e8099c7b8d9c18a704927db9cfda255169d5c0645fbc0875003acede9",
+      "bytes": 8862
+    },
+    {
+      "path": "backend/src/main/java/com/heyganba/dto/admin/AdminPasswordConfirmRequest.java",
+      "sha256": "4c26f526a394974ffce2127cd68971e1171684170ffb08bc4eef874a0e1112ef",
+      "bytes": 732
+    },
+    {
+      "path": "backend/src/main/java/com/heyganba/dto/auth/ChangePasswordRequest.java",
+      "sha256": "1c0c0817f817800fe6da0d1e3c612e8b85ac28be41319631921fcc7fab6051fe",
+      "bytes": 436
+    },
+    {
+      "path": "backend/src/main/java/com/heyganba/dto/auth/LoginRequest.java",
+      "sha256": "7c32045cc11c2c45d13bb261739b4c6697930110545f335db91bdcc5b979a4d0",
+      "bytes": 777
+    },
+    {
+      "path": "backend/src/main/java/com/heyganba/dto/auth/RegisterRequest.java",
+      "sha256": "ddfe80def96044d9dad4ab8df0842afff44cbbd8f54a8132eb3fa989f0bd33d7",
+      "bytes": 1303
+    },
+    {
+      "path": "backend/src/test/java/com/heyganba/NotebookAliasSecurityTest.java",
+      "sha256": "cbb46e874996c55dcf06cee098980d75513a0739976c462851970deb1a21aaff",
+      "bytes": 5707
+    },
+    {
+      "path": "backend/src/test/java/com/heyganba/PasswordUtf8BoundaryApiTest.java",
+      "sha256": "2b2ad7bfa91c73b105cbac94c14fdd91f81f1c63bf6a5a3ddaa4121958fb3c90",
+      "bytes": 7049
+    },
+    {
+      "path": "docs/Operations/REPOSITORY-REVIEW-SAFE-FIX-20261113.md",
+      "sha256": "308b29ff1955074f66a4b24411bdc72d2edae4e954dfb831f20e4d9c9eb06c0b",
+      "bytes": 18067
+    },
+    {
+      "path": "docs/Operations/repository-review-20261113/api-security-results.json",
+      "sha256": "448bfe4a0602be6862f57b6e8841e6c39157a16ade2a0dbadc75fea9f6f5a9f7",
+      "bytes": 3080
+    },
+    {
+      "path": "docs/Operations/repository-review-20261113/backend-test-totals.json",
+      "sha256": "338e82fd6526869df8c655860177e85708d893b1ba7be241b1cc5c34b0a4f008",
+      "bytes": 4715
+    },
+    {
+      "path": "docs/Operations/repository-review-20261113/baseline-p2-reproduction.json",
+      "sha256": "661a66c7ca58d650ee5a3e84194d04b1a51c23dd9fd5518a7dc1bf8bf547c46b",
+      "bytes": 629
+    },
+    {
+      "path": "docs/Operations/repository-review-20261113/product-browser-results.json",
+      "sha256": "b6b527839208a44156078ab7456f7171ed601ed36d6b0c3b9b24cb9d16cb2993",
+      "bytes": 6028
+    },
+    {
+      "path": "docs/Operations/repository-review-20261113/unicode-validation-1440.png",
+      "sha256": "9f6fe18e6ee661dbebb69befa5f4eca36cce5018d05a19920eabe4aa6355b5c4",
+      "bytes": 107197
+    },
+    {
+      "path": "docs/Operations/repository-review-20261113/unicode-validation-390.png",
+      "sha256": "cca823244c6a364e3be4ce90eb07a85a9592aca7b1866a80803705b13034a5aa",
+      "bytes": 43682
+    },
+    {
+      "path": "docs/Operations/repository-review-20261113/validation.json",
+      "sha256": "e47c51d7a8a3798922db942745530321cf61019f9f33bdd0ccb341242fde429d",
+      "bytes": 9131
+    },
+    {
+      "path": "frontend/src/features/auth/AuthModal.tsx",
+      "sha256": "afae7d9e0072cb5a9147c91db6850459855b706f4c7a7f396c86771ab0ed2e0e",
+      "bytes": 8202
+    },
+    {
+      "path": "frontend/src/features/auth/ChangePasswordModal.tsx",
+      "sha256": "de49932ec16d88178c993d3084ed522ce723a83472d2fcdb753ef682fd9879d4",
+      "bytes": 2968
+    },
+    {
+      "path": "frontend/src/features/auth/passwordValidation.ts",
+      "sha256": "e37fe6e3f7b0b8bf3f96e5294028a16f818869d8c76208c919adba9b0df33e4d",
+      "bytes": 338
+    },
+    {
+      "path": "frontend/tests/unit/password-utf8.test.tsx",
+      "sha256": "9b78a4441f2ababdfe74b02d140701c66b571d4b13cc4baeeaccccfc934852ca",
+      "bytes": 3539
+    }
+  ]
+}

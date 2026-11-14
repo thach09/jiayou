@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotBlank;
  */
 public record AdminPasswordConfirmRequest(
         @NotBlank(message = "Mật khẩu xác nhận là bắt buộc")
+        @com.heyganba.common.validation.BcryptPassword
         String password
 ) {
 }

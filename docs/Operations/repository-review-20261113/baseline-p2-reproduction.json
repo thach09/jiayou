@@ -1,0 +1,17 @@
+{
+  "base": "acfd49e7de6bf0daf7983bfa1c66abc5b73e0e85",
+  "exit": 1,
+  "tests": 10,
+  "failures": 7,
+  "errors": 0,
+  "skipped": 0,
+  "failedCases": [
+    "everyNotebookAliasOperationRequiresAuthenticationBeforeControllerExecution",
+    "emojiBoundaryUsesUtf8BytesAndRejectsExtraCodePoint",
+    "overlongCurrentPasswordCannotAuthorizeChangeOrRevokeSession",
+    "rejectsTooManyBytesBeforeRegistrationWritesAnything",
+    "acceptsExactly72BytesAndAuthenticatesWithoutTruncation",
+    "adminConfirmationRejectsByteOverflowWithoutDisablingTwoFactor",
+    "invalidReplacementKeepsCurrentPasswordAndSessionValid"
+  ]
+}

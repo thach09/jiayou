@@ -1,5 +1,6 @@
 import { useRequestScope } from '../../lib/hooks/useRequestScope';
 import { authApi } from './api';
+import { passwordLengthError } from './passwordValidation';
 import { useRef, useState } from 'react';
 import { clearTokens, getRefreshToken } from '../../lib/api/session';
 import { SubmitButton } from '../../components/SubmitButton';
@@ -16,6 +17,8 @@ export function ChangePasswordModal({ onClose, onChanged }: { onClose: () => voi
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (busy.current) return;
+    const lengthError = passwordLengthError(currentPassword, newPassword);
+    if (lengthError) { setError(lengthError); return; }
     if (newPassword !== confirmation) { setError('Mật khẩu xác nhận chưa khớp.'); return; }
     busy.current = true; setSaving(true); setError('');
     const response = await run('authApi.password', signal => authApi.password({ signal, method: 'PUT', body: JSON.stringify({ currentPassword, newPassword, refreshToken: getRefreshToken() }) }));

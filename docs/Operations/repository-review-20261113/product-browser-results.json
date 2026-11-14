@@ -1,0 +1,130 @@
+{
+  "checks": [
+    "guest / 1440: no horizontal overflow",
+    "guest / 1440: no crashed or disconnected app",
+    "guest / 390: no horizontal overflow",
+    "guest / 390: no crashed or disconnected app",
+    "guest /pinyin 1440: no horizontal overflow",
+    "guest /pinyin 1440: no crashed or disconnected app",
+    "guest /pinyin 390: no horizontal overflow",
+    "guest /pinyin 390: no crashed or disconnected app",
+    "guest /hanzi 1440: no horizontal overflow",
+    "guest /hanzi 1440: no crashed or disconnected app",
+    "guest /hanzi 390: no horizontal overflow",
+    "guest /hanzi 390: no crashed or disconnected app",
+    "guest /vocabulary 1440: no horizontal overflow",
+    "guest /vocabulary 1440: no crashed or disconnected app",
+    "guest /vocabulary 390: no horizontal overflow",
+    "guest /vocabulary 390: no crashed or disconnected app",
+    "guest /dictionary 1440: no horizontal overflow",
+    "guest /dictionary 1440: no crashed or disconnected app",
+    "guest /dictionary 390: no horizontal overflow",
+    "guest /dictionary 390: no crashed or disconnected app",
+    "guest /grammar 1440: no horizontal overflow",
+    "guest /grammar 1440: no crashed or disconnected app",
+    "guest /grammar 390: no horizontal overflow",
+    "guest /grammar 390: no crashed or disconnected app",
+    "guest /exam 1440: no horizontal overflow",
+    "guest /exam 1440: no crashed or disconnected app",
+    "guest /exam 390: no horizontal overflow",
+    "guest /exam 390: no crashed or disconnected app",
+    "guest /toi 1440: no horizontal overflow",
+    "guest /toi 1440: no crashed or disconnected app",
+    "guest /toi 390: no horizontal overflow",
+    "guest /toi 390: no crashed or disconnected app",
+    "auth / 1440: no horizontal overflow",
+    "auth / 1440: no crashed or disconnected app",
+    "auth / 390: no horizontal overflow",
+    "auth / 390: no crashed or disconnected app",
+    "auth /pinyin 1440: no horizontal overflow",
+    "auth /pinyin 1440: no crashed or disconnected app",
+    "auth /pinyin 390: no horizontal overflow",
+    "auth /pinyin 390: no crashed or disconnected app",
+    "auth /hanzi 1440: no horizontal overflow",
+    "auth /hanzi 1440: no crashed or disconnected app",
+    "auth /hanzi 390: no horizontal overflow",
+    "auth /hanzi 390: no crashed or disconnected app",
+    "auth /vocabulary 1440: no horizontal overflow",
+    "auth /vocabulary 1440: no crashed or disconnected app",
+    "auth /vocabulary 390: no horizontal overflow",
+    "auth /vocabulary 390: no crashed or disconnected app",
+    "auth /dictionary 1440: no horizontal overflow",
+    "auth /dictionary 1440: no crashed or disconnected app",
+    "auth /dictionary 390: no horizontal overflow",
+    "auth /dictionary 390: no crashed or disconnected app",
+    "auth /grammar 1440: no horizontal overflow",
+    "auth /grammar 1440: no crashed or disconnected app",
+    "auth /grammar 390: no horizontal overflow",
+    "auth /grammar 390: no crashed or disconnected app",
+    "auth /exam 1440: no horizontal overflow",
+    "auth /exam 1440: no crashed or disconnected app",
+    "auth /exam 390: no horizontal overflow",
+    "auth /exam 390: no crashed or disconnected app",
+    "auth /toi 1440: no horizontal overflow",
+    "auth /toi 1440: no crashed or disconnected app",
+    "auth /toi 390: no horizontal overflow",
+    "auth /toi 390: no crashed or disconnected app",
+    "display name remains literal text, never a DOM image",
+    "profile name is also escaped",
+    "invalid Unicode registration does not send a POST",
+    "notebook title persists in owner API",
+    "notebook UI survives reload",
+    "grammar retry reuses exact payload and attemptId",
+    "lost-response retry earns no duplicate EXP",
+    "lost-response retry duplicates no study activity",
+    "insufficient approved exam corpus produces visible error without a fake exam",
+    "cookie mode persists no access or refresh JWT",
+    "cookie mode uses HttpOnly path-scoped SameSite refresh",
+    "document.cookie cannot read refresh credential",
+    "cookie refresh restores actual server profile after reload",
+    "cross-tab logout removes private profile",
+    "logout clears refresh cookie",
+    "no uncaught JS errors"
+  ],
+  "failures": [],
+  "pageErrors": [],
+  "consoleErrors": [
+    {
+      "phase": "real grammar response loss and safe retry",
+      "message": "Failed to load resource: net::ERR_CONNECTION_RESET"
+    },
+    {
+      "phase": "empty corpus and exam generation stay fail closed",
+      "message": "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+    },
+    {
+      "phase": "cookie-mode browser recovery, CSRF and cross-tab logout",
+      "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "phase": "cookie-mode browser recovery, CSRF and cross-tab logout",
+      "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "phase": "cookie-mode browser recovery, CSRF and cross-tab logout",
+      "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "phase": "cookie-mode browser recovery, CSRF and cross-tab logout",
+      "message": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    }
+  ],
+  "limitations": [
+    "No published vocabulary is available in this isolated dev fixture: real successful SRS review is covered by backend fixtures, not claimed as this browser flow.",
+    {
+      "feature": "HSK exam generation",
+      "message": "Chưa đủ câu hỏi đã duyệt cho HSK 1. Hãy chọn ít câu hơn."
+    }
+  ],
+  "screenshots": [
+    "master-route-pinyin-390.png",
+    "master-route-hanzi-390.png",
+    "master-route-vocabulary-390.png",
+    "master-route-grammar-390.png",
+    "master-route-exam-390.png",
+    "master-unicode-validation-1440.png",
+    "master-unicode-validation-390.png"
+  ],
+  "mockedBusinessResponses": false,
+  "result": "PASS"
+}
