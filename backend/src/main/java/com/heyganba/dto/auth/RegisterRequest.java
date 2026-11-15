@@ -20,6 +20,7 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank(message = "Password is required")
+    @com.heyganba.common.validation.BcryptPassword
     @Size(min = 6, max = 50, message = "Password must be between 6 and 50 characters")
     @jakarta.validation.constraints.Size(max=128)
     private String password;

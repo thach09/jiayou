@@ -1,0 +1,130 @@
+{
+  "review-h2": {
+    "tests": 565,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 8,
+    "passed": 557,
+    "skippedCases": [
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "rejectsAlternateLocationsCallbacksAndUnapprovedResourcesBeforeWriting",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "actualApplicationInitializesAndValidatesAgainWithoutWrites",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "reviewedV1UpgradeIsExplicitAtomicAndRestartIsReadOnly",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "rejectsForeignObjectsAndUnknownLineageOnRestart",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "rejectsNonemptyLegacyAndWrongTargetWithoutChanges",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+        "case": "caseA_officialSchemaOnly",
+        "reason": "System property [postgres.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+        "case": "caseB_stagingSchemaWithV4",
+        "reason": "System property [postgres.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+        "case": "caseC_hibernateSchemaValidation",
+        "reason": "System property [postgres.rehearsal] does not exist"
+      }
+    ]
+  },
+  "review-postgres": {
+    "tests": 565,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 8,
+    "passed": 557,
+    "skippedCases": [
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "rejectsAlternateLocationsCallbacksAndUnapprovedResourcesBeforeWriting",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "actualApplicationInitializesAndValidatesAgainWithoutWrites",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "reviewedV1UpgradeIsExplicitAtomicAndRestartIsReadOnly",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "rejectsForeignObjectsAndUnknownLineageOnRestart",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+        "case": "rejectsNonemptyLegacyAndWrongTargetWithoutChanges",
+        "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+        "case": "caseA_officialSchemaOnly",
+        "reason": "System property [postgres.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+        "case": "caseB_stagingSchemaWithV4",
+        "reason": "System property [postgres.rehearsal] does not exist"
+      },
+      {
+        "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+        "case": "caseC_hibernateSchemaValidation",
+        "reason": "System property [postgres.rehearsal] does not exist"
+      }
+    ]
+  },
+  "review-rehearsal": {
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 3,
+    "skippedCases": []
+  },
+  "review-bootstrap": {
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 26,
+    "skippedCases": []
+  },
+  "review-legacy": {
+    "tests": 24,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 23,
+    "skippedCases": [
+      {
+        "class": "com.heyganba.DictionaryPilotPostgresRehearsalTest",
+        "case": "rehearseFullAssistedReleaseThroughFlywayWithoutCurriculumMutation",
+        "reason": "System property [dictionary.pilot.rehearsal] does not exist"
+      }
+    ]
+  }
+}

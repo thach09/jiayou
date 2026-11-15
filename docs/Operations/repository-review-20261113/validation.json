@@ -1,0 +1,304 @@
+{
+  "date": "2026-11-13",
+  "baseHead": "acfd49e7de6bf0daf7983bfa1c66abc5b73e0e85",
+  "branch": "review/jiayou-master-audit-fixes",
+  "newCommit": false,
+  "tools": {
+    "node": "24.21.0",
+    "jdk": "21.0.12.1",
+    "maven": "3.9.16",
+    "postgresqlMajor": 16
+  },
+  "frontend": {
+    "vitestPass": 317,
+    "nodePass": 9,
+    "fail": 0,
+    "skip": 0,
+    "auditVulnerabilities": 0
+  },
+  "backend": {
+    "review-h2": {
+      "tests": 565,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 8,
+      "passed": 557,
+      "skippedCases": [
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "rejectsAlternateLocationsCallbacksAndUnapprovedResourcesBeforeWriting",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "actualApplicationInitializesAndValidatesAgainWithoutWrites",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "reviewedV1UpgradeIsExplicitAtomicAndRestartIsReadOnly",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "rejectsForeignObjectsAndUnknownLineageOnRestart",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "rejectsNonemptyLegacyAndWrongTargetWithoutChanges",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+          "case": "caseA_officialSchemaOnly",
+          "reason": "System property [postgres.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+          "case": "caseB_stagingSchemaWithV4",
+          "reason": "System property [postgres.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+          "case": "caseC_hibernateSchemaValidation",
+          "reason": "System property [postgres.rehearsal] does not exist"
+        }
+      ]
+    },
+    "review-postgres": {
+      "tests": 565,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 8,
+      "passed": 557,
+      "skippedCases": [
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "rejectsAlternateLocationsCallbacksAndUnapprovedResourcesBeforeWriting",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "actualApplicationInitializesAndValidatesAgainWithoutWrites",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "reviewedV1UpgradeIsExplicitAtomicAndRestartIsReadOnly",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "rejectsForeignObjectsAndUnknownLineageOnRestart",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.config.JiayouBootstrapPostgresTest",
+          "case": "rejectsNonemptyLegacyAndWrongTargetWithoutChanges",
+          "reason": "System property [jiayou.bootstrap.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+          "case": "caseA_officialSchemaOnly",
+          "reason": "System property [postgres.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+          "case": "caseB_stagingSchemaWithV4",
+          "reason": "System property [postgres.rehearsal] does not exist"
+        },
+        {
+          "class": "com.heyganba.PostgresSchemaStagingRehearsalTest",
+          "case": "caseC_hibernateSchemaValidation",
+          "reason": "System property [postgres.rehearsal] does not exist"
+        }
+      ]
+    },
+    "review-rehearsal": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 3,
+      "skippedCases": []
+    },
+    "review-bootstrap": {
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 26,
+      "skippedCases": []
+    },
+    "review-legacy": {
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "passed": 23,
+      "skippedCases": [
+        {
+          "class": "com.heyganba.DictionaryPilotPostgresRehearsalTest",
+          "case": "rehearseFullAssistedReleaseThroughFlywayWithoutCurriculumMutation",
+          "reason": "System property [dictionary.pilot.rehearsal] does not exist"
+        }
+      ]
+    }
+  },
+  "commands": {
+    "frontend": [
+      {
+        "check": "npm-ci",
+        "exit": 0
+      },
+      {
+        "check": "frontend-lint",
+        "exit": 0
+      },
+      {
+        "check": "frontend-tests",
+        "exit": 0
+      },
+      {
+        "check": "frontend-build",
+        "exit": 0
+      },
+      {
+        "check": "npm-audit-json",
+        "exit": 0
+      },
+      {
+        "check": "npm-audit-moderate",
+        "exit": 0
+      },
+      {
+        "check": "npm-audit-production",
+        "exit": 0
+      }
+    ],
+    "backend": [
+      {
+        "check": "backend-h2-verify",
+        "exit": 0
+      },
+      {
+        "check": "backend-runtime-list",
+        "exit": 0
+      },
+      {
+        "check": "backend-runtime-audit",
+        "exit": 0
+      },
+      {
+        "check": "production-preflight-unit",
+        "exit": 0
+      }
+    ],
+    "postgres": [
+      {
+        "check": "postgres-api-suite",
+        "exit": 0
+      },
+      {
+        "check": "postgres-staging-rehearsal",
+        "exit": 0
+      },
+      {
+        "check": "postgres-jiayou-bootstrap",
+        "exit": 0
+      }
+    ],
+    "container": [
+      {
+        "check": "compose-validate",
+        "exit": 0
+      },
+      {
+        "check": "backend-container-build",
+        "exit": 0
+      },
+      {
+        "check": "frontend-container-build",
+        "exit": 0
+      },
+      {
+        "check": "nginx-offline",
+        "exit": 0
+      },
+      {
+        "check": "backend-offline-fail-closed",
+        "expected_nonzero": 1,
+        "pass": true
+      }
+    ],
+    "legacy": {
+      "exit": 0,
+      "fixture": "18 verified historical resources outside checkout; not publication"
+    }
+  },
+  "runtimeAudit": {
+    "coordinates": 104,
+    "exit": 0,
+    "existingExceptions": [
+      "GHSA-j9f9-w8pj-32f8",
+      "GHSA-pc63-qcmh-9cmg"
+    ],
+    "newWaivers": false,
+    "mvcGuardsPass": 3
+  },
+  "browser": {
+    "pass": 80,
+    "fail": 0,
+    "uncaughtPageErrors": 0,
+    "expectedNetworkConsoleMessages": 6,
+    "mockedBusinessSuccess": false,
+    "screenshotsInspected": [
+      1440,
+      390
+    ]
+  },
+  "apiSecurity": {
+    "pass": 54,
+    "fail": 0,
+    "firstHarnessAssumptionCorrected": "Fresh disposable DB can legitimately assign first user ID 1; injection sentinel now distinct"
+  },
+  "preflightUnitTests": 19,
+  "sourceScan": {
+    "filesScanned": 743,
+    "findings": [],
+    "scope": "high confidence current source signatures including untracked candidate; not full SAST/history/entropy scan"
+  },
+  "preservation": {
+    "status": "VERIFIED",
+    "baselineEntries": 138,
+    "verifiedHashes": 1031,
+    "mismatches": [],
+    "historicalUntrackedMigrations": 31,
+    "oldBranchTipsUnchanged": 22,
+    "newBranches": 1,
+    "originalWorktreesClean": 18,
+    "totalRegisteredWorktrees": 19,
+    "intentionalDirtyCandidate": "D:\\GitHub\\jiayou-audit-review",
+    "oldRefsReachable": true
+  },
+  "github": {
+    "name": "main",
+    "sha": "acfd49e7de6bf0daf7983bfa1c66abc5b73e0e85",
+    "protected": true
+  },
+  "ciForCandidate": "NOT RUN - no commit/push/PR authorization",
+  "liveProviderIsolation": "NOT VERIFIED - historical reports only",
+  "fullReleaseCorpus": "BLOCKED - no eligible published vocabulary / insufficient approved exam questions",
+  "notRun": [
+    "live DB compatibility/migrations",
+    "production or host access",
+    "external full SAST/DAST/pentest",
+    "image OS CVE scan",
+    "Nov8 load and backup replay",
+    "Safari/Firefox/physical device/native TTS"
+  ],
+  "productionChanges": false,
+  "push": false,
+  "merge": false
+}

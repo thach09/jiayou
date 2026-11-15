@@ -1,5 +1,6 @@
 import { useRequestScope } from '../../lib/hooks/useRequestScope';
 import { authApi } from './api';
+import { passwordLengthError } from './passwordValidation';
 import React, { useState } from 'react';
 import { Lock, Mail, User as UserIcon } from 'lucide-react';
 import { saveTokens, saveUser } from '../../lib/api/session';
@@ -38,6 +39,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const lengthError = passwordLengthError(password);
+    if (lengthError) { setError(lengthError); return; }
     setError(null);
     setLoading(true);
 
