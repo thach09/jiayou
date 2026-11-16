@@ -32,7 +32,6 @@ import type { VocabNotebook } from '../dictionary/types';
 import { speakChinese, stopChineseSpeech } from '../../services/chineseSpeech';
 import { RedSealStamp } from '../../components/RedSealStamp';
 import { Modal } from '../../components/Modal';
-import { StudyPetCompanion } from '../companion/StudyPetCompanion';
 import { useCompanion } from '../companion/useCompanionStore';
 import { checkPinyinAnswer } from '../pinyin/pinyinData';
 import { lastPracticeLesson, readLessonPractice, rememberPracticeLesson, saveLessonPractice } from './lessonPracticeSession';
@@ -747,10 +746,6 @@ export const FlashcardView: React.FC = () => {
           </p>
         </div>
 
-        {/* Companion Dock */}
-        <div className="flex items-center gap-3">
-          <StudyPetCompanion />
-        </div>
       </div>
 
       {/* Primary Mode Tabs: Học theo bài vs Ôn đến hạn (SRS) */}

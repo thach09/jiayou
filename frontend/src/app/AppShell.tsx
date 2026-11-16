@@ -6,7 +6,7 @@ import { AppRoutes } from './routes';
 import { progressApi } from '../features/progress/api';
 import { isRequestCancelled } from '../lib/api/client';
 import { OrientalDecorBackground } from '../components/OrientalDecorBackground';
-import { ThemeToggle } from '../components/ThemeToggle';
+import { CherryBlossomIntro } from '../components/CherryBlossomIntro';
 import { Link, useLocation } from 'react-router-dom';
 import {BrandLogo} from '../components/BrandLogo';
 import { stopChineseSpeech } from '../services/chineseSpeech';
@@ -160,9 +160,11 @@ export function AppShell() {
   };
 
   return (
-    <div className="relative z-[1] flex min-h-screen">
+    <div className="relative z-[1] flex min-h-screen bg-bg">
       {/* Authentic Guochao Chinese Background Decor */}
-      <div className="dashboard-atmosphere" aria-hidden="true"/><OrientalDecorBackground />
+      <div className="dashboard-atmosphere" aria-hidden="true" />
+      <OrientalDecorBackground />
+      <CherryBlossomIntro />
 
       {/* Menu backdrop: only rendered while the sidebar is open as a mobile overlay */}
       {isSidebarOverlay && (
@@ -200,18 +202,64 @@ export function AppShell() {
         >
           <Menu size={18} />
         </button>
-        <Link to="/" aria-label="Jiayou — Trang chủ"><BrandLogo /></Link><ThemeToggle />
+        <Link to="/" aria-label="Jiayou — Trang chủ"><BrandLogo /></Link>
       </header>}
 
       {/* Main Content Area */}
       <div
-        className={`flex min-h-screen min-w-0 flex-1 flex-col transition-[margin] duration-150 ${
-          isSidebarOpen ? 'ml-[216px] max-[900px]:ml-0' : 'ml-0'
+        className={`relative flex min-h-screen min-w-0 flex-1 flex-col transition-[margin] duration-150 ${
+          isSidebarOpen ? 'ml-[228px] max-[900px]:ml-0' : 'ml-0'
         }`}
       >
+        {/* Upper-Left Traditional Chinese Ornaments (Vân Mây Như Ý & Hồi Văn Góc) — Tracks sidebar transition */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none select-none absolute top-2 z-0 w-[200px] h-[140px] opacity-[0.14] hidden sm:block transition-[left] duration-150 ${
+            isSidebarOpen ? 'left-2 md:left-3' : 'left-8'
+          }`}
+        >
+          <svg
+            viewBox="0 0 200 140"
+            fill="none"
+            className="w-full h-full"
+            aria-hidden="true"
+          >
+            {/* Subtle Imperial Meander Corner Flourish */}
+            <path
+              d="M 6 42 L 6 8 C 6 6.895 6.895 6 8 6 L 42 6 M 14 36 L 14 14 L 36 14"
+              stroke="#E8B15C"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+            />
+            <circle cx="6" cy="46" r="1.5" fill="#FF8D73" />
+            <circle cx="46" cy="6" r="1.5" fill="#FF8D73" />
+
+            {/* Graceful Ruyi Cloud Motif (如意云纹) */}
+            <path
+              d="M 28 32 C 34 22, 50 20, 60 28 C 68 18, 86 18, 96 26 C 108 34, 104 50, 92 56 C 82 60, 72 54, 70 46 C 68 36, 78 32, 84 36"
+              stroke="#FF8D73"
+              strokeWidth="1.1"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 60 28 C 55 36, 44 38, 38 32"
+              stroke="#E8B15C"
+              strokeWidth="0.9"
+              strokeLinecap="round"
+            />
+            {/* Gentle trailing tendril flowing eastward into negative space */}
+            <path
+              d="M 96 26 C 114 20, 138 28, 154 38 Q 168 46, 178 44"
+              stroke="#E8B15C"
+              strokeWidth="0.8"
+              strokeDasharray="2 3"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
         <main
           inert={isSidebarOverlay ? true : undefined}
-          className="relative z-[1] w-full min-w-0 flex-1 px-8 pb-10 pt-12 max-[900px]:px-5 max-[900px]:pb-10 max-[900px]:pt-20"
+          className="relative z-[1] w-full min-w-0 flex-1 px-8 pb-36 pt-12 max-[900px]:px-5 max-[900px]:pb-28 max-[900px]:pt-20"
         >
           {backendHealthy === false && (
             <div className="mb-5 border-l-2 border-l-red bg-tint px-4 py-3 text-[12.5px] leading-[1.8] text-fg-60">

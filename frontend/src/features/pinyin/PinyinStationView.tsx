@@ -5,7 +5,6 @@ import { PinyinStepByStep } from './PinyinStepByStep';
 import { PinyinTable } from './PinyinTable';
 import { ToneContourWave } from './ToneContourWave';
 import { PinyinQuiz } from './PinyinQuiz';
-import { StudyPetCompanion } from '../companion/StudyPetCompanion';
 import { stopChineseSpeech } from '../../services/chineseSpeech';
 import { useAuth } from '../../app/useAuth';
 import { PINYIN_METADATA, canAccessPinyinContent } from './pinyinData';
@@ -150,10 +149,6 @@ export const PinyinStationView: React.FC = () => {
               </p>
             </div>
 
-            {/* Companion Dock */}
-            <div className="flex min-w-0 flex-wrap items-center gap-3">
-              <StudyPetCompanion />
-            </div>
           </div>
 
       {/* Mode Switcher Tabs */}

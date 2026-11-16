@@ -1,19 +1,80 @@
+import { useEffect, useState } from 'react';
+
 /**
  * OrientalDecorBackground:
- * Authentic Chinese Imperial Palace & Three Kingdoms Historical Heritage Motifs.
- *
- * Visual Components:
- * 1. Floating Kongming Lanterns (Khổng Minh Đăng - 孔明灯):
- *    Invented by Zhuge Liang in the Three Kingdoms era, floating in the night sky with warm amber glow.
- * 2. Forbidden City Curved Palace Eaves (Hoàng Cung Phi Thiềm - 斗拱飞檐):
- *    Double-eaved Chinese imperial palace roofs with upward swooping horns & ridge beasts.
- * 3. Three Kingdoms Mountain Pass & Fortress (Quan Ải Tam Quốc - 虎牢关 / 剑阁):
- *    Ancient battlements, watchtowers, and mountain cliffs along the horizon.
- * 4. Imperial Window Lattice (Hoa Song Cung Đình - 窗棂万字格):
- *    Intricate imperial palace geometric fretwork.
- * 5. Vermilion Seal Watermark (Chu Sa Triện Ấn: 志在千里 - Chí tại thiên lý).
+ * Authentic Chinese Imperial Night Sky, Great Wall & Misty Mountain Atmosphere (V7).
+ * Features:
+ * 1. Traditional Chinese Palace Lanterns (Cung Đăng - 宫灯) with radiant amber glow & gentle sway.
+ * 2. Floating Kongming Sky Lanterns (Khổng Minh Đăng - 孔明灯) drifting peacefully in the night sky.
+ * 3. Ancient Chinese imperial citadel / palace silhouette in top-right with blooming cherry blossoms.
+ * 4. Panoramic Great Wall of China (Vạn Lý Trường Thành) & layered misty mountains along the bottom horizon.
+ * 5. Mobile-adapted scenery: zero giant pagodas, zero intrusive buildings, soft atmospheric mountain wash.
+ * 6. Continuous, seamless base (#120E10) with gradual atmospheric dissolving—zero black cutoff bands.
  */
-import { useEffect, useState } from 'react';
+
+interface AuthenticLanternProps {
+  width?: number;
+  height?: number;
+  stringHeight?: number;
+  glowBlur?: number;
+  glowOpacity?: number;
+}
+
+function AuthenticChineseLantern({
+  width = 38,
+  height = 57,
+  stringHeight = 16,
+  glowBlur = 14,
+  glowOpacity = 0.65,
+}: AuthenticLanternProps) {
+  return (
+    <div
+      className="relative flex flex-col items-center select-none pointer-events-none"
+      style={{ transformOrigin: 'top center' }}
+    >
+      {/* Hanging silk cord connecting to viewport or blossom branch */}
+      {stringHeight > 0 && (
+        <div
+          className="w-[1.2px] bg-gradient-to-b from-[#A8A29E] via-[#D97706] to-[#F59E0B] opacity-80"
+          style={{ height: `${stringHeight}px` }}
+        />
+      )}
+      <div
+        className="relative"
+        style={{
+          width: `${width}px`,
+          height: `${height}px`,
+          marginTop: stringHeight > 0 ? '-2px' : '0',
+        }}
+      >
+        {/* Layer 1: Core warm amber glow aura */}
+        <div
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            inset: '-14px',
+            background: `radial-gradient(circle at 50% 60%, rgba(251, 191, 36, ${glowOpacity}) 0%, rgba(249, 115, 22, ${glowOpacity * 0.55}) 45%, rgba(220, 38, 38, ${glowOpacity * 0.2}) 65%, transparent 75%)`,
+            filter: `blur(${glowBlur}px)`,
+          }}
+        />
+        {/* Layer 2: Wide atmospheric night peach radiance */}
+        <div
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            inset: '-28px',
+            background: `radial-gradient(circle at 50% 60%, rgba(255, 141, 115, ${glowOpacity * 0.45}) 0%, rgba(243, 193, 111, ${glowOpacity * 0.22}) 40%, transparent 70%)`,
+            filter: `blur(${glowBlur * 1.5}px)`,
+          }}
+        />
+        {/* High-fidelity Authentic Silk Palace Lantern Artwork */}
+        <img
+          src="/assets/decor/authentic-lantern.png"
+          alt=""
+          className="w-full h-full object-contain drop-shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+        />
+      </div>
+    </div>
+  );
+}
 
 export function OrientalDecorBackground() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,242 +91,250 @@ export function OrientalDecorBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none"
+      className="pointer-events-none absolute inset-0 z-0 overflow-hidden select-none bg-[#120E10]"
     >
-      {/* Static blossom silhouette from the approved dashboard's atmosphere. No falling particles. */}
-      <svg viewBox="0 0 580 120" className="absolute -top-2 right-0 h-28 w-[480px] max-w-[70vw] text-cinnabar-ink opacity-25" fill="none">
-        <path d="M590 0 Q450 60 310 12 Q235 0 170 16 M460 28 Q405 65 350 63 M327 16 Q285 42 245 38" stroke="currentColor" strokeWidth="4"/>
-        {[[540,12],[493,26],[455,34],[408,49],[357,60],[328,18],[279,27],[243,37],[197,14]].map(([x,y],n)=><g key={x} transform={`translate(${x} ${y}) rotate(${n*17})`} fill="currentColor">{[0,1,2,3,4].map(i=><ellipse key={i} cy="-5" rx="3" ry="5" transform={`rotate(${i*72})`}/>)}<circle r="1.5" fill="var(--paper-gold)"/></g>)}
-      </svg>
-      {/* 1. Floating Kongming Lanterns (Khổng Minh Đăng - 孔明灯) in the Upper Night Sky */}
+      {/* 1. Multi-Layer Ambient Warm Lighting Radiance */}
+      <div
+        className="absolute -top-24 right-[-5%] w-[740px] h-[560px] rounded-full pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle at 65% 35%, rgba(255, 141, 115, 0.16) 0%, rgba(243, 193, 111, 0.08) 32%, transparent 70%)',
+          filter: 'blur(36px)',
+        }}
+      />
+      <div
+        className="absolute bottom-[-5%] right-[-5%] w-[760px] h-[520px] rounded-full pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle at 70% 70%, rgba(243, 193, 111, 0.07) 0%, rgba(255, 141, 115, 0.05) 35%, transparent 70%)',
+          filter: 'blur(45px)',
+        }}
+      />
+
+      {/* 2. Top-Right Imperial Palace Complex (Hoàng Thành & Điện Các Cung Đình) */}
+      <div className="absolute top-0 right-0 w-[520px] max-w-[45vw] h-[280px] max-h-[32vh] pointer-events-none select-none overflow-hidden max-[767px]:w-[280px] max-[767px]:max-w-[70vw] max-[767px]:h-[160px]">
+        <img
+          src="/assets/decor/palace-top-right.jpg"
+          alt=""
+          className="w-full h-full object-cover object-top-right opacity-85 transition-opacity max-[767px]:opacity-65"
+          style={{
+            maskImage:
+              'radial-gradient(ellipse 90% 85% at 90% 12%, black 35%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.18) 78%, transparent 92%)',
+            WebkitMaskImage:
+              'radial-gradient(ellipse 90% 85% at 90% 12%, black 35%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.18) 78%, transparent 92%)',
+          }}
+        />
+      </div>
+
+      {/* 3. Top-Right Blooming Cherry Blossom Branch (Cành Hoa Đào Son) */}
+      <div className="absolute -top-3 right-0 w-[520px] max-w-[50vw] h-[210px] pointer-events-none max-[767px]:w-[320px] max-[767px]:max-w-[75vw] max-[767px]:h-[140px]">
+        <svg
+          viewBox="0 0 540 220"
+          fill="none"
+          className="w-full h-full drop-shadow-[0_4px_14px_rgba(255,141,115,0.3)]"
+        >
+          {/* Main Gnarled Branches */}
+          <path
+            d="M 545 0 Q 420 50 320 25 Q 240 5 180 38 Q 140 60 110 50"
+            stroke="#4A2F27"
+            strokeWidth="5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 440 28 Q 380 90 320 85 Q 270 80 230 110"
+            stroke="#4A2F27"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 330 27 Q 290 60 250 55"
+            stroke="#4A2F27"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 245 10 Q 210 32 180 26"
+            stroke="#4A2F27"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 490 15 Q 460 70 410 75"
+            stroke="#4A2F27"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+
+          {/* Blossom Clusters (Hoa Đào Cổ Thụ) */}
+          {[
+            { x: 505, y: 15, r: 1.1, rot: 15 },
+            { x: 460, y: 32, r: 1.25, rot: 42 },
+            { x: 425, y: 68, r: 0.95, rot: 78 },
+            { x: 385, y: 88, r: 1.15, rot: 120 },
+            { x: 345, y: 28, r: 1.3, rot: 5 },
+            { x: 310, y: 75, r: 1.05, rot: 65 },
+            { x: 280, y: 48, r: 0.9, rot: 140 },
+            { x: 245, y: 98, r: 1.1, rot: 88 },
+            { x: 220, y: 22, r: 1.2, rot: 33 },
+            { x: 185, y: 35, r: 0.85, rot: 95 },
+            { x: 150, y: 55, r: 0.95, rot: 50 },
+            { x: 115, y: 48, r: 0.8, rot: 110 },
+            { x: 440, y: 80, r: 0.85, rot: 160 },
+            { x: 370, y: 40, r: 0.75, rot: 25 },
+            { x: 275, y: 105, r: 0.7, rot: 70 },
+          ].map((flower, idx) => (
+            <g
+              key={idx}
+              transform={`translate(${flower.x} ${flower.y}) scale(${flower.r}) rotate(${flower.rot})`}
+            >
+              {/* Petals */}
+              {[0, 72, 144, 216, 288].map((angle, pIdx) => (
+                <ellipse
+                  key={pIdx}
+                  cx="0"
+                  cy="-7"
+                  rx="4.2"
+                  ry="6.5"
+                  transform={`rotate(${angle})`}
+                  fill={pIdx % 2 === 0 ? '#E04F42' : '#FF8D73'}
+                  opacity="0.94"
+                />
+              ))}
+              {/* Center Stamen & Golden Core */}
+              <circle cx="0" cy="0" r="2.8" fill="#FFF275" opacity="0.96" />
+              <circle cx="0" cy="0" r="1.4" fill="#B45309" />
+            </g>
+          ))}
+
+          {/* Drifting Petals with subtle motion */}
+          {[
+            { x: 410, y: 115, rot: 25, s: 0.9 },
+            { x: 340, y: 140, rot: 70, s: 0.8 },
+            { x: 250, y: 155, rot: 45, s: 0.85 },
+            { x: 180, y: 125, rot: 80, s: 0.75 },
+          ].map((petal, idx) => (
+            <path
+              key={idx}
+              d="M 0 -5 C 3 -2, 3 3, 0 5 C -3 3, -3 -2, 0 -5 Z"
+              fill="#FF8D73"
+              opacity="0.82"
+              transform={`translate(${petal.x} ${petal.y}) scale(${petal.s}) rotate(${petal.rot})`}
+            />
+          ))}
+        </svg>
+      </div>
+
+      {/* 4. Authentic Traditional Chinese Hanging Palace Lanterns (Cung Đăng - 宫灯) */}
       <div
         data-lanterns
         className={`absolute inset-x-0 top-0 h-[480px] pointer-events-none transition-opacity duration-300 motion-reduce:transition-none ${
           isScrolled ? 'opacity-0' : 'opacity-100'
         }`}
       >
-        {/* Lantern 1 - Top right margin, clear of content */}
+        {/* Distant Lantern A (V8.1): Small scale, muted amber glow in upper mid-left sky */}
         <div
-          className="absolute right-[4%] top-4"
-          style={{ animationDuration: '7s' }}
+          className="hidden md:block absolute right-[63%] top-1 z-[9] animate-lantern-sway opacity-80"
+          style={{
+            transformOrigin: 'top center',
+            animationDuration: '10.5s',
+            animationDelay: '-4.2s',
+          }}
         >
-          <div className="relative w-12 h-16">
-            {/* Lantern Body */}
-            <svg viewBox="0 0 48 64" fill="none" className="w-full h-full drop-shadow-[0_0_16px_rgba(245,158,11,0.45)]">
-              {/* Outer Glow & Shell */}
-              <path
-                d="M 12 8 Q 24 4 36 8 L 40 48 Q 24 54 8 48 Z"
-                fill="url(#lantern-grad-1)"
-                opacity="0.85"
-              />
-              {/* Bamboo rib frames */}
-              <line x1="24" y1="6" x2="24" y2="51" stroke="#78350F" strokeWidth="0.8" opacity="0.6" />
-              <line x1="16" y1="7" x2="14" y2="49" stroke="#78350F" strokeWidth="0.6" opacity="0.5" />
-              <line x1="32" y1="7" x2="34" y2="49" stroke="#78350F" strokeWidth="0.6" opacity="0.5" />
-              {/* Inner Flame Core */}
-              <ellipse cx="24" cy="42" rx="6" ry="7" fill="#FEF08A" opacity="0.9" />
-              <ellipse cx="24" cy="42" rx="3" ry="4" fill="#FFFFFF" opacity="0.95" />
-              {/* Bottom fire ring & tassel */}
-              <rect x="18" y="50" width="12" height="3" rx="1.5" fill="#B91C1C" opacity="0.8" />
-              <line x1="24" y1="53" x2="24" y2="62" stroke="#B91C1C" strokeWidth="1" opacity="0.7" />
-              <circle cx="24" cy="62" r="1.5" fill="#D97706" />
-            </svg>
-          </div>
+          <AuthenticChineseLantern
+            width={20}
+            height={30}
+            stringHeight={20}
+            glowBlur={9}
+            glowOpacity={0.38}
+          />
         </div>
 
-        {/* Lantern 2 - Upper center-right, mid distance */}
+        {/* Primary Palace Lantern 1: Hanging from top roofbeam above header */}
         <div
-          className="absolute right-[28%] top-4 opacity-60"
-          style={{ animationDuration: '9s', animationDelay: '-2s' }}
+          className="hidden sm:block absolute right-[51%] top-0 z-10 animate-lantern-sway"
+          style={{
+            transformOrigin: 'top center',
+            animationDuration: '8.5s',
+            animationDelay: '-2.5s',
+          }}
         >
-          <div className="relative w-8 h-11">
-            <svg viewBox="0 0 48 64" fill="none" className="w-full h-full drop-shadow-[0_0_12px_rgba(245,158,11,0.35)]">
-              <path
-                d="M 12 8 Q 24 4 36 8 L 40 48 Q 24 54 8 48 Z"
-                fill="url(#lantern-grad-1)"
-              />
-              <ellipse cx="24" cy="42" rx="5" ry="6" fill="#FEF08A" opacity="0.85" />
-              <rect x="18" y="50" width="12" height="3" rx="1.5" fill="#B91C1C" opacity="0.7" />
-              <line x1="24" y1="53" x2="24" y2="60" stroke="#B91C1C" strokeWidth="1" opacity="0.6" />
-            </svg>
-          </div>
+          <AuthenticChineseLantern
+            width={36}
+            height={54}
+            stringHeight={14}
+            glowBlur={13}
+            glowOpacity={0.58}
+          />
         </div>
 
-        {/* Lantern 3 - Far distance, small drift */}
+        {/* Distant Lantern B (V8.1): Small scale, depth between Lantern 1 and blossom branch */}
         <div
-          className="absolute right-[42%] top-6 opacity-40"
-          style={{ animationDuration: '11s', animationDelay: '-5s' }}
+          className="hidden lg:block absolute right-[39.5%] top-2 z-[9] animate-lantern-sway opacity-75"
+          style={{
+            transformOrigin: 'top center',
+            animationDuration: '9.2s',
+            animationDelay: '-1.8s',
+          }}
         >
-          <div className="relative w-5 h-7">
-            <svg viewBox="0 0 48 64" fill="none" className="w-full h-full">
-              <path
-                d="M 12 8 Q 24 4 36 8 L 40 48 Q 24 54 8 48 Z"
-                fill="#F59E0B"
-                opacity="0.8"
-              />
-              <ellipse cx="24" cy="42" rx="5" ry="5" fill="#FEF08A" />
-            </svg>
-          </div>
+          <AuthenticChineseLantern
+            width={19}
+            height={28.5}
+            stringHeight={15}
+            glowBlur={8}
+            glowOpacity={0.35}
+          />
         </div>
 
-        {/* Lantern 4 - Top left drift (hidden on mobile to keep header clean) */}
+        {/* Primary Palace Lantern 2: Hanging from cherry blossom branch */}
         <div
-          className="hidden sm:block absolute left-[12%] top-6 opacity-40"
-          style={{ animationDuration: '8.5s', animationDelay: '-3.5s' }}
+          className="absolute right-[27.3%] top-2 z-10 animate-lantern-sway"
+          style={{ transformOrigin: 'top center', animationDuration: '7s' }}
         >
-          <div className="relative w-7 h-10">
-            <svg viewBox="0 0 48 64" fill="none" className="w-full h-full drop-shadow-[0_0_10px_rgba(245,158,11,0.25)]">
-              <path
-                d="M 12 8 Q 24 4 36 8 L 40 48 Q 24 54 8 48 Z"
-                fill="url(#lantern-grad-1)"
-                opacity="0.75"
-              />
-              <ellipse cx="24" cy="42" rx="5" ry="6" fill="#FEF08A" opacity="0.8" />
-              <line x1="24" y1="50" x2="24" y2="58" stroke="#B91C1C" strokeWidth="1" opacity="0.6" />
-            </svg>
-          </div>
+          <AuthenticChineseLantern
+            width={38}
+            height={57}
+            stringHeight={18}
+            glowBlur={14}
+            glowOpacity={0.65}
+          />
         </div>
-
-        {/* SVG Gradient Definitions */}
-        <svg className="absolute w-0 h-0" aria-hidden="true">
-          <defs>
-            <linearGradient id="lantern-grad-1" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#D97706" stopOpacity="0.7" />
-              <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#B91C1C" stopOpacity="0.8" />
-            </linearGradient>
-            <linearGradient id="palace-eave-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="var(--paper-gold)" stopOpacity="0.08" />
-              <stop offset="60%" stopColor="var(--paper-red)" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="var(--paper-ink)" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-        </svg>
       </div>
 
-      {/* 2. Forbidden City Curved Palace Eaves (Phi Thiềm Hoàng Cung - 斗拱飞檐) in Upper Right */}
-      <svg
-        className="absolute -top-6 right-0 w-[580px] max-w-[50vw] h-[320px] text-gold-ink opacity-[0.055] pointer-events-none"
-        viewBox="0 0 500 280"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-      >
-        {/* Upper Tier Palace Ridge (Thượng Thiềm) */}
-        <path
-          d="M 160 30 Q 320 60 480 15 Q 492 12 498 4 C 496 18, 480 28, 450 36 L 220 54 Z"
-          fill="currentColor"
-          fillOpacity="0.25"
+      {/* 5. Continuous Lower Scenery: Great Wall & Misty Mountains (Desktop) — Anchored to actual document bottom */}
+      <div className="hidden sm:block absolute bottom-0 inset-x-0 h-[480px] pointer-events-none select-none overflow-hidden">
+        <img
+          src="/assets/decor/great-wall-mountains.jpg"
+          alt=""
+          className="w-full h-full object-cover object-[center_35%] opacity-90"
+          style={{
+            maskImage:
+              'linear-gradient(to top, black 45%, rgba(0,0,0,0.45) 75%, transparent 100%)',
+            WebkitMaskImage:
+              'linear-gradient(to top, black 45%, rgba(0,0,0,0.45) 75%, transparent 100%)',
+          }}
         />
-        {/* Chi-wen roof beast ornament (吻兽) at the tip */}
-        <path d="M 498 4 C 504 1 508 8 502 14 C 496 18 490 16 488 12 Z" fill="currentColor" />
 
-        {/* Lower Tier Grand Eaves (Hạ Thiềm Phi Vĩ) with deep classical upward swoop */}
-        <path
-          d="M 40 100 Q 260 135 460 70 Q 480 62 494 48 C 490 68, 465 82, 420 95 L 120 125 Z"
-          fill="currentColor"
-          fillOpacity="0.3"
-        />
-        {/* Lower roof tip beast */}
-        <path d="M 494 48 C 500 44 506 52 498 58 C 492 62 486 60 484 54 Z" fill="currentColor" />
+        {/* Smooth, gradual base vignette dissolving completely into #120E10 at the bottom edge */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#120E10] from-2% via-transparent to-transparent opacity-60" />
+      </div>
 
-        {/* Dougong Brackets (Đấu Củng - 斗拱) support blocks */}
-        <g strokeWidth="1" stroke="currentColor" opacity="0.8">
-          <rect x="180" y="54" width="14" height="10" />
-          <rect x="230" y="58" width="14" height="10" />
-          <rect x="280" y="62" width="14" height="10" />
-          <rect x="330" y="66" width="14" height="10" />
-          <rect x="380" y="70" width="14" height="10" />
-          {/* Lower tier bracket row */}
-          <rect x="120" y="125" width="16" height="12" />
-          <rect x="180" y="130" width="16" height="12" />
-          <rect x="240" y="135" width="16" height="12" />
-          <rect x="300" y="138" width="16" height="12" />
-          <rect x="360" y="136" width="16" height="12" />
-        </g>
-
-        {/* Imperial Vermilion Palace Pillars (Trụ Son Cung Đình) */}
-        <line x1="200" y1="147" x2="200" y2="280" stroke="var(--paper-red)" strokeWidth="3" opacity="0.4" />
-        <line x1="320" y1="150" x2="320" y2="280" stroke="var(--paper-red)" strokeWidth="3" opacity="0.4" />
-        <line x1="420" y1="148" x2="420" y2="280" stroke="var(--paper-red)" strokeWidth="3" opacity="0.4" />
-      </svg>
-
-      {/* 3. Classical Chinese Window Lattice (Hoa Song Cung Đình - 万字万象) in Top Left */}
-      <svg
-        className="absolute top-0 left-0 w-44 h-44 text-gold-ink opacity-[0.035] pointer-events-none"
-        viewBox="0 0 100 100"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.2"
-      >
-        <path d="M 0 0 L 70 0 L 70 18 L 18 18 L 18 70 L 0 70 Z" />
-        <path d="M 28 28 L 56 28 L 56 40 L 40 40 L 40 56 L 28 56 Z" />
-        <line x1="0" y1="35" x2="18" y2="35" />
-        <line x1="35" y1="0" x2="35" y2="18" />
-        <circle cx="56" cy="56" r="4" fill="currentColor" opacity="0.5" />
-      </svg>
-
-      {/* 4. Three Kingdoms Mountain Pass & Fortress Silhouette (Quan Ải Tam Quốc - 虎牢关 / 剑阁) along Bottom */}
-      <div className="absolute bottom-0 inset-x-0 h-[240px] pointer-events-none">
+      {/* 6. Mobile Scenery: Zero giant pagodas, zero intrusive buildings, subtle misty mountain wash */}
+      <div className="block sm:hidden absolute bottom-0 inset-x-0 h-[190px] pointer-events-none select-none overflow-hidden">
         <svg
-          className="w-full h-full text-fg opacity-[0.055] pointer-events-none"
-          viewBox="0 0 1440 240"
+          viewBox="0 0 390 190"
+          className="w-full h-full text-[#1A1416] opacity-35"
           fill="currentColor"
           preserveAspectRatio="none"
         >
-          {/* Distant Heroic Mountain Pass Peaks (Dãy Núi Hiểm Trở) */}
-          <path
-            d="M 0 240 L 0 140 Q 140 70 280 130 T 560 90 Q 720 40 880 120 T 1200 80 Q 1320 50 1440 100 L 1440 240 Z"
-            fill="var(--paper-ink)"
-            opacity="0.6"
-          />
-
-          {/* Three Kingdoms Watchtowers & Battlements (Thành Lâu Quan Ải & Nữ Tường) */}
-          {/* Mountain Pass Gate 1 (Left): Kiếm Các / Hổ Lao Quan */}
-          <g fill="var(--paper-ink)" opacity="0.95">
-            {/* Gate rampart base */}
-            <path d="M 160 240 L 180 150 L 320 150 L 340 240 Z" />
-            {/* Gate archway portal */}
-            <path d="M 230 240 L 230 190 Q 250 170 270 190 L 270 240 Z" fill="var(--paper-ink)" />
-            {/* Crenelated battlements on wall top */}
-            <rect x="180" y="142" width="15" height="8" />
-            <rect x="205" y="142" width="15" height="8" />
-            <rect x="230" y="142" width="15" height="8" />
-            <rect x="255" y="142" width="15" height="8" />
-            <rect x="280" y="142" width="15" height="8" />
-            <rect x="305" y="142" width="15" height="8" />
-            {/* Multi-story Gate Watchtower Pavilion (Môn Lâu) */}
-            <path d="M 210 142 L 210 115 L 290 115 L 290 142 Z" />
-            {/* Curved watchtower roof with upward eaves */}
-            <path d="M 190 118 Q 250 112 310 118 L 316 112 Q 250 96 184 112 Z" fill="var(--paper-gold)" opacity="0.4" />
-            {/* Battle Pennant / Flag (Chiến Kỳ Tam Quốc) */}
-            <line x1="290" y1="115" x2="290" y2="82" stroke="var(--paper-gold)" strokeWidth="1.5" />
-            <path d="M 290 82 L 314 90 L 290 98 Z" fill="var(--paper-red)" opacity="0.75" />
-          </g>
-
-          {/* Fortress Tower 2 (Right Horizon) */}
-          <g fill="var(--paper-ink)" opacity="0.85">
-            <path d="M 1120 240 L 1135 160 L 1225 160 L 1240 240 Z" />
-            <rect x="1135" y="154" width="12" height="6" />
-            <rect x="1155" y="154" width="12" height="6" />
-            <rect x="1175" y="154" width="12" height="6" />
-            <rect x="1195" y="154" width="12" height="6" />
-            <rect x="1213" y="154" width="12" height="6" />
-            <path d="M 1150 154 L 1150 130 L 1210 130 L 1210 154 Z" />
-            <path d="M 1138 132 Q 1180 126 1222 132 L 1226 128 Q 1180 116 1134 128 Z" fill="var(--paper-gold)" opacity="0.35" />
-            <line x1="1210" y1="130" x2="1210" y2="105" stroke="var(--paper-gold)" strokeWidth="1.2" />
-            <path d="M 1210 105 L 1228 111 L 1210 117 Z" fill="var(--paper-red)" opacity="0.65" />
-          </g>
-
-          {/* Foreground Atmospheric Mist Wave (Sương Mù Quan Ải) */}
-          <path
-            d="M 0 240 L 0 205 C 240 190, 480 215, 720 198 C 960 185, 1200 215, 1440 200 L 1440 240 Z"
-            fill="var(--paper-ink)"
-            opacity="0.9"
-          />
+          {/* Distant gentle mountain ridge */}
+          <path d="M 0 190 L 0 95 Q 80 60 160 85 T 300 65 Q 350 75 390 80 L 390 190 Z" opacity="0.6" />
+          {/* Foreground mountain ridge with soft mist transition */}
+          <path d="M 0 190 L 0 120 Q 110 95 210 125 T 390 110 L 390 190 Z" opacity="0.85" />
         </svg>
-      </div>
 
+        {/* Soft mobile gradient dissolving seamlessly into the base warm background */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#120E10] from-5% via-[#120E10]/40 to-transparent" />
+      </div>
     </div>
   );
 }

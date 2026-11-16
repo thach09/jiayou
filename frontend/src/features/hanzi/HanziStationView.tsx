@@ -12,7 +12,6 @@ import { RedSealStamp } from '../../components/RedSealStamp';
 import { useTheme } from '../../app/useTheme';
 import { FloatingExpReward } from '../../components/FloatingExpReward';
 import { progressApi } from '../progress/api';
-import { StudyPetCompanion } from '../companion/StudyPetCompanion';
 import { useCompanion } from '../companion/useCompanionStore';
 
 // Foundational radicals for quick filtering
@@ -290,10 +289,6 @@ const HanziStationSession: React.FC = () => {
           </p>
         </div>
 
-        {/* Companion Pet */}
-        <div className="flex items-center gap-3">
-          <StudyPetCompanion />
-        </div>
       </div>
 
       {/* Filter Toolbar: HSK Levels & Radical Filter Chips */}

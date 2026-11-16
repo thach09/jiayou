@@ -20,6 +20,11 @@ test('profile with another owner is rejected even if the API reports success',as
  signIn();state.get.mockResolvedValue({success:true,data:{...profile,id:32,email:'other@jiayou.test'}});render(<AccountView/>);await screen.findByRole('button',{name:'Thử lại'});expect(screen.queryByText('other@jiayou.test')).toBeNull();expect(screen.queryByLabelText('Mã lớp')).toBeNull();
 });
 
+test('missing or invalid joined date never renders a fabricated date',async()=>{
+ signIn();state.get.mockResolvedValue({success:true,data:{...profile,createdAt:'invalid'}});render(<AccountView/>);
+ expect(await screen.findByText('Chưa có dữ liệu')).toBeTruthy();expect(screen.queryByText('31/10/2026')).toBeNull();
+});
+
 test('malformed profile fails closed while session management remains available',async()=>{
  signIn();state.get.mockResolvedValue({success:true,data:{id:31,email:profile.email,fullName:null,role:'ROLE_USER'}});render(<AccountView/>);
  await screen.findByRole('button',{name:'Thử lại'});expect(screen.queryByText(profile.email)).toBeNull();expect(screen.queryByLabelText('Mã lớp')).toBeNull();

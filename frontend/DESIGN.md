@@ -1,5 +1,33 @@
 # Design — Học tiếng Trung
 
+## V8.1 consolidation — owner duyệt 16/11/2026
+
+Owner đã duyệt visual/product scope của PR #66 ngày 16/11/2026: chỉ merge sau khi
+CI và provider isolation pass. Đây không phải phê duyệt triển khai production.
+Nó ưu tiên hơn các mục lịch sử bên dưới đối với những phần được nêu rõ.
+
+- Một giao diện tối cố định, không theo OS hoặc localStorage theme cũ. Giữ Be Vietnam
+  Pro cho UI và Noto Serif SC cho chữ Hán. Palette V8 dùng nền #120E10, thẻ #22191B,
+  chữ #F7F0E8, chữ phụ #CBBBAF, coral #FF8D73, jade #67D2A0 và gold #F3C16F.
+  Variants đã có trong source V8 được khai báo tại theme.css, dùng alias trong @theme.
+- Giữ sidebar, account, dashboard và artwork V8.1. Intro hoa chỉ một lần mỗi browsing
+  session, không nhận pointer/focus và tắt khi prefers-reduced-motion. Cảnh nền không
+  được che navigation, form hoặc tạo page overflow.
+- Heatmap 365 ngày lấy từ API theo ngày học của server, có overflow nội bộ trên mobile.
+  Nhãn thống kê phải đúng nghĩa dữ liệu. Không suy số bài luyện từ điểm ngữ pháp,
+  không dùng 0% để thay dữ liệu chưa có hoặc chưa đăng nhập.
+- Chọn trực tiếp HSK 1–6 như main. Không đưa quy tắc mở khóa 80% của nhánh V8 vào
+  candidate này. Mức học là lựa chọn điều hướng, publication/ownership vẫn do server giữ.
+- Giữ identity mascot và invariant Ấu Thú/Đại Hiệp của main. Không đổi tên nhân vật
+  hoặc thêm nội dung học thuật từ visual branch.
+- UI Refinement được dùng để đối chiếu, không chồng toàn bộ layout lên V8.1.
+  PR #62/#65 và các lớp auth, owner cancellation, streak/restoration, bootstrap giữ nguyên.
+- Streak bình thường thu gọn thành số ngày; lịch và lượt khôi phục vẫn có cho screen
+  reader. Banner khôi phục hiện khi server xác nhận đủ điều kiện. Ô HSK chọn cấp;
+  link chi tiết mở học liệu của cấp đã chọn. Bỏ companion dock ở ba trạm Pinyin,
+  Chữ Hán và Từ vựng; giữ companion trên dashboard.
+
+
 Hệ thị giác "mực trên giấy", đảo tối. Chữ Hán là nhân vật chính, chữ Việt là sàn đọc, Pinyin là chú thích.
 
 ## Owner 02/11/2026 — dashboard được duyệt

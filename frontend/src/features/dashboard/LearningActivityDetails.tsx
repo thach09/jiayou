@@ -1,12 +1,35 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../app/useAuth';
 import { useRequestScope } from '../../lib/hooks/useRequestScope';
 import { progressApi } from '../progress/api';
 import { flashcardApi } from '../flashcard/api';
 import type { HeatmapDay } from '../progress/types';
-const TRACKER_DAYS = 24 * 7;
-const CHART_DAYS = 30;
-const INTENSITY = [0.06, 0.22, 0.44, 0.66, 0.9];
+
+/** 1 full year = 365 days (fits backend @Max(366) validation) */
+const TRACKER_DAYS = 365;
+
+const CELL_LEVELS = [
+  'bg-heat-empty border border-heat-border/40',
+  'bg-cinnabar/22 border border-cinnabar/32',
+  'bg-cinnabar/48 border border-cinnabar/58',
+  'bg-cinnabar/74 border border-cinnabar/84',
+  'bg-cinnabar border border-heat-strong shadow-[0_0_6px_rgba(255,141,115,0.35)]',
+];
+
+const MONTH_NAMES = [
+  'Thg 1',
+  'Thg 2',
+  'Thg 3',
+  'Thg 4',
+  'Thg 5',
+  'Thg 6',
+  'Thg 7',
+  'Thg 8',
+  'Thg 9',
+  'Thg 10',
+  'Thg 11',
+  'Thg 12',
+];
 
 const formatNumber = (value: number) => value.toLocaleString('vi-VN');
 
@@ -32,7 +55,7 @@ const toLocalDate = (isoDate: unknown): Date => {
 const mondayFirstIndex = (date: Date) => (date.getDay() + 6) % 7;
 
 const Caption: React.FC<{ text: string }> = ({ text }) => (
-  <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-fg-38">
+  <div className="text-[11.5px] font-medium uppercase tracking-[0.12em] text-fg-60">
     {text}
   </div>
 );
@@ -41,22 +64,78 @@ const StatRow: React.FC<{ label: string; value: number | null }> = ({
   label,
   value,
 }) => (
-  <div className="flex items-baseline justify-between gap-4 py-3">
-    <span className="text-[13px] text-fg-60">{label}</span>
-    <b className="text-base font-semibold tabular-nums">
+  <div className="flex items-baseline justify-between gap-4 py-1.5">
+    <span className="text-[12.5px] text-fg-60">{label}</span>
+    <b className="text-[15px] font-semibold tabular-nums text-fg">
       {value === null ? '—' : formatNumber(value)}
     </b>
   </div>
 );
 
-/** Tracker: per-day ink density - the more you study, the brighter the cell */
+/** Tracker: 1-Year GitHub-Style Contribution Heatmap */
 const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
-  const cells = useMemo<(HeatmapDay | null)[]>(() => {
-    if (!days || days.length === 0 || !days[0]) {
-      return Array.from({ length: TRACKER_DAYS }, () => null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to the newest days (rightmost) on mobile / tablet
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
     }
-    const pad = mondayFirstIndex(toLocalDate(days[0].date));
-    return [...Array.from({ length: pad }, () => null), ...days];
+  }, [days]);
+
+  // Transform 365 days into 52-53 weekly columns (Monday -> Sunday)
+  const { weeks, monthLabels, totalYearItems } = useMemo(() => {
+    if (!days || days.length === 0 || !days[0]) {
+      return { weeks: [], monthLabels: [], totalYearItems: 0 };
+    }
+
+    const firstDate = toLocalDate(days[0].date);
+    const startPad = mondayFirstIndex(firstDate);
+
+    const weekList: (HeatmapDay | null)[][] = [];
+    let currentWeek: (HeatmapDay | null)[] = [];
+
+    // Pad beginning of first week so column starts on Monday
+    for (let p = 0; p < startPad; p++) {
+      currentWeek.push(null);
+    }
+
+    let total = 0;
+    for (const d of days) {
+      currentWeek.push(d);
+      total += d?.itemCount || 0;
+      if (currentWeek.length === 7) {
+        weekList.push(currentWeek);
+        currentWeek = [];
+      }
+    }
+
+    if (currentWeek.length > 0) {
+      while (currentWeek.length < 7) {
+        currentWeek.push(null);
+      }
+      weekList.push(currentWeek);
+    }
+
+    // Determine month labels aligned with week columns
+    const labels: { colIdx: number; label: string }[] = [];
+    let lastMonth = -1;
+
+    weekList.forEach((week, colIdx) => {
+      const firstValid = week.find((item) => item !== null);
+      if (!firstValid) return;
+      const m = toLocalDate(firstValid.date).getMonth();
+      if (m !== lastMonth) {
+        // Omit a short partial starting month rather than overlap the next label.
+        if (labels.length > 0 && colIdx - labels[labels.length - 1].colIdx < 3) {
+          labels.pop();
+        }
+        labels.push({ colIdx, label: MONTH_NAMES[m] });
+        lastMonth = m;
+      }
+    });
+
+    return { weeks: weekList, monthLabels: labels, totalYearItems: total };
   }, [days]);
 
   const level = useMemo(() => {
@@ -68,51 +147,102 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
 
   return (
     <div>
-      <div className="flex items-baseline justify-between gap-6">
-        <Caption text="Hoạt động" />
-        <div className="inline-flex items-center gap-1.5 text-[10.5px] text-fg-38">
-          ít
-          {INTENSITY.map((opacity) => (
+      {/* Header bar: Year summary on left, legend on right */}
+      <div className="flex items-center justify-between gap-4 flex-wrap pb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-[13px] font-medium text-fg">
+            {formatNumber(totalYearItems)} lượt học trong năm qua
+          </span>
+        </div>
+        <div className="inline-flex items-center gap-1.5 text-[10.5px] text-fg-60">
+          <span>Ít</span>
+          {CELL_LEVELS.map((cls, idx) => (
             <i
-              key={opacity}
-              className="inline-block h-2 w-2 bg-fg"
-              style={{ opacity }}
+              key={idx}
+              className={`inline-block h-2.5 w-2.5 rounded-[2px] ${cls}`}
+              aria-hidden="true"
             />
           ))}
-          nhiều
+          <span>Nhiều</span>
         </div>
       </div>
-      <div className="mt-[22px] flex gap-3">
+
+      {/* GitHub-Style 53-Week Unified Grid */}
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto pb-2 [scrollbar-width:thin] select-none"
+      >
         <div
-          aria-hidden="true"
-          className="grid grid-rows-[repeat(7,minmax(0,1fr))] gap-[3px] text-[9px] leading-none text-fg-38"
+          className="inline-grid gap-[2.5px] items-center"
+          style={{
+            gridTemplateColumns: `22px repeat(${weeks.length || 53}, 10.5px)`,
+            gridTemplateRows: `18px repeat(7, 10.5px)`,
+          }}
         >
-          <span className="self-center" style={{ gridRow: 1 }}>
+          {/* Row 1: Month labels */}
+          {monthLabels.map(({ colIdx, label }) => (
+            <span
+              key={colIdx}
+              style={{ gridColumn: colIdx + 2, gridRow: 1 }}
+              className="text-[9.5px] font-normal text-fg-60/70 whitespace-nowrap self-end pb-0.5 leading-none"
+            >
+              {label}
+            </span>
+          ))}
+
+          {/* Column 1: Alternating day labels (T2 = Mon, T4 = Wed, T6 = Fri) */}
+          <span
+            style={{ gridColumn: 1, gridRow: 2 }}
+            className="text-[9px] text-fg-60/50 pr-1 text-right self-center leading-none"
+            aria-hidden="true"
+          >
             T2
           </span>
-          <span className="self-center" style={{ gridRow: 3 }}>
+          <span
+            style={{ gridColumn: 1, gridRow: 4 }}
+            className="text-[9px] text-fg-60/50 pr-1 text-right self-center leading-none"
+            aria-hidden="true"
+          >
             T4
           </span>
-          <span className="self-center" style={{ gridRow: 5 }}>
+          <span
+            style={{ gridColumn: 1, gridRow: 6 }}
+            className="text-[9px] text-fg-60/50 pr-1 text-right self-center leading-none"
+            aria-hidden="true"
+          >
             T6
           </span>
-        </div>
-        <div
-          aria-hidden="true"
-          className="grid min-w-0 flex-1 auto-cols-fr grid-flow-col grid-rows-[repeat(7,minmax(0,1fr))] gap-[3px]"
-        >
-          {cells.map((cell, index) => (
-            <i
-              key={index}
-              className={`block aspect-square w-full bg-fg ${cell?.restored ? 'protected-heat-cell' : ''}`}
-              title={
-                cell
-                  ? `${cell.date}: ${cell.itemCount} lượt học${cell.restored ? ' · Ngày bảo vệ chuỗi' : ''}`
-                  : undefined
+
+          {/* Rows 2-8, Columns 2-(weeks+1): 365 Days Cells */}
+          {weeks.map((week, wIdx) =>
+            week.map((cell, dIdx) => {
+              if (!cell) {
+                return (
+                  <div
+                    key={`${wIdx}-${dIdx}`}
+                    style={{ gridColumn: wIdx + 2, gridRow: dIdx + 2 }}
+                    className="w-[10.5px] h-[10.5px]"
+                  />
+                );
               }
-              style={{ opacity: INTENSITY[cell ? level(cell.itemCount) : 0] }}
-            />
-          ))}
+              const lvl = level(cell.itemCount);
+              const isProtected = cell.restored;
+              return (
+                <i
+                  key={`${wIdx}-${dIdx}`}
+                  style={{ gridColumn: wIdx + 2, gridRow: dIdx + 2 }}
+                  className={`block w-[10.5px] h-[10.5px] rounded-[2px] transition-transform hover:scale-150 hover:z-20 cursor-pointer ${
+                    isProtected
+                      ? 'border border-dashed border-gold-soft bg-gold-soft/25'
+                      : CELL_LEVELS[lvl]
+                  }`}
+                  title={`${cell.date}: ${cell.itemCount} lượt học${
+                    isProtected ? ' · Ngày bảo vệ chuỗi' : ''
+                  }`}
+                />
+              );
+            }),
+          )}
         </div>
       </div>
     </div>
@@ -124,62 +254,15 @@ const WeekStats: React.FC<{
   correct: number | null;
   learned: number | null;
 }> = ({ items, correct, learned }) => (
-  <div className="flex h-full flex-col">
+  <div className="flex h-full flex-col justify-between">
     <Caption text="7 ngày gần nhất" />
-    <div className="mt-[22px] flex flex-1 flex-col justify-between">
+    <div className="mt-2.5 flex flex-1 flex-col justify-between divide-y divide-rule-muted/40">
       <StatRow label="Lượt học" value={items} />
       <StatRow label="Trả lời đúng" value={correct} />
-      <StatRow label="Thẻ đã ôn nhớ (tổng)" value={learned} />
+      <StatRow label="Từ đã ôn nhớ (tổng)" value={learned} />
     </div>
   </div>
 );
-
-/** 30-day ink bar chart - today is the brightest, the last 7 days are brighter than the rest */
-const ActivityChart: React.FC<{
-  days: HeatmapDay[];
-  metric: 'itemCount' | 'correctCount';
-  label: string;
-}> = ({ days, metric, label }) => {
-  const values = useMemo(
-    () => (Array.isArray(days) ? days.map((day) => day?.[metric] || 0) : []),
-    [days, metric],
-  );
-  const max = Math.max(1, ...values);
-  const total = values.reduce((sum, value) => sum + value, 0);
-
-  return (
-    <div>
-      <div className="flex items-baseline justify-between gap-6">
-        <Caption text={label} />
-        <div className="text-[10.5px] text-fg-38">
-          {values.length === 0 ? '—' : `${formatNumber(total)} · 30 ngày`}
-        </div>
-      </div>
-      <div className="mt-[22px] flex h-[88px] items-end justify-between border-b border-rule">
-        {values.map((value, index) => {
-          const opacity =
-            index === values.length - 1
-              ? 'opacity-[0.95]'
-              : index >= values.length - 7
-                ? 'opacity-[0.62]'
-                : 'opacity-[0.38]';
-          const height =
-            value <= 0
-              ? '2px'
-              : `${Math.max(6, Math.round((value / max) * 100))}%`;
-          return (
-            <i
-              key={index}
-              aria-hidden="true"
-              className={`block w-[min(12px,3%)] bg-fg ${opacity}`}
-              style={{ height }}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-};
 
 export function LearningActivityDetails() {
   const { user } = useAuth();
@@ -188,6 +271,7 @@ export function LearningActivityDetails() {
   const [days, setDays] = useState<HeatmapDay[] | null>(null),
     [learned, setLearned] = useState<number | null>(null),
     [error, setError] = useState('');
+
   const load = useCallback(async () => {
     if (owner === undefined) return;
     const res = await run('activity-details', (signal) =>
@@ -205,42 +289,46 @@ export function LearningActivityDetails() {
       );
     } else setError('Chưa tải được hoạt động học.');
   }, [owner, run]);
+
   useEffect(() => {
-    // oxlint-disable-next-line react/set-state-in-effect -- fetch owner-scoped activity only when this disclosure mounts.
+    // oxlint-disable-next-line react/set-state-in-effect -- fetch owner-scoped activity only when mounted.
     void load();
   }, [load]);
+
   if (error)
     return (
-      <p role="status" className="dashboard-subtle mt-4">
+      <p role="status" className="dashboard-subtle text-xs">
         {error}{' '}
-        <button className="underline" onClick={() => void load()}>
+        <button className="underline text-cinnabar" onClick={() => void load()}>
           Thử lại
         </button>
       </p>
     );
+
   if (!days)
     return (
-      <p role="status" className="dashboard-subtle mt-4">
+      <p role="status" className="dashboard-subtle text-xs">
         Đang tải hoạt động…
       </p>
     );
-  const recent = days.slice(-7),
-    chart = days.slice(-CHART_DAYS);
+
+  const recent = days.slice(-7);
+
   return (
-    <div className="mt-6 grid gap-6 md:grid-cols-2">
-      <section className="min-w-0">
+    <div className="grid gap-6 xl:grid-cols-[1fr_220px] items-start">
+      <section className="min-w-0" aria-label="Bản đồ nhiệt hoạt động học 1 năm">
         <Tracker days={days} />
-        <p className="dashboard-subtle mt-4">
-          Nét đứt: ngày bảo vệ chuỗi, không cộng hoạt động học hay EXP.
-        </p>
       </section>
-      <WeekStats
-        items={recent.reduce((n, d) => n + d.itemCount, 0)}
-        correct={recent.reduce((n, d) => n + d.correctCount, 0)}
-        learned={learned}
-      />
-      <ActivityChart days={chart} metric="itemCount" label="Lượt học" />
-      <ActivityChart days={chart} metric="correctCount" label="Trả lời đúng" />
+      <section
+        className="min-w-0 xl:border-l xl:border-rule-muted/40 xl:pl-6"
+        aria-label="Thống kê 7 ngày gần nhất"
+      >
+        <WeekStats
+          items={recent.reduce((n, d) => n + d.itemCount, 0)}
+          correct={recent.reduce((n, d) => n + d.correctCount, 0)}
+          learned={learned}
+        />
+      </section>
     </div>
   );
 }

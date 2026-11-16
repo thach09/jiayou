@@ -1,41 +1,21 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, test, vi } from 'vitest';
-import { ThemeToggle } from '../../src/components/ThemeToggle';
 import { initializeTheme } from '../../src/app/useTheme';
 import { OrientalDecorBackground } from '../../src/components/OrientalDecorBackground';
 import { SentenceOrderExercise } from '../../src/features/grammar/SentenceOrderExercise';
 
 afterEach(() => { document.documentElement.removeAttribute('data-theme'); });
-test('theme toggles update both controls and survive initialization', () => {
+test('official dark theme is enforced and survives initialization regardless of stale storage', () => {
   localStorage.setItem('chinese-learning-theme', 'light');
   initializeTheme();
-  render(<><ThemeToggle /><ThemeToggle /></>);
-  expect(document.documentElement.dataset.theme).toBe('light');
-  const switches = screen.getAllByRole('switch');
-  expect(switches).toHaveLength(2);
-  expect(switches[0].getAttribute('aria-checked')).toBe('false');
-  expect(switches[1].getAttribute('aria-checked')).toBe('false');
-
-  fireEvent.click(switches[0]);
   expect(document.documentElement.dataset.theme).toBe('dark');
-  expect(switches[0].getAttribute('aria-checked')).toBe('true');
-  expect(switches[1].getAttribute('aria-checked')).toBe('true');
-  expect(localStorage.getItem('chinese-learning-theme')).toBe('dark');
   expect(initializeTheme()).toBe('dark');
 });
-test('theme reacts to another tab and works without local storage', () => {
-  initializeTheme(); render(<ThemeToggle />);
+test('official dark theme remains dark when storage event fires', () => {
+  initializeTheme();
   localStorage.setItem('chinese-learning-theme', 'light');
   act(() => window.dispatchEvent(new StorageEvent('storage', { key: 'chinese-learning-theme' })));
-  const toggle = screen.getByRole('switch');
-  expect(toggle.getAttribute('aria-checked')).toBe('false');
-  expect(toggle.getAttribute('aria-label')).toMatch(/sáng|Giấy Tuyên/i);
-
-  const blocked = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked'); });
-  fireEvent.click(toggle);
   expect(document.documentElement.dataset.theme).toBe('dark');
-  expect(toggle.getAttribute('aria-checked')).toBe('true');
-  blocked.mockRestore();
 });
 test('ceiling lanterns disappear after 20px and return at the top', () => {
   vi.stubGlobal('scrollY', 0);

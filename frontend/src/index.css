@@ -42,6 +42,24 @@
   --color-rank-4: var(--paper-jade);
   --color-rank-5: var(--paper-jade);
   --color-on-accent: var(--paper-on-accent);
+  --color-gold-soft: var(--paper-gold-soft);
+  --color-rule-muted: var(--paper-rule-muted);
+  --color-fg-subtle: var(--paper-subtle);
+  --color-cinnabar-hover: var(--paper-red-hover);
+  --color-card-raised: var(--paper-card-raised);
+  --color-jade-strong: var(--paper-jade-strong);
+  --color-jade-light: var(--paper-jade-light);
+  --color-fg-secondary: var(--paper-secondary);
+  --color-cinnabar-soft: var(--paper-red-soft);
+  --color-heat-empty: var(--paper-heat-empty);
+  --color-heat-border: var(--paper-heat-border);
+  --color-heat-strong: var(--paper-heat-strong);
+  --color-sidebar: var(--paper-sidebar);
+  --color-sidebar-hover: var(--paper-sidebar-hover);
+  --color-companion-border: var(--paper-companion-border);
+  --color-companion-jade: var(--paper-companion-jade);
+  --color-companion-gold: var(--paper-companion-gold);
+  --color-companion-ink: var(--paper-companion-ink);
   --color-transparent: transparent;
   --color-current: currentColor;
 
@@ -63,6 +81,7 @@
   --animate-pet-float: pet-float 2.4s ease-in-out infinite;
   --animate-lantern-sway: lantern-sway 6s ease-in-out infinite alternate;
   --animate-lantern-glow: lantern-glow 3.5s ease-in-out infinite alternate;
+  --animate-kongming-float: kongming-float 7s ease-in-out infinite alternate;
 
   @keyframes caret-blink {
     0%, 49% { opacity: 1; }
@@ -163,10 +182,19 @@
 
   @keyframes lantern-sway {
     0% {
-      transform: translateY(0) rotate(-1.5deg);
+      transform: rotate(-2.2deg);
     }
     100% {
-      transform: translateY(-14px) rotate(1.8deg);
+      transform: rotate(2.2deg);
+    }
+  }
+
+  @keyframes kongming-float {
+    0%, 100% {
+      transform: translateY(0) rotate(-1.2deg);
+    }
+    50% {
+      transform: translateY(-8px) rotate(1.2deg);
     }
   }
 
@@ -178,11 +206,29 @@
       filter: drop-shadow(0 0 22px rgba(245, 158, 11, 0.75));
     }
   }
+
+  @keyframes jiayou-petal-fall {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 0, 0) rotate(var(--petal-rot-start, -20deg)) scale(0.85);
+    }
+    12% {
+      opacity: 0.9;
+    }
+    75% {
+      opacity: 0.85;
+    }
+    100% {
+      opacity: 0;
+      transform: translate3d(var(--petal-drift-x, 30px), 82vh, 0) rotate(var(--petal-rot-end, 180deg)) scale(1);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-lantern-sway,
-  .animate-lantern-glow {
+  .animate-lantern-glow,
+  .animate-kongming-float {
     animation: none !important;
     transform: none !important;
   }
