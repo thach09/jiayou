@@ -51,6 +51,11 @@ class ReleaseSafetyTest(unittest.TestCase):
   c=self.config();r=object.__new__(module.Release);r.c=c;r.d=Mock()
   with self.assertRaisesRegex(module.ReleaseError,'another independent'):r.restore(self.root/'absent.dump',c.database)
   r.d.assert_not_called()
+ def test_incomplete_rollback_manifest_rejected_before_compose_mutation(self):
+  c=self.config();r=object.__new__(module.Release);r.c=c;r.identity=Mock();r.compose=Mock();r.image_receipt=Mock(return_value={'images':{'backend':{'id':'one'},'frontend':{'id':'two'}}})
+  manifest=self.root/'rollback.json';module.write_json(manifest,{'targetId':c.target,'project':c.project,'database':c.database,'contract':1,'schemaVersion':2,'releaseSha':'b'*40,'images':{'backend':{'id':'one'}}})
+  with self.assertRaisesRegex(module.ReleaseError,'Complete rollback'):r.rollback(manifest)
+  r.compose.assert_not_called();self.assertEqual(c.sha,'a'*40)
  def test_peer_config_is_idempotent_and_can_be_updated_after_read_only_render(self):
   c=self.config();r=object.__new__(module.Release);r.c=c;r.prepare_config();before=(c.config_dir/'trusted-ingress.conf').read_bytes();r.prepare_config();self.assertEqual(before,(c.config_dir/'trusted-ingress.conf').read_bytes())
   c.peers=['172.30.240.12/32'];r.prepare_config();self.assertIn('172.30.240.12/32',(c.config_dir/'trusted-ingress.conf').read_text())
