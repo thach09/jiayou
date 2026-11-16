@@ -1,23 +1,41 @@
 /* Visual contract: DESIGN.md, approved Xuan paper / inkstone palettes. */
 :root, [data-theme="dark"] {
-  --paper-brand-surface: #1C1B19;
-  --paper-brand-ink: #F5F2EB;
+  --paper-brand-surface: #181214;
+  --paper-brand-ink: #F7F0E8;
+  --paper-gold-soft: #E8B15C;
+  --paper-rule-muted: #49403D;
+  --paper-subtle: #9E8F86;
+  --paper-red-hover: #FFA38D;
+  --paper-card-raised: #24201F;
+  --paper-jade-strong: #4FC28D;
+  --paper-jade-light: #91E4C0;
+  --paper-secondary: #B9B0AA;
+  --paper-red-soft: #FF8C74;
+  --paper-heat-empty: #1C1416;
+  --paper-heat-border: #3A282D;
+  --paper-heat-strong: #FFB48C;
+  --paper-sidebar: #1E1718;
+  --paper-sidebar-hover: #251D1F;
+  --paper-companion-border: #2E2C28;
+  --paper-companion-jade: #7DDAB0;
+  --paper-companion-gold: #E9BC78;
+  --paper-companion-ink: #F5F0E9;
   color-scheme: dark;
-  --paper-bg: #161413;
-  --paper-card: #24201F;
-  --paper-ink: #F5F0E9;
-  --paper-muted: #B9B0AA;
-  --paper-rule: #49403D;
+  --paper-bg: #120E10;
+  --paper-card: #22191B;
+  --paper-ink: #F7F0E8;
+  --paper-muted: #CBBBAF;
+  --paper-rule: rgba(255, 180, 140, 0.18);
   --paper-strong: #82736B;
-  --paper-red: #FF8C74;
-  --paper-red-text: #FF9B86;
-  --paper-jade: #7DDAB0;
-  --paper-jade-text: #91E4C0;
-  --paper-gold: #E9BC78;
-  --paper-gold-text: #E9BC78;
-  --paper-on-accent: #161413;
+  --paper-red: #FF8D73;
+  --paper-red-text: #FF9B7A;
+  --paper-jade: #67D2A0;
+  --paper-jade-text: #89E0B8;
+  --paper-gold: #F3C16F;
+  --paper-gold-text: #FFCC7D;
+  --paper-on-accent: #120E10;
   --paper-tint: color-mix(in srgb, var(--paper-ink) 5%, transparent);
-  --paper-scrim: rgb(18 18 17 / 80%);
+  --paper-scrim: rgb(18 14 16 / 80%);
 }
 [data-theme="light"] {
   color-scheme: light;
@@ -36,8 +54,8 @@
   --paper-on-accent: #FFFDF9;
 }
 @layer base {
-  body { background: var(--paper-bg); color: var(--paper-ink); }
-  input, textarea, select { color: var(--paper-ink); accent-color: var(--paper-red); }
+  body { background: var(--paper-bg); color: var(--paper-ink); color-scheme: dark; }
+  input, textarea, select { color: var(--paper-ink); accent-color: var(--paper-red); color-scheme: dark; }
   input::placeholder, textarea::placeholder { color: var(--paper-muted); opacity: 1; }
   :focus-visible { outline: 1px solid var(--paper-muted); outline-offset: 3px; }
 }

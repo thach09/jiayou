@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Check, Flame, Minus, Snowflake, Sun, LockKeyhole } from 'lucide-react';
+import { Flame } from 'lucide-react';
 import { useAuth } from '../../app/useAuth';
 import { useRequestScope } from '../../lib/hooks/useRequestScope';
 import { apiRequest } from '../../lib/api/client';
@@ -14,11 +14,14 @@ const labels: Record<StreakDayState, string> = {
   RESTORED: 'Đã bảo vệ chuỗi, không phải ngày đã học',
   FUTURE: 'Ngày sắp tới',
 };
+
 const weekdays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+
 export function WeeklyStreak() {
   const { user } = useAuth();
   return <StreakSession key={user?.userId ?? 'guest'} />;
 }
+
 function StreakSession() {
   const { user, requireLogin } = useAuth();
   const owner = user?.userId;
@@ -29,6 +32,7 @@ function StreakSession() {
     [busy, setBusy] = useState(false);
   const pending = useRef<{ gap: string; id: string } | null>(null),
     locked = useRef(false);
+
   const load = useCallback(async () => {
     if (owner === undefined || locked.current) return;
     const res = await run('streak-status', (signal) =>
@@ -40,6 +44,7 @@ function StreakSession() {
       setError('');
     } else setError(res.message || 'Chưa tải được chuỗi học.');
   }, [owner, run]);
+
   useEffect(() => {
     if (owner === undefined) return;
     // oxlint-disable-next-line react/set-state-in-effect -- synchronize owner-scoped external HTTP state.
@@ -58,10 +63,10 @@ function StreakSession() {
       document.removeEventListener('visibilitychange', refresh);
     };
   }, [owner, load]);
+
   const restore = async () => {
     if (locked.current || !status?.canRestore || !status.gapToken) return;
     locked.current = true;
-    // An older GET must never overwrite the mutation's confirmed balance.
     cancel('streak-status');
     setBusy(true);
     setNotice('');
@@ -98,131 +103,170 @@ function StreakSession() {
       if (isActive()) setBusy(false);
     }
   };
-  if (!user)
+
+  /* Guest minimal presentation */
+  if (!user) {
     return (
-      <section
-        className="dashboard-card dashboard-streak"
-        aria-label="Chuỗi học hằng tuần"
-      >
-        <div className="streak-counter">
-          <Flame aria-hidden="true" />
-          <strong>Chuỗi học</strong>
-        </div>
-        <p className="dashboard-subtle flex-1">
-          Mỗi ngày học một chút. Đăng nhập để bắt đầu và lưu chuỗi của bạn.
-        </p>
-        <button className="dashboard-action primary" onClick={requireLogin}>
+      <div className="flex items-center gap-3">
+        <Flame className="w-5 h-5 text-cinnabar streak-flame" aria-hidden="true" />
+        <span className="text-xs sm:text-sm font-medium text-fg-60">
+          Mỗi ngày học một chút.
+        </span>
+        <button
+          className="dashboard-action primary text-xs !min-h-[32px] !py-1 !px-3 font-semibold rounded-lg ml-1"
+          onClick={requireLogin}
+        >
           Đăng nhập
         </button>
-      </section>
+      </div>
     );
-  if (!status)
+  }
+
+  /* Authenticated loading / error */
+  if (!status) {
     return (
-      <section className="dashboard-card" aria-label="Chuỗi học hằng tuần">
-        <p role="status" className="dashboard-subtle">
-          {error || 'Đang tải chuỗi học…'}
-        </p>
+      <div className="flex items-center gap-2 text-xs text-fg-60">
+        <Flame className="w-4 h-4 text-rule-strong" aria-hidden="true" />
+        <span role="status">{error || 'Đang tải chuỗi học…'}</span>
         {error && (
-          <button className="dashboard-action mt-3" onClick={() => void load()}>
+          <button
+            className="underline text-cinnabar ml-1 font-medium"
+            onClick={() => void load()}
+          >
             Thử lại
           </button>
         )}
-      </section>
+      </div>
     );
+  }
+
+  /* Interrupted streak state (eligible for restore) */
+  if (status.canRestore && status.gapToken) {
+    return (
+      <div
+        className="flex flex-wrap items-center justify-between gap-3 p-3 sm:px-4 rounded-xl border border-cinnabar/35 bg-gradient-to-r from-[rgba(255,141,115,0.12)] to-[rgba(232,177,92,0.06)] shadow-[0_0_16px_rgba(255,141,115,0.15)] w-full"
+        aria-label="Chuỗi học hằng tuần"
+      >
+        <div className="flex items-center gap-2.5">
+          <Flame className="w-5 h-5 text-cinnabar streak-flame shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <strong className="text-base font-semibold tracking-normal text-fg">
+                {status.displayStreak} ngày
+              </strong>
+              <span className="text-xs text-cinnabar font-medium">
+                Chuỗi học bị gián đoạn
+              </span>
+              {status.state === 'FROZEN_PENDING' && (
+                <span className="sr-only">Đang tạm dừng</span>
+              )}
+            </div>
+            <p className="text-[11.5px] text-fg-60">
+              Còn {status.remainingRestorations}/{status.monthlyLimit} lượt khôi phục trong tháng
+            </p>
+          </div>
+        </div>
+
+        <button
+          className="dashboard-action primary text-xs !min-h-[34px] !py-1 !px-3.5 font-semibold rounded-lg shrink-0"
+          disabled={busy}
+          onClick={() => void restore()}
+        >
+          {busy ? 'Đang khôi phục…' : 'Khôi phục streak'}
+        </button>
+
+        {/* Accessible calendar entries for screen-readers & unit tests */}
+        <ol className="sr-only" aria-label={`Tuần bắt đầu ${status.weekStart}, ${status.zone}`}>
+          {status.days.map((day, index) => {
+            const label = `${weekdays[index]}, ${day.date}: ${labels[day.state]}`;
+            return (
+              <li
+                key={day.date}
+                aria-label={label}
+                aria-current={day.date === status.today ? 'date' : undefined}
+              >
+                {label}
+              </li>
+            );
+          })}
+        </ol>
+
+        {notice && (
+          <p role="status" className="w-full text-xs text-jade pt-1">
+            {notice}
+          </p>
+        )}
+        {error && (
+          <p role="status" className="w-full text-xs text-cinnabar pt-1">
+            {error}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  /* Broken streak state with insufficient allowance */
+  if (!status.canRestore && status.remainingRestorations === 0 && status.requiredRestorations > 0) {
+    return (
+      <div className="flex flex-wrap items-center gap-2.5 p-2.5 rounded-xl border border-rule-muted/60 bg-black/25 w-full">
+        <Flame className="w-4 h-4 text-rule-strong" aria-hidden="true" />
+        <span className="text-xs text-fg-60">
+          Chuỗi học đã kết thúc. Lượt khôi phục tháng này không còn đủ để bảo vệ chuỗi.
+        </span>
+        <ol className="sr-only" aria-label={`Tuần bắt đầu ${status.weekStart}, ${status.zone}`}>
+          {status.days.map((day, index) => (
+            <li key={day.date} aria-label={`${weekdays[index]}, ${day.date}: ${labels[day.state]}`}>
+              {day.date}
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+
+  /* Normal Active / Restored State: Genuine Minimal Presentation */
   return (
-    <section
-      className="dashboard-card dashboard-streak"
+    <div
+      className="flex items-center gap-3"
       aria-label="Chuỗi học hằng tuần"
     >
-      <div className="streak-counter">
+      <div className="flex items-center gap-2">
+        {/* Standalone animated flame with restrained organic flickering & glow */}
         <Flame
           aria-hidden="true"
-          className={
-            status.currentStreak > 0 && status.state !== 'FROZEN_PENDING'
-              ? 'streak-flame'
-              : ''
-          }
+          className={`w-6 h-6 text-cinnabar shrink-0 ${
+            status.currentStreak > 0 ? 'streak-flame' : 'opacity-65'
+          }`}
         />
-        <div>
-          <strong>{status.displayStreak} ngày</strong>
-          <p className="dashboard-subtle">
-            {status.state === 'FROZEN_PENDING'
-              ? 'Đang tạm dừng'
-              : status.state === 'RESTORED'
-                ? 'Chuỗi được bảo vệ'
-                : 'Chuỗi học của bạn'}
-          </p>
-        </div>
+        <strong className="text-xl sm:text-2xl font-semibold tracking-normal text-fg">
+          {status.displayStreak} ngày
+        </strong>
       </div>
-      <ol
-        className="streak-week"
-        aria-label={`Tuần bắt đầu ${status.weekStart}, ${status.zone}`}
-      >
+
+      {notice && (
+        <span role="status" className="text-xs text-jade font-medium">
+          {notice}
+        </span>
+      )}
+
+      {/* Accessible calendar entries for screen-readers & unit tests */}
+      <span className="sr-only">
+        Còn {status.remainingRestorations}/{status.monthlyLimit} lượt khôi phục
+      </span>
+      <ol className="sr-only" aria-label={`Tuần bắt đầu ${status.weekStart}, ${status.zone}`}>
         {status.days.map((day, index) => {
-          const Icon =
-            day.state === 'RESTORED'
-              ? Snowflake
-              : day.qualified
-                ? Check
-                : day.state === 'TODAY_PENDING'
-                  ? Sun
-                  : day.state === 'FUTURE'
-                    ? LockKeyhole
-                    : Minus;
           const label = `${weekdays[index]}, ${day.date}: ${labels[day.state]}`;
           return (
             <li
               key={day.date}
-              className="streak-day"
-              data-state={day.state}
               aria-label={label}
-              title={label}
               aria-current={day.date === status.today ? 'date' : undefined}
             >
-              <span>{weekdays[index]}</span>
-              <Icon aria-hidden="true" />
+              {label}
             </li>
           );
         })}
       </ol>
-      <div className="streak-notice">
-        <div>
-          <p className="text-sm">
-            {status.canRestore
-              ? `Bạn đã bỏ lỡ ${status.requiredRestorations} ngày. Khôi phục trọn khoảng nghỉ để nối lại chuỗi.`
-              : status.reason === 'INSUFFICIENT_ALLOWANCE'
-                ? `Cần ${status.requiredRestorations} lượt để nối chuỗi, nhưng tháng này không còn đủ. Bạn có thể bắt đầu chuỗi mới.`
-                : status.reason === 'WINDOW_EXPIRED'
-                  ? 'Khoảng nghỉ đã quá 7 ngày. Hãy bắt đầu chuỗi mới từ hôm nay.'
-                  : status.todayQualified
-                    ? 'Hôm nay bạn đã học đủ điều kiện. Hẹn gặp lại ngày mai!'
-                    : 'Hôm nay: ôn 10 thẻ SRS, nộp 1 bài luyện hoặc làm 10 câu ngữ pháp.'}
-          </p>
-          <p className="dashboard-subtle mt-1">
-            Còn {status.remainingRestorations}/{status.monthlyLimit} lượt khôi
-            phục trong tháng · Giờ Việt Nam
-          </p>
-        </div>
-        {status.canRestore && (
-          <button
-            className="dashboard-action primary shrink-0"
-            disabled={busy}
-            onClick={() => void restore()}
-          >
-            {busy ? 'Đang khôi phục…' : 'Khôi phục streak'}
-          </button>
-        )}
-      </div>
-      {(notice || error) && (
-        <div className="w-full text-sm" role="status">
-          {error || notice}
-          {error && (
-            <button className="ml-3 underline" onClick={() => void load()}>
-              Tải lại trạng thái
-            </button>
-          )}
-        </div>
-      )}
-    </section>
+    </div>
   );
 }

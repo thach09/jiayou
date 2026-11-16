@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, expect, test, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { DashboardView } from '../../src/features/dashboard/DashboardView';
@@ -95,8 +95,41 @@ test('personal greeting uses the owner-checked server profile', async () => {
   mount();
   expect(
     await screen.findByRole('heading', {
-      name: 'Chào mừng trở lại, Tên từ máy chủ! 👋',
+      name: 'Chào mừng trở lại, Tên từ máy chủ',
     }),
   ).toBeTruthy();
   expect(screen.queryByText('Cached must not appear')).toBeNull();
+});
+
+test('guest progress stays unknown instead of presenting zero personal progress', () => {
+  mount();
+  expect(screen.queryByText('0%')).toBeNull();
+  expect(screen.getByText('Chưa có dữ liệu')).toBeInTheDocument();
+  expect(screen.queryByText('bài đã học')).toBeNull();
+  expect(screen.queryByText('bài luyện tập')).toBeNull();
+});
+
+test('server grammar counts are labelled as grammar points without inferred exercise totals', async () => {
+  mocks.user = { userId: 1 };
+  const profile = { id: 1, fullName: 'Học viên QA', email: 'fixture@jiayou.test', role: 'ROLE_USER' };
+  mocks.api.mockImplementation(async (path: string) => ({
+    success: true,
+    data: path === '/users/me' ? profile : {
+      levels: [{ level: 1, learnedWords: 5, totalWords: 10, practicedGrammar: 3, totalGrammar: 4 }],
+      quests: [], wallet: { bamboo: 0, affectionExp: 0 },
+    },
+  }));
+  mount();
+  const grammar = await screen.findByText('điểm ngữ pháp đã luyện');
+  expect(grammar.textContent).toContain('3');
+  expect(screen.queryByText('bài đã học')).toBeNull();
+  expect(screen.queryByText('bài luyện tập')).toBeNull();
+});
+
+test('HSK6 remains directly selectable without a new client-side progression gate', () => {
+  localStorage.setItem('heyganba_target_hsk', '1');
+  mount();
+  fireEvent.click(screen.getByRole('button', { name: 'HSK 6' }));
+  expect(localStorage.getItem('heyganba_target_hsk')).toBe('6');
+  expect(screen.getByRole('link', { name: 'Tiếp tục học' }).getAttribute('href')).toBe('/vocabulary?level=HSK6');
 });
