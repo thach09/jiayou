@@ -419,9 +419,14 @@ class Release:
         receipt = json.loads(Path(manifest).read_text())
         require(receipt.get('targetId') == self.c.target and receipt.get('project') == self.c.project and receipt.get('database') == self.c.database and receipt.get('contract') == 1 and receipt.get('schemaVersion') == 2, 'Rollback manifest target/schema mismatch')
         self.identity()
-        for component,value in receipt['images'].items():
-            d = json.loads(self.d('image','inspect',value['reference']).stdout)[0]
-            require(d['Id'] == value['id'] and d['Config']['Labels'].get('org.opencontainers.image.revision') == receipt['releaseSha'], 'Rollback image identity unavailable/mismatched')
+        require(bool(re.fullmatch(r'[a-f0-9]{40}', receipt.get('releaseSha',''))), 'Immutable rollback revision required')
+        original_sha = self.c.sha
+        try:
+            self.c.sha = receipt['releaseSha']
+            expected_images = self.image_receipt()['images']
+        finally:
+            self.c.sha = original_sha
+        require(receipt.get('images') == expected_images, 'Complete rollback image identities/component labels unavailable or mismatched')
         self.compose('up','-d','--wait','--wait-timeout','240','backend','frontend',env={'JIAYOU_RELEASE_SHA':receipt['releaseSha']},phase='Scoped application artifact rollback')
         # No database downgrade, restore or migration is performed by rollback.
         self.c.v['JIAYOU_RELEASE_SHA'] = receipt['releaseSha'];self.c.sha = receipt['releaseSha']
