@@ -139,7 +139,9 @@ server { listen 127.0.0.1:8081; location = /_edge_health { return 200 "ready\\n"
    connections=r.sql("SELECT count(*) FROM pg_stat_activity WHERE datname="+release.literal(c.database)+" AND usename="+release.literal(c.v['JIAYOU_DATABASE_USER'])+" AND client_addr="+release.literal(backend_ip)+"::inet;")
    release.require(int(connections)>0,'Actual API/database network binding not proven')
    now=dt.datetime.now(dt.timezone.utc);record={'purpose':'jiayou-disposable-auth-cookie-qa','mainSha':head,'webUrl':values['JIAYOU_PUBLIC_ORIGIN']+'/','apiUrl':values['JIAYOU_PUBLIC_ORIGIN']+'/api/v1','disposablePostgresql':True,'productionConnectionsExcluded':True,'verifiedBy':'Authorized rehearsal driver: inspected local engine, new project labels, resource IDs, image revisions and actual SQL connections','apiIdentity':backend['Id']+' image='+backend['Image'],'postgresIdentity':pg['Id']+' database='+c.database+' target='+target,'apiDatabaseBindingEvidence':'Runtime-role pg_stat_activity client_addr matches inspected backend endpoint on the new private database network; actual target marker/history verified','verifiedAt':now.isoformat(),'expiresAt':(now+dt.timedelta(hours=2)).isoformat()}
-   raw=json.dumps(record,indent=2).encode();(browser_output/'isolation.json').write_bytes(raw);os.chmod(browser_output/'isolation.json',0o444);values['JIAYOU_QA_ISOLATION_SHA256']=hashlib.sha256(raw).hexdigest();save_env()
+   raw=json.dumps(record,indent=2).encode();record_path=browser_output/'isolation.json'
+   if record_path.exists():os.chmod(record_path,0o600)
+   record_path.write_bytes(raw);os.chmod(record_path,0o444);values['JIAYOU_QA_ISOLATION_SHA256']=hashlib.sha256(raw).hexdigest();save_env()
    return {'actualDatasourceConnection':True,'newProject':project,'targetId':target,'recordSha256':values['JIAYOU_QA_ISOLATION_SHA256']}
   stage('independent API/PostgreSQL binding verification',isolation_record)
   def browser(mode,*extra):
