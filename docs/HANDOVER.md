@@ -31,9 +31,10 @@ runtime dependency audit. PostgreSQL and bootstrap rehearsals use disposable loo
 fixtures only; see the independent bootstrap guide and the dedicated CI job.
 
 The backend artifact is jiayou-backend-0.0.1-SNAPSHOT.jar. Frontend output is frontend/dist.
-Build images only from the final clean clone with its lockfile. Floating upstream image
-tags must be resolved to reviewed immutable digests in the operator's deployment manifest;
-this repository does not pretend to know the target laptop's hardware budget.
+Build images only from the final clean clone with its lockfile. The Dockerfiles and
+Compose pin upstream image digests; application images are labelled/tagged with the full
+source SHA and their actual local IDs recorded externally. The target laptop's hardware
+budgets remain operator inputs. Follow [the executable production procedure](Operations/PRODUCTION-DEPLOYMENT.md).
 
 ## Production profile and initialization
 
@@ -56,7 +57,7 @@ read-only manual CI check; it is not a first-bootstrap or live-schema authorizat
 The owner confirms Ganbarou already runs on the Arch laptop and Tailscale is administrative
 access. Keep Ganbarou untouched. Use a distinct Compose project, images, secrets, networks,
 DB instance/roles/history and external volume; never reuse its database or Compose project.
-No database or backend host port is published by the review template. The frontend is also
+No database or backend host port is published by the canonical stack. The frontend is also
 private until an explicitly approved ingress adapter is configured. No actual domain,
 host port, subnet, storage path or TLS proxy choice is embedded here.
 
@@ -65,16 +66,18 @@ Ganbarou and OS headroom. External volumes must be provisioned deliberately and 
 by rollout/rollback. Image/user/project names are Jiayou-scoped; avoid global container_name.
 The same physical laptop remains a common power/disk/kernel/network failure domain.
 
-docker-compose.yml is a review template, not an executable deployment authorization. It
-starts backend in validate mode and cannot silently bootstrap a new DB. Its PostgreSQL
-owner is separate from the application role; role creation/grants and initial bootstrap
-are separately approved operator steps. No entrypoint curriculum/admin script is installed.
-Provide required secrets via a protected external environment or service-scoped mounted
-config tree; never commit actual .env files. Docker local environment secrets remain visible
-to privileged daemon operators, so apply host permissions and use scoped secret files when
-the selected deployment tooling supports them.
+`deployment/jiayou.py` and docker-compose.yml provide the executable procedure, not host
+deployment authorization. Normal backend startup validates only. The one-shot bootstrap
+uses a migration owner distinct from both the cluster operator and runtime role, applies
+the existing pinned V1/V2 through the existing guard, and exits without an HTTP listener.
+No curriculum or admin seed is installed. Secrets are external service-scoped read-only
+files imported through Spring configtree, never plaintext environment values or build args.
+Protect their private parent directory and Docker access; local Compose secrets are bind
+mounts, not an encrypted vault. Do not commit actual .env files or recovery dumps.
 
-The frontend proxies same-origin /api/v1 and blocks public health/actuator routes. An outer
+The frontend proxies same-origin /api/v1. The existing aggregate `/api/v1/health` readiness
+response is allowed only through the trusted HTTPS ingress; actuator/detail routes remain
+blocked. An outer
 HTTPS proxy or optional Cloudflare Tunnel must sanitize forwarded headers and set trusted
 peer CIDRs, cookies, TLS/renewal, body/time limits and cache exclusions. Do not infer public
 connectivity from Tailscale. Discover the existing ingress before planning any additive route;
@@ -87,7 +90,7 @@ host, restore a failed disk or make an unapproved schema compatible.
 1. Select Jiayou's hostname and confirm shared-host capacity/ingress/storage ownership.
 2. Provision dedicated roles, external volume and immutable images/secrets in a separately
    authorized host task. Define an initial bootstrap invocation and switch to validate mode
-   afterward; the application is a long-running server, not a one-shot completion job.
+   afterward; the bootstrap command exits, while the application is a long-running server.
 3. Define RPO/RTO/retention; schedule encrypted logical backups plus required role metadata,
    retain copies off the laptop, monitor freshness/disk and test restore to a separate empty
    target. Verify migration checksums, row/FK integrity, content statuses and application reads.

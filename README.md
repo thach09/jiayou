@@ -11,6 +11,7 @@ its running services, database or Docker deployment.
 
 - [Dashboard and streak acceptance](docs/Operations/JIAYOU-DASHBOARD-STREAK-RELEASE.md): current UI, monthly recovery rules, screenshots and safe V1→V2 upgrade.
 - [Developer handover](docs/HANDOVER.md): builds, validation and operator prerequisites.
+- [Production deployment procedure](docs/Operations/PRODUCTION-DEPLOYMENT.md): immutable image builds, file secrets, explicit bootstrap, additive ingress, backup/restore and rollback.
 - [Independent bootstrap](docs/Operations/jiayou-independent-bootstrap.md).
 - [Shared-host checklist](docs/Operations/jiayou-shared-host-discovery.md).
 - [Design rules](frontend/DESIGN.md) and [product scope](PRODUCT.md).
@@ -37,11 +38,12 @@ not permission to initialize a new database.
 
 ## Production intent
 
-Anh H?ng will deploy an independent Jiayou stack on the existing Arch Linux laptop
-that also hosts Ganbarou. Jiayou's hostname is not selected. docker-compose.yml is a
-fail-closed review template: no host/public ports, separate external storage and secrets,
-measured resource budgets and validation-only backend startup. It creates no public route
-or initial schema. Do not run it on the host without a separately approved deployment.
+Anh Hưng will deploy an independent Jiayou stack on the existing Arch Linux laptop
+that also hosts Ganbarou. Jiayou's hostname is not selected. `deployment/jiayou.py` drives
+the private Compose stack with digest-pinned image bases, separate external storage/file
+secrets, three database roles and explicit resource budgets. First initialization is a
+target-bound one-shot command; ordinary application startup validates only. No public
+route is created. Actual host deployment still requires separate approval and acceptance.
 
 The default backend profile is jiayou-prod. Missing identity/authorization fails before
 initialization. Legacy prod/staging profiles and historical SQL remain for compatibility,

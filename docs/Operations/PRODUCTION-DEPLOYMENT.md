@@ -1,4 +1,4 @@
-# Jiayou production deployment ? executable contract v1
+# Jiayou production deployment - executable contract v1
 
 This is the canonical deployment path: `docker-compose.yml` plus `deployment/jiayou.py`.
 Build locally from one clean, immutable Git commit. No registry publishing is required.
