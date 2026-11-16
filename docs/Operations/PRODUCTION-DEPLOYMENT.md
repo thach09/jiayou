@@ -103,6 +103,19 @@ Nginx peer map accepts HTTPS assertions only from those physical peers; backend 
 only the reserved frontend IP/32. Host mismatches and untrusted API forwarding are rejected.
 Do not use /0 or broad catch-all proxy trust. Reserve the frontend IP across restarts.
 
+```sh
+python3 deployment/jiayou.py --env /absolute/external/release.env ingress
+```
+
+This renders `jiayou-nginx-location.conf` outside Git for review inside the separately
+approved HTTPS virtual host. It contains no listen/certificate/DNS/activation directives.
+A host Nginx must be able to reach the dedicated frontend bridge address; a containerized
+ingress needs a separately authorized attachment to Jiayou's dedicated application network.
+Never attach Jiayou to Ganbarou's application/database network merely for convenience.
+If the actual ingress is Caddy/Tunnel/another proxy, preserve the same exact host/header/
+peer/private-upstream contract and review that implementation before activation. QA uses
+an independent Nginx TLS edge to test this same forwarding pattern.
+
 Block `/api/v1/actuator`, health subpaths and `/_jiayou_health` at the public edge.
 Allow exactly `/api/v1/health`, the existing public aggregate readiness response used
 by the UI (UP/DOWN, service/version/time; no datasource/component details). Internal

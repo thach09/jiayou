@@ -229,6 +229,20 @@ class Release:
         require('JIAYOU_DATABASE_PASSWORD' not in data['services']['backend']['environment'], 'Runtime password must come from a scoped file secret')
         return data
 
+    def ingress_contract(self):
+        self.prepare_config()
+        path = self.c.config_dir/'jiayou-nginx-location.conf'
+        content = '# Review only: insert in the separately approved HTTPS virtual host for ' + self.c.v['JIAYOU_PUBLIC_HOST'] + '.\n'
+        content += '# No listen, certificate, DNS or activation directive is generated.\n'
+        content += 'location ~ ^/(api/v1/actuator|_jiayou_health)(/|$) { return 404; }\n'
+        content += 'location / {\n    proxy_pass http://' + self.c.v['JIAYOU_FRONTEND_IP'] + ':8080;\n'
+        content += '    proxy_set_header Host $http_host;\n    proxy_set_header X-Forwarded-Proto https;\n'
+        content += '    proxy_set_header X-Forwarded-For $remote_addr;\n    proxy_set_header Forwarded "";\n'
+        content += '    proxy_set_header X-Real-IP "";\n    proxy_set_header CF-Connecting-IP "";\n}\n'
+        if path.exists(): os.chmod(path,0o600)
+        path.write_text(content,encoding='utf-8');os.chmod(path,0o444)
+        return path
+
     def provision(self):
         self.c.secret_check()
         volume = self.c.v['JIAYOU_DATABASE_VOLUME']
@@ -419,7 +433,7 @@ class Release:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--env',required=True,type=Path)
-    parser.add_argument('command',choices=['secrets','check','build','provision','initialize','up','verify','backup','restore','restart','rollback','stop'])
+    parser.add_argument('command',choices=['secrets','check','ingress','build','provision','initialize','up','verify','backup','restore','restart','rollback','stop'])
     parser.add_argument('--ack-target')
     parser.add_argument('--backup',type=Path)
     parser.add_argument('--database')
@@ -430,8 +444,9 @@ def main():
         config = Config(args.env)
         if args.command == 'secrets':
             config.make_secrets();print('Independent secret files generated; values suppressed.');return
-        release = Release(config,verify_engine=args.command != 'check')
+        release = Release(config,verify_engine=args.command not in ('check','ingress'))
         if args.command == 'check': config.secret_check();release.prepare_config();release.contract()
+        elif args.command == 'ingress': release.ingress_contract()
         elif args.command == 'build': release.build()
         else:
             config.ack(args.ack_target)
