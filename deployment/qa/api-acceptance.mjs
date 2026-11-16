@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {randomBytes,createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
 import https from 'node:https';
+import http from 'node:http';
 import tls from 'node:tls';
 
 let phase='verified QA target preflight';
@@ -29,7 +30,9 @@ try {
  phase='real aggregate readiness and no public management';
  let r=await request('/health');assert.equal(r.response.status,200);assert.equal(r.data.data.status,'UP');assert.deepEqual(Object.keys(r.data.data).sort(),['service','status','timestamp','version']);checks++;
  r=await request('/actuator/health');assert.equal(r.response.status,404);checks++;
- const internal=await fetch('http://frontend:8080/api/v1/users/me',{headers:{Host:'jiayou-qa.test','X-Forwarded-Proto':'https'},signal:AbortSignal.timeout(10000)});assert.equal(internal.status,400);checks++;
+ phase='reject spoofed HTTPS from untrusted physical peer';
+ // Core HTTP preserves the explicit Host header; fetch normalizes it to its URL host.
+ const internalStatus=await new Promise((resolve,reject)=>{const req=http.get('http://frontend:8080/api/v1/users/me',{headers:{Host:'jiayou-qa.test','X-Forwarded-Proto':'https'},timeout:10000},response=>{response.resume();resolve(response.statusCode)});req.on('error',reject);req.on('timeout',()=>req.destroy(new Error('timeout')))});assert.equal(internalStatus,400);checks++;
  phase='cookie login and authorization';const a=await login(state.a),b=await login(state.b);
  r=await request('/users/me',{token:a.token});assert.equal(r.response.status,200);assert.equal(r.data.data.id,state.a.id);checks++;
  for(const prefix of ['/notebooks','/vocab/notebooks']){r=await request(prefix);assert.equal(r.response.status,401);checks++}
