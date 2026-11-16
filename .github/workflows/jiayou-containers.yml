@@ -13,14 +13,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate private Compose template without starting services
-        run: python3 scripts/validate-compose.py
+      - name: Validate production Compose and release safety contracts without starting services
+        run: |
+          python3 scripts/validate-compose.py
+          python3 -m unittest discover -s deployment/tests -v
       - name: Build local images without publishing
         run: |
-          docker build -t jiayou-backend:ci backend
-          docker build -t jiayou-frontend:ci frontend
+          epoch=$(git show -s --format=%ct HEAD)
+          docker build --build-arg RELEASE_SHA="$GITHUB_SHA" --build-arg SOURCE_DATE_EPOCH="$epoch" -t jiayou-backend:ci backend
+          docker build --build-arg RELEASE_SHA="$GITHUB_SHA" --build-arg VITE_AUTH_COOKIE=true -t jiayou-frontend:ci frontend
       - name: Validate Nginx configuration offline
-        run: docker run --rm --network none --add-host backend:127.0.0.1 jiayou-frontend:ci nginx -t
+        run: |
+          cat > "$RUNNER_TEMP/jiayou-trusted-ingress.conf" <<'CONF'
+          geo $realip_remote_addr $jiayou_trusted_ingress { default 0; 127.0.0.1/32 1; }
+          map "$jiayou_trusted_ingress:$http_x_forwarded_proto" $jiayou_forwarded_proto { default ""; "1:https" https; }
+          CONF
+          docker run --rm --read-only --tmpfs /tmp --network none --add-host backend:127.0.0.1 \
+            -e JIAYOU_PUBLIC_HOST=fixture.invalid \
+            --mount "type=bind,source=$RUNNER_TEMP/jiayou-trusted-ingress.conf,target=/etc/nginx/jiayou/trusted-ingress.conf,readonly" \
+            jiayou-frontend:ci nginx -t
       - name: Reject unauthorized backend startup offline
         shell: bash
         run: |

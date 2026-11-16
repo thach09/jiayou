@@ -70,6 +70,14 @@ class JiayouBootstrapGuardTest {
         assertThatCode(() -> JiayouBootstrapGuard.validateEnvironment(environment(valid()))).doesNotThrowAnyException();
     }
 
+    @Test
+    void productionCannotDisableSecureRefreshCookies() {
+        var p = valid();
+        p.put("app.security.refresh-cookie-secure", "false");
+        assertThatThrownBy(() -> JiayouBootstrapGuard.validateEnvironment(environment(p)))
+                .hasMessageContaining("Secure refresh cookies required");
+    }
+
     @Test void upgradeNeedsExactVersionAndTargetAuthorization() {
         var p=settings("jdbc:postgresql://127.0.0.1:54321/jiayou_unit","upgrade");
         assertThatCode(()->JiayouBootstrapGuard.validateEnvironment(environment(p))).doesNotThrowAnyException();

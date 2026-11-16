@@ -1,78 +1,153 @@
-# Review template only. No host ports, public ingress or automatic initialization.
-name: ${JIAYOU_COMPOSE_PROJECT:?Choose a unique project identity}
+# Canonical private Jiayou stack. Run deployment/jiayou.py; no production activation implied.
+name: ${JIAYOU_COMPOSE_PROJECT:?Set an independent Jiayou project}
+x-labels: &labels
+  io.jiayou.managed: release-v1
+  io.jiayou.target: ${JIAYOU_TARGET_ID:?Set target UUID}
+  io.jiayou.project: ${JIAYOU_COMPOSE_PROJECT:?Set project}
+x-backend-env: &backend-env
+  SPRING_PROFILES_ACTIVE: jiayou-prod
+  SPRING_CONFIG_IMPORT: configtree:/run/secrets/
+  JIAYOU_PRODUCT: Jiayou
+  JIAYOU_ENVIRONMENT: production
+  JIAYOU_TARGET_ID: ${JIAYOU_TARGET_ID:?Set target UUID}
+  JIAYOU_DATABASE_URL: jdbc:postgresql://postgres:5432/${JIAYOU_DATABASE_NAME:?Set dedicated database}
+  JIAYOU_DATABASE_HOST: postgres
+  JIAYOU_DATABASE_PORT: '5432'
+  JIAYOU_DATABASE_NAME: ${JIAYOU_DATABASE_NAME:?Set database}
+  JIAYOU_DATABASE_USER: ${JIAYOU_DATABASE_USER:?Set runtime role}
+  JIAYOU_CORS_ALLOWED_ORIGINS: ${JIAYOU_PUBLIC_ORIGIN:?Set exact approved HTTPS origin}
+  JIAYOU_BOOTSTRAP_MODE: validate
+  JIAYOU_BOOTSTRAP_AUTHORIZATION: validate:Jiayou:production:${JIAYOU_TARGET_ID:?Set identity}
+  TRUSTED_PROXY_CIDRS: ${JIAYOU_FRONTEND_IP:?Set reserved frontend IP}/32
+  JAVA_TOOL_OPTIONS: ${JIAYOU_JAVA_TOOL_OPTIONS:?Set measured JVM budget}
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:16.16-alpine3.24@sha256:81e77a4833487b8132fe4b00bedd39dc3f74b8641e387f19312a48f7de218c2e
+    labels: *labels
     restart: unless-stopped
+    security_opt: [no-new-privileges:true]
+    cap_drop: [NET_RAW]
     environment:
-      POSTGRES_DB: ${JIAYOU_DATABASE_NAME:?Set dedicated database}
-      POSTGRES_USER: ${JIAYOU_POSTGRES_OWNER:?Set separate migration owner}
-      POSTGRES_PASSWORD: ${JIAYOU_POSTGRES_OWNER_PASSWORD:?Supply owner secret externally}
+      POSTGRES_DB: ${JIAYOU_DATABASE_NAME:?Set database}
+      POSTGRES_USER: ${JIAYOU_POSTGRES_OPERATOR:?Set dedicated operator role}
+      POSTGRES_PASSWORD_FILE: /run/secrets/operator_password
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    secrets: [operator_password]
     volumes: [jiayou_database:/var/lib/postgresql/data]
     networks: [database]
     healthcheck:
       test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
-    mem_limit: ${JIAYOU_DB_MEMORY_LIMIT:?Measure capacity first}
-    cpus: ${JIAYOU_DB_CPU_LIMIT:?Measure capacity first}
-    pids_limit: ${JIAYOU_DB_PIDS_LIMIT:?Measure PID budget first}
+      retries: 12
+    stop_grace_period: 30s
+    mem_limit: ${JIAYOU_DB_MEMORY_LIMIT:?Set measured budget}
+    cpus: ${JIAYOU_DB_CPU_LIMIT:?Set budget}
+    pids_limit: ${JIAYOU_DB_PIDS_LIMIT:?Set budget}
   backend:
-    image: ${JIAYOU_BACKEND_IMAGE:?Select an immutable reviewed image}
+    image: jiayou-backend:${JIAYOU_RELEASE_SHA:?Build from immutable commit first}
+    labels: *labels
+    init: true
     restart: unless-stopped
-    environment:
-      SPRING_PROFILES_ACTIVE: jiayou-prod
-      JIAYOU_PRODUCT: Jiayou
-      JIAYOU_ENVIRONMENT: production
-      JIAYOU_TARGET_ID: ${JIAYOU_TARGET_ID:?Set approved identity}
-      JIAYOU_DATABASE_URL: jdbc:postgresql://postgres:5432/${JIAYOU_DATABASE_NAME:?Set database}
-      JIAYOU_DATABASE_HOST: postgres
-      JIAYOU_DATABASE_PORT: '5432'
-      JIAYOU_DATABASE_NAME: ${JIAYOU_DATABASE_NAME:?Set database}
-      JIAYOU_DATABASE_USER: ${JIAYOU_DATABASE_USER:?Set role}
-      JIAYOU_DATABASE_PASSWORD: ${JIAYOU_DATABASE_PASSWORD:?Supply externally}
-      JIAYOU_JWT_SECRET: ${JIAYOU_JWT_SECRET:?Supply independent signing key}
-      JIAYOU_CORS_ALLOWED_ORIGINS: ${JIAYOU_CORS_ALLOWED_ORIGINS:?Set approved HTTPS origin}
-      JIAYOU_BOOTSTRAP_MODE: validate
-      JIAYOU_BOOTSTRAP_AUTHORIZATION: validate:Jiayou:production:${JIAYOU_TARGET_ID:?Set identity}
-      JAVA_TOOL_OPTIONS: ${JIAYOU_JAVA_TOOL_OPTIONS:?Set measured JVM budget}
-      TRUSTED_PROXY_CIDRS: ${JIAYOU_TRUSTED_PROXY_CIDRS:?Set reviewed immediate proxy peers}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: ['/tmp:rw,nosuid,nodev,size=128m']
+    environment: *backend-env
+    secrets:
+      - source: runtime_password
+        target: JIAYOU_DATABASE_PASSWORD
+      - source: jwt_key
+        target: JIAYOU_JWT_SECRET
     networks: [database, application]
     depends_on:
       postgres:
         condition: service_healthy
-    mem_limit: ${JIAYOU_BACKEND_MEMORY_LIMIT:?Measure capacity first}
-    cpus: ${JIAYOU_BACKEND_CPU_LIMIT:?Measure capacity first}
-    pids_limit: ${JIAYOU_BACKEND_PIDS_LIMIT:?Measure PID budget first}
-    stop_grace_period: 30s
     healthcheck:
-      test: [CMD, curl, --fail, --silent, --output, /dev/null, 'http://127.0.0.1:8080/api/v1/actuator/health']
-      interval: 15s
+      test: [CMD-SHELL, 'wget -q -O /dev/null http://127.0.0.1:8080/api/v1/actuator/health']
+      interval: 5s
       timeout: 5s
       start_period: 60s
-      retries: 5
+      retries: 20
+    stop_grace_period: 30s
+    mem_limit: ${JIAYOU_BACKEND_MEMORY_LIMIT:?Set measured budget}
+    cpus: ${JIAYOU_BACKEND_CPU_LIMIT:?Set budget}
+    pids_limit: ${JIAYOU_BACKEND_PIDS_LIMIT:?Set budget}
+  bootstrap:
+    image: jiayou-backend:${JIAYOU_RELEASE_SHA:?Build first}
+    labels: *labels
+    profiles: [operations]
+    command: [--jiayou-bootstrap-only]
+    restart: 'no'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: ['/tmp:rw,nosuid,nodev,size=128m']
+    environment:
+      <<: *backend-env
+      JIAYOU_DATABASE_USER: ${JIAYOU_MIGRATION_USER:?Set separate migration owner}
+      JIAYOU_BOOTSTRAP_MODE: initialize
+      JIAYOU_BOOTSTRAP_AUTHORIZATION: ${JIAYOU_INITIALIZE_AUTHORIZATION:-}
+    secrets:
+      - source: migration_password
+        target: JIAYOU_DATABASE_PASSWORD
+      - source: jwt_key
+        target: JIAYOU_JWT_SECRET
+    networks: [database]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    mem_limit: ${JIAYOU_BACKEND_MEMORY_LIMIT:?Set budget}
+    cpus: ${JIAYOU_BACKEND_CPU_LIMIT:?Set budget}
+    pids_limit: ${JIAYOU_BACKEND_PIDS_LIMIT:?Set budget}
   frontend:
-    image: ${JIAYOU_FRONTEND_IMAGE:?Select an immutable reviewed image}
+    image: jiayou-frontend:${JIAYOU_RELEASE_SHA:?Build first}
+    labels: *labels
     restart: unless-stopped
-    networks: [application]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: ['/tmp:rw,nosuid,nodev,size=64m']
+    environment:
+      JIAYOU_PUBLIC_HOST: ${JIAYOU_PUBLIC_HOST:?Set selected hostname}
+    volumes:
+      - type: bind
+        source: ${JIAYOU_CONFIG_DIR:?Set protected external config directory}/trusted-ingress.conf
+        target: /etc/nginx/jiayou/trusted-ingress.conf
+        read_only: true
+    networks:
+      application:
+        ipv4_address: ${JIAYOU_FRONTEND_IP:?Set reserved frontend IP}
     depends_on:
       backend:
         condition: service_healthy
         restart: true
-    mem_limit: ${JIAYOU_FRONTEND_MEMORY_LIMIT:?Measure capacity first}
-    cpus: ${JIAYOU_FRONTEND_CPU_LIMIT:?Measure capacity first}
-    pids_limit: ${JIAYOU_FRONTEND_PIDS_LIMIT:?Measure PID budget first}
     healthcheck:
-      test: [CMD-SHELL, 'wget -q -O /dev/null http://127.0.0.1:8080/']
-      interval: 15s
+      test: [CMD-SHELL, 'wget -q --header="Host: $$JIAYOU_PUBLIC_HOST" -O /dev/null http://127.0.0.1:8080/_jiayou_health']
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 12
+    stop_grace_period: 15s
+    mem_limit: ${JIAYOU_FRONTEND_MEMORY_LIMIT:?Set measured budget}
+    cpus: ${JIAYOU_FRONTEND_CPU_LIMIT:?Set budget}
+    pids_limit: ${JIAYOU_FRONTEND_PIDS_LIMIT:?Set budget}
 networks:
   database:
     internal: true
-  application: {}
+    labels: *labels
+  application:
+    external: true
+    name: ${JIAYOU_APPLICATION_NETWORK:?Provision independent network}
 volumes:
   jiayou_database:
     external: true
-    name: ${JIAYOU_DATABASE_VOLUME:?Provision a separate Jiayou volume}
+    name: ${JIAYOU_DATABASE_VOLUME:?Provision independent volume}
+secrets:
+  operator_password:
+    file: ${JIAYOU_SECRETS_DIR:?Set protected external secret directory}/operator_password
+  migration_password:
+    file: ${JIAYOU_SECRETS_DIR:?Set secrets directory}/migration_password
+  runtime_password:
+    file: ${JIAYOU_SECRETS_DIR:?Set secrets directory}/runtime_password
+  jwt_key:
+    file: ${JIAYOU_SECRETS_DIR:?Set secrets directory}/jwt_key
