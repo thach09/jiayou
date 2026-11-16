@@ -19,7 +19,6 @@ vi.mock('../../src/components/Sidebar', () => ({ Sidebar: ({ onToggleSidebar }: 
   <button onClick={onToggleSidebar}>Toggle sidebar</button>,
 }));
 vi.mock('../../src/components/OrientalDecorBackground', () => ({ OrientalDecorBackground: () => null }));
-vi.mock('../../src/components/ThemeToggle', () => ({ ThemeToggle: () => null }));
 vi.mock('../../src/app/routes', () => ({ AppRoutes: () => <input aria-label="Learning draft" /> }));
 
 const profile = (userId = 1): AuthResponse => ({
