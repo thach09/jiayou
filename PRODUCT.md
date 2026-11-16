@@ -18,7 +18,7 @@ Thi thử là bài luyện nội bộ: cấp 1–2 chấm Nghe/Đọc, tổng 20
 
 ## Tiến độ và phần thưởng
 
-Dashboard hiển thị tuần hiện tại từ thứ Hai đến Chủ nhật theo Asia/Ho_Chi_Minh. Candidate V8.1 dùng heatmap 365 ngày và thống kê bảy ngày từ hoạt động thật. Tổng từ đã ôn nhớ được ghi rõ là số tích lũy. Tiến độ sáu cấp đếm từ riêng đã có lần ôn nhớ và điểm ngữ pháp đã trả lời đúng; không suy ra số bài luyện hoặc năng lực được chứng nhận. Người học chọn trực tiếp HSK 1–6 như main. Visual/product scope của candidate cần owner duyệt trước merge.
+V8.1 đã được owner duyệt phạm vi visual/product ngày 16/11/2026, chỉ merge sau khi CI và provider isolation pass, không bao gồm quyền triển khai production. Dashboard dùng heatmap 365 ngày và thống kê bảy ngày từ hoạt động thật theo Asia/Ho_Chi_Minh. Streak bình thường hiển thị gọn số ngày; lịch tuần từ thứ Hai đến Chủ nhật và lượt khôi phục vẫn có cho screen reader, banner khôi phục hiện khi server xác nhận đủ điều kiện. Tổng từ đã ôn nhớ được ghi rõ là số tích lũy. Tiến độ sáu cấp đếm từ riêng đã có lần ôn nhớ và điểm ngữ pháp đã trả lời đúng; không suy ra số bài luyện hoặc năng lực được chứng nhận. Người học chọn trực tiếp HSK 1–6, rồi mở học liệu qua link chi tiết; không có khóa 80%.
 
 EXP: đúng bài tập +10 theo cấu hình, mỗi 10 lượt SRS tích luỹ +50, thi thử 100 × tỷ lệ điểm. Nhiệm vụ mỗi ngày theo Asia/Ho_Chi_Minh: 10 lượt SRS (30 EXP/2 măng), 3 lượt viết đúng (25/2), đúng 5 câu ngữ pháp hoặc nộp 1 đề (50/3). Server kiểm tra điều kiện và chỉ nhận một lần/ngày. Ví măng gắn tài khoản, khởi tạo 6 măng, cho ăn tốn 1 và cộng 25 điểm thân thiết. Hoạt ảnh linh vật là phản hồi giao diện, không tự cộng tiền từ localStorage.
 

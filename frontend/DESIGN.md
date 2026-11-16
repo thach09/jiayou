@@ -1,8 +1,9 @@
 # Design — Học tiếng Trung
 
-## V8.1 consolidation candidate — 16/11/2026
+## V8.1 consolidation — owner duyệt 16/11/2026
 
-Phần này mô tả candidate đang chờ owner duyệt visual/product scope trước merge.
+Owner đã duyệt visual/product scope của PR #66 ngày 16/11/2026: chỉ merge sau khi
+CI và provider isolation pass. Đây không phải phê duyệt triển khai production.
 Nó ưu tiên hơn các mục lịch sử bên dưới đối với những phần được nêu rõ.
 
 - Một giao diện tối cố định, không theo OS hoặc localStorage theme cũ. Giữ Be Vietnam
@@ -21,6 +22,10 @@ Nó ưu tiên hơn các mục lịch sử bên dưới đối với những ph�
   hoặc thêm nội dung học thuật từ visual branch.
 - UI Refinement được dùng để đối chiếu, không chồng toàn bộ layout lên V8.1.
   PR #62/#65 và các lớp auth, owner cancellation, streak/restoration, bootstrap giữ nguyên.
+- Streak bình thường thu gọn thành số ngày; lịch và lượt khôi phục vẫn có cho screen
+  reader. Banner khôi phục hiện khi server xác nhận đủ điều kiện. Ô HSK chọn cấp;
+  link chi tiết mở học liệu của cấp đã chọn. Bỏ companion dock ở ba trạm Pinyin,
+  Chữ Hán và Từ vựng; giữ companion trên dashboard.
 
 
 Hệ thị giác "mực trên giấy", đảo tối. Chữ Hán là nhân vật chính, chữ Việt là sàn đọc, Pinyin là chú thích.
