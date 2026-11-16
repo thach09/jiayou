@@ -52,7 +52,7 @@ services:
     read_only: true
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
-    tmpfs: [/tmp:rw,nosuid,nodev,size=128m]
+    tmpfs: ['/tmp:rw,nosuid,nodev,size=128m']
     environment: *backend-env
     secrets:
       - source: runtime_password
@@ -82,7 +82,7 @@ services:
     read_only: true
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
-    tmpfs: [/tmp:rw,nosuid,nodev,size=128m]
+    tmpfs: ['/tmp:rw,nosuid,nodev,size=128m']
     environment:
       <<: *backend-env
       JIAYOU_DATABASE_USER: ${JIAYOU_MIGRATION_USER:?Set separate migration owner}
@@ -107,7 +107,7 @@ services:
     read_only: true
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
-    tmpfs: [/tmp:rw,nosuid,nodev,size=64m]
+    tmpfs: ['/tmp:rw,nosuid,nodev,size=64m']
     environment:
       JIAYOU_PUBLIC_HOST: ${JIAYOU_PUBLIC_HOST:?Set selected hostname}
     volumes:

@@ -14,6 +14,7 @@ with tempfile.TemporaryDirectory(prefix='jiayou-compose-check-') as temp:
  data=json.loads(subprocess.check_output(['docker','compose','--env-file',str(env),'-f',str(root/'docker-compose.yml'),'--profile','operations','config','--format','json'],text=True))
  for service in data['services'].values():
   assert not service.get('ports') and not service.get('container_name')
+  assert all(m.startswith('/') and 'nosuid,nodev' in m for m in service.get('tmpfs', []))
  assert data['volumes']['jiayou_database']['external']
  assert data['networks']['database']['internal']
  assert data['services']['backend']['environment']['JIAYOU_BOOTSTRAP_MODE']=='validate'
