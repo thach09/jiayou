@@ -49,6 +49,9 @@ def main():
    if not kwargs.get('binary'):
     text=(result.stdout or '')+'\n'+(result.stderr or '')
     (output/'failed-command.private.log').write_text(text,encoding='utf-8')
+    # Fixed labels only: never copy raw daemon/application diagnostics to public artifacts.
+    for pattern,label in [('user specified IP address is supported only','STATIC_IP_REQUIRES_EXPLICIT_SUBNET'),('permission denied','FILESYSTEM_PERMISSION_DENIED'),('unknown flag','COMPOSE_FEATURE_UNSUPPORTED'),('unhealthy','SERVICE_HEALTH_REJECTED')]:
+     if pattern in text.lower():summary['sanitizedDiagnosticClass']=label
    raise release.ReleaseError(str(kwargs.get('phase','operation'))+' failed; private diagnostics recorded')
   return result
  release.run=audited
@@ -77,8 +80,13 @@ def main():
   labels={'io.jiayou.managed':release.CONTRACT,'io.jiayou.target':target,'io.jiayou.project':project}
   command_args=['network','create']
   for k,v in labels.items():command_args+=['--label',k+'='+v]
-  nid=d(*command_args,network).stdout.strip();release.require(nid not in baseline['networks'],'New namespace required')
-  network_data=json.loads(d('network','inspect',network).stdout)[0];subnet=ipaddress.ip_network(network_data['IPAM']['Config'][0]['Subnet'])
+  # Observe the engine allocator, then explicitly declare that actual subnet. Older Linux
+  # engines reject static frontend/edge IPs on an implicitly allocated IPAM network.
+  probe=d(*command_args,project+'_allocator').stdout.strip();release.require(probe not in baseline['networks'],'New namespace required')
+  network_data=json.loads(d('network','inspect',probe).stdout)[0];subnet=ipaddress.ip_network(network_data['IPAM']['Config'][0]['Subnet'])
+  release.require(not network_data.get('Containers')and all(network_data.get('Labels',{}).get(k)==v for k,v in labels.items()),'Only the newly allocated empty owned probe may be removed')
+  d('network','rm',probe,phase='Remove only newly owned empty allocation probe')
+  nid=d(*command_args,'--subnet',str(subnet),network).stdout.strip();release.require(nid not in baseline['networks'],'New application namespace required')
   values={'JIAYOU_DOCKER_CONTEXT':args.context,'JIAYOU_RELEASE_SHA':head,'JIAYOU_COMPOSE_PROJECT':project,'JIAYOU_TARGET_ID':target,'JIAYOU_DATABASE_NAME':'jiayou_rehearsal','JIAYOU_POSTGRES_OPERATOR':'jiayou_operator','JIAYOU_MIGRATION_USER':'jiayou_migrator','JIAYOU_DATABASE_USER':'jiayou_runtime','JIAYOU_DATABASE_VOLUME':project+'_database','JIAYOU_APPLICATION_NETWORK':network,'JIAYOU_APPLICATION_SUBNET':str(subnet),'JIAYOU_FRONTEND_IP':str(subnet.network_address+10),'JIAYOU_PUBLIC_HOST':'jiayou-qa.test','JIAYOU_PUBLIC_ORIGIN':'https://jiayou-qa.test:8443','JIAYOU_INGRESS_PEERS':str(subnet.network_address+11)+'/32','JIAYOU_JAVA_TOOL_OPTIONS':'-Xms128m -Xmx512m -XX:+ExitOnOutOfMemoryError','JIAYOU_QA_DIR':output.as_posix(),'JIAYOU_QA_EDGE_IP':str(subnet.network_address+11),'JIAYOU_QA_SECCOMP_PATH':(ROOT/'deployment/qa/chromium-seccomp.json').as_posix()}
   for key,folder in [('JIAYOU_SECRETS_DIR','secrets'),('JIAYOU_CONFIG_DIR','config'),('JIAYOU_STATE_DIR','state'),('JIAYOU_BACKUP_DIR','backups')]:values[key]=(output/folder).as_posix()
   for component,memory,cpu,pids in [('DB','256m','0.5','128'),('BACKEND','1024m','2','256'),('FRONTEND','128m','0.5','128')]:
