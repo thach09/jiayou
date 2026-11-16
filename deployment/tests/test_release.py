@@ -47,6 +47,9 @@ class ReleaseSafetyTest(unittest.TestCase):
   c=self.config();r=object.__new__(module.Release);r.c=c;r.d=Mock()
   with self.assertRaisesRegex(module.ReleaseError,'another independent'):r.restore(self.root/'absent.dump',c.database)
   r.d.assert_not_called()
+ def test_peer_config_is_idempotent_and_can_be_updated_after_read_only_render(self):
+  c=self.config();r=object.__new__(module.Release);r.c=c;r.prepare_config();before=(c.config_dir/'trusted-ingress.conf').read_bytes();r.prepare_config();self.assertEqual(before,(c.config_dir/'trusted-ingress.conf').read_bytes())
+  c.peers=['172.30.240.12/32'];r.prepare_config();self.assertIn('172.30.240.12/32',(c.config_dir/'trusted-ingress.conf').read_text())
  def test_command_failure_suppresses_raw_output(self):
   import sys
   with self.assertRaises(module.ReleaseError)as error:module.run([sys.executable,'-c',"import sys;print('DO_NOT_LOG_SECRET');sys.exit(7)"],phase='fixture')

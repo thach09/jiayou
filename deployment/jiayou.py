@@ -210,7 +210,12 @@ class Release:
                   'map "$jiayou_trusted_ingress:$http_x_forwarded_proto" $jiayou_forwarded_proto {',
                   '    default "";', '    "1:https" https;', '}']
         path = self.c.config_dir / 'trusted-ingress.conf'
-        path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+        content = '\n'.join(lines) + '\n'
+        if path.exists() and path.read_text(encoding='utf-8') == content:
+            return
+        if path.exists():
+            os.chmod(path, 0o600)
+        path.write_text(content, encoding='utf-8')
         os.chmod(path, 0o444)
 
     def contract(self):
@@ -339,13 +344,17 @@ class Release:
         state = self.c.state_dir/'build.json'
         require(state.is_file() and json.loads(state.read_text())['images'] == image['images'], 'Build manifest/image identities missing or changed')
         args = ['up','-d','--wait','--wait-timeout','240']
+        active = self.c.state_dir/'release.json'
+        ingress = hashlib.sha256((self.c.config_dir/'trusted-ingress.conf').read_bytes()).hexdigest()
+        if active.exists() and json.loads(active.read_text()).get('ingressContractSha256') != ingress:
+            recreate = True
         if recreate: args += ['--force-recreate']
         self.compose(*args,'backend','frontend',phase='Validate-only application startup')
         self.verify()
         previous = self.c.state_dir/'release.json'
         if previous.exists():
             write_json(self.c.state_dir/'previous-release.json',json.loads(previous.read_text()))
-        write_json(previous,image)
+        write_json(previous,{**image,'ingressContractSha256':ingress})
 
     def verify(self):
         for service in ('postgres','backend','frontend'):
