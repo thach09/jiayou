@@ -1,4 +1,4 @@
-﻿import assert from 'node:assert/strict';
+import assert from 'node:assert/strict';
 import {randomBytes,createHash} from 'node:crypto';
 import {readFileSync,writeFileSync} from 'node:fs';
 import https from 'node:https';

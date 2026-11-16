@@ -17,6 +17,8 @@ import os
 import secrets
 import subprocess
 import sys
+import tarfile
+import tempfile
 import time
 import uuid
 
@@ -67,7 +69,7 @@ def main():
   release.require(engine['MemTotal']>=6*1024**3,'Insufficient verified QA capacity')
   ids=d('ps','-aq').stdout.splitlines();baseline['containers']={}
   for cid in ids:
-   item=json.loads(d('inspect',cid).stdout)[0];baseline['containers'][item['Id']]={'image':item['Image'],'startedAt':item['State']['StartedAt'],'status':item['State']['Status']}
+   item=json.loads(d('inspect',cid).stdout)[0];baseline['containers'][item['Id']]={'image':item['Image'],'startedAt':item['State']['StartedAt'],'status':item['State']['Status'],'configurationSha256':hashlib.sha256(json.dumps({'Config':item['Config'],'HostConfig':item['HostConfig']},sort_keys=True).encode()).hexdigest()}
   baseline['networks']=d('network','ls','-q','--no-trunc').stdout.splitlines();baseline['volumes']=d('volume','ls','-q').stdout.splitlines()
   release.write_json(output/'baseline.private.json',baseline)
   summary['engineEvidence']={'localEndpoint':True,'linuxContainers':True,'verifiedSurface':'GitHub-hosted runner'if hosted else'Docker Desktop','preexistingContainers':len(ids),'memoryBytes':engine['MemTotal']}
@@ -85,7 +87,14 @@ def main():
   save_env();c=release.Config(env_path);c.make_secrets();r=release.Release(c)
   stage('canonical Compose validation',lambda:(r.prepare_config(),r.contract(),{'privatePorts':True,'externalSecretFiles':True})[-1])
   stage('clean immutable production image builds',lambda:(r.build(),r.image_receipt())[-1])
-  stage('sandboxed QA browser image build',lambda:d('build','--build-arg','RELEASE_SHA='+head,'-t','jiayou-qa-browser:'+head,'-f',str(ROOT/'deployment/qa/Dockerfile.browser'),str(ROOT),phase='QA browser image build').returncode)
+  def build_browser():
+   # Canonical Git bytes prevent checkout CRLF, untracked data or private env files entering QA images.
+   with tempfile.TemporaryDirectory(prefix='jiayou-qa-build-')as temporary:
+    archive=Path(temporary)/'source.tar';archive.write_bytes(audited(['git','-c','core.autocrlf=false','-C',ROOT,'archive','--format=tar',head],binary=True).stdout)
+    source=Path(temporary)/'source';source.mkdir()
+    with tarfile.open(archive)as tar:tar.extractall(source,filter='data')
+    return d('build','--build-arg','RELEASE_SHA='+head,'-t','jiayou-qa-browser:'+head,'-f',str(source/'deployment/qa/Dockerfile.browser'),str(source),phase='QA browser image build').returncode
+  stage('sandboxed QA browser image build',build_browser)
   tls_dir=output/'tls';tls_dir.mkdir(mode=0o700);browser_output=output/'output';browser_output.mkdir(mode=0o700)
   # Private parent remains 0700; only the sandboxed QA container gets this bind mount.
   os.chmod(tls_dir,0o777);os.chmod(browser_output,0o777)
@@ -172,13 +181,15 @@ server { listen 127.0.0.1:8081; location = /_edge_health { return 200 "ready\\n"
      r.compose('stop',service,phase='Stop owned QA service only',allow_failure=True)
    except Exception:summary['cleanup']='Owned partial resources retained for inspection; no global cleanup attempted'
   if baseline.get('containers'):
-   differences=[]
+   differences=[];observations=[]
    for cid,expected in baseline['containers'].items():
     result=d('inspect',cid,allow_failure=True)
     if result.returncode:differences.append({'id':cid,'field':'missing'});continue
-    item=json.loads(result.stdout)[0];actual={'image':item['Image'],'startedAt':item['State']['StartedAt'],'status':item['State']['Status']}
-    if actual!=expected:differences.append({'id':cid,'field':'external state changed'})
-   summary['preexistingContainerPreservation']={'count':len(baseline['containers']),'differences':differences}
+    item=json.loads(result.stdout)[0];actual={'image':item['Image'],'startedAt':item['State']['StartedAt'],'status':item['State']['Status'],'configurationSha256':hashlib.sha256(json.dumps({'Config':item['Config'],'HostConfig':item['HostConfig']},sort_keys=True).encode()).hexdigest()}
+    if actual!=expected:
+     if expected['status']=='restarting'and actual['image']==expected['image']and actual['configurationSha256']==expected['configurationSha256']:observations.append({'id':cid,'observation':'Already-restarting external container changed runtime timestamp; image/configuration unchanged; no command targeted it'})
+     else:differences.append({'id':cid,'field':'external state changed'})
+   summary['preexistingContainerPreservation']={'count':len(baseline['containers']),'differences':differences,'observations':observations}
    if differences:summary['result']='FAIL'
   if baseline.get('networks'):
    release.require(set(baseline['networks']).issubset(set(d('network','ls','-q','--no-trunc').stdout.splitlines())), 'Preexisting network missing')

@@ -1,4 +1,4 @@
-﻿#!/bin/sh
+#!/bin/sh
 set -eu
 # Trust only this disposable CA inside this container; never change the host trust store.
 mkdir -p "$HOME/.pki/nssdb"
