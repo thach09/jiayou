@@ -40,6 +40,11 @@ class ReleaseSafetyTest(unittest.TestCase):
   c=self.config()
   with self.assertRaises(module.ReleaseError):c.ack('wrong')
   c.ack(c.target)
+ def test_verify_rejects_wrong_running_image_before_database_checks(self):
+  c=self.config();r=object.__new__(module.Release);r.c=c;r.image_receipt=Mock(return_value={'images':{'backend':{'id':'expected'},'frontend':{'id':'expected-frontend'}}});r.identity=Mock()
+  r.container=Mock(return_value={'Image':'wrong','State':{'Health':{'Status':'healthy'}},'HostConfig':{}})
+  with self.assertRaisesRegex(module.ReleaseError,'Actual running image'):r.verify()
+  r.identity.assert_not_called()
  def test_up_starts_owned_postgres_before_database_identity_check(self):
   c=self.config();c.make_secrets();r=object.__new__(module.Release);r.c=c;r.provision=Mock();r.prepare_config();r.image_receipt=Mock(return_value={'images':{'fixture':'image'}});module.write_json(c.state_dir/'build.json',{'images':{'fixture':'image'}})
   calls=[];r.compose=Mock(side_effect=lambda *a,**k:calls.append(k.get('phase')));r.identity=Mock(side_effect=lambda:calls.append('identity'));r.verify=Mock();r.up()
