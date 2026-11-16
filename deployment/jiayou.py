@@ -353,10 +353,11 @@ class Release:
     def up(self, recreate=False):
         self.c.secret_check()
         self.provision()
-        self.identity()
         image = self.image_receipt()
         state = self.c.state_dir/'build.json'
         require(state.is_file() and json.loads(state.read_text())['images'] == image['images'], 'Build manifest/image identities missing or changed')
+        self.compose('up','-d','--wait','--wait-timeout','120','postgres',phase='Dedicated PostgreSQL startup')
+        self.identity()
         args = ['up','-d','--wait','--wait-timeout','240']
         active = self.c.state_dir/'release.json'
         ingress = hashlib.sha256((self.c.config_dir/'trusted-ingress.conf').read_bytes()).hexdigest()

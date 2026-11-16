@@ -40,6 +40,10 @@ class ReleaseSafetyTest(unittest.TestCase):
   c=self.config()
   with self.assertRaises(module.ReleaseError):c.ack('wrong')
   c.ack(c.target)
+ def test_up_starts_owned_postgres_before_database_identity_check(self):
+  c=self.config();c.make_secrets();r=object.__new__(module.Release);r.c=c;r.provision=Mock();r.prepare_config();r.image_receipt=Mock(return_value={'images':{'fixture':'image'}});module.write_json(c.state_dir/'build.json',{'images':{'fixture':'image'}})
+  calls=[];r.compose=Mock(side_effect=lambda *a,**k:calls.append(k.get('phase')));r.identity=Mock(side_effect=lambda:calls.append('identity'));r.verify=Mock();r.up()
+  self.assertEqual(calls[:2],['Dedicated PostgreSQL startup','identity'])
  def test_ingress_config_only_trusts_supplied_peer(self):
   c=self.config();r=object.__new__(module.Release);r.c=c;r.prepare_config();text=(c.config_dir/'trusted-ingress.conf').read_text()
   self.assertIn('172.30.240.11/32',text);self.assertIn('default 0;',text);self.assertNotIn('0.0.0.0/0',text)
