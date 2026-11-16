@@ -17,7 +17,7 @@ LABEL org.opencontainers.image.source="https://github.com/thach09/jiayou" \
 ENV NGINX_ENVSUBST_FILTER="^JIAYOU_" NGINX_ENVSUBST_OUTPUT_DIR=/tmp/jiayou-nginx
 COPY nginx-main.conf /etc/nginx/nginx.conf
 COPY nginx.conf /etc/nginx/templates/default.conf.template
-COPY deployment-required.sh /docker-entrypoint.d/15-jiayou-required.sh
-RUN rm /etc/nginx/conf.d/default.conf && mkdir -p /etc/nginx/jiayou && chmod +x /docker-entrypoint.d/15-jiayou-required.sh
+COPY --chmod=0755 deployment-required.sh /docker-entrypoint.d/15-jiayou-required.sh
+RUN rm /etc/nginx/conf.d/default.conf && mkdir -p /etc/nginx/jiayou
 COPY --from=build /workspace/dist /usr/share/nginx/html
 EXPOSE 8080

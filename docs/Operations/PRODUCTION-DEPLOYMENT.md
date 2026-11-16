@@ -103,8 +103,10 @@ Nginx peer map accepts HTTPS assertions only from those physical peers; backend 
 only the reserved frontend IP/32. Host mismatches and untrusted API forwarding are rejected.
 Do not use /0 or broad catch-all proxy trust. Reserve the frontend IP across restarts.
 
-Block `/api/v1/actuator`, `/api/v1/health` and `/_jiayou_health` at the public edge.
-Health probes stay inside the private services. `/api/v1` stays same-origin; no external
+Block `/api/v1/actuator`, health subpaths and `/_jiayou_health` at the public edge.
+Allow exactly `/api/v1/health`, the existing public aggregate readiness response used
+by the UI (UP/DOWN, service/version/time; no datasource/component details). Internal
+container probes still use private actuator. `/api/v1` stays same-origin; no external
 production API is embedded in the frontend. Preserve no-store on auth/API responses.
 TLS certificates/renewal, hostname ownership and any Cloudflare Tunnel connector are
 host-owned inputs. Review the exact additive ingress diff, validation and rollback before
