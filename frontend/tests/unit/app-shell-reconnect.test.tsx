@@ -9,7 +9,6 @@ vi.mock('../../src/app/useAuth', () => ({ useAuth: () => ({ user: null, requireL
 vi.mock('../../src/features/progress/api', () => ({ progressApi: { health: fixture.health } }));
 vi.mock('../../src/components/Sidebar', () => ({ Sidebar: () => <nav /> }));
 vi.mock('../../src/components/OrientalDecorBackground', () => ({ OrientalDecorBackground: () => null }));
-vi.mock('../../src/components/ThemeToggle', () => ({ ThemeToggle: () => null }));
 vi.mock('../../src/app/routes', () => ({ AppRoutes: () => {
   const [draft, setDraft] = useState('');
   const [card, setCard] = useState(1);

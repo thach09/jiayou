@@ -7,8 +7,17 @@ handover. Jiayou has no selected domain and must use its own hostname and stack.
 
 ## Source and build contract
 
-The repository is https://github.com/thach09/jiayou. For current dashboard, streak
-and account acceptance read `docs/Operations/JIAYOU-DASHBOARD-STREAK-RELEASE.md`.
+The repository is https://github.com/thach09/jiayou. The owner-approved V8.1 visual
+scope was integrated through [PR66](https://github.com/thach09/jiayou/pull/66).
+`frontend/DESIGN.md` is the current visual contract; its dated V8.1 section takes
+precedence over retained earlier design notes. The fixed dark theme, compact streak,
+expanded 365-day tracker, account/sidebar/artwork and station companion-dock removal
+do not change backend qualification, restoration, ownership or publication controls.
+All HSK levels remain selectable; the detail link opens the selected level.
+PR62 security and PR65 fail-closed HTTPS smoke checks remain intact. Browser visual
+fixtures do not establish real HTTPS/PostgreSQL authentication or production readiness.
+Earlier dashboard, streak and account acceptance remains historical evidence in
+`docs/Operations/JIAYOU-DASHBOARD-STREAK-RELEASE.md`.
 The earlier brand/account baseline is `docs/Operations/LOCAL-UX-AND-ACCOUNT-QA.md`. Also read
 `docs/Operations/FINAL-ENGINEERING-AUDIT.md` and its evidence index for the reviewed
 release; verify the current main SHA with Git, not an uncommitted research worktree.
