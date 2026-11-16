@@ -372,10 +372,13 @@ class Release:
         write_json(previous,{**image,'ingressContractSha256':ingress})
 
     def verify(self):
+        expected_images = self.image_receipt()['images']
         for service in ('postgres','backend','frontend'):
             data = self.container(service)
             require(data['State'].get('Health',{}).get('Status') == 'healthy', 'Service is not healthy: '+service)
             require(not data['HostConfig'].get('PortBindings'), 'Canonical services must not publish host ports')
+            if service in expected_images:
+                require(data['Image'] == expected_images[service]['id'], 'Actual running image differs from the verified release: '+service)
         self.identity()
         backend = self.container('backend')
         settings = dict(x.split('=',1) for x in backend['Config']['Env'] if '=' in x)
