@@ -42,7 +42,7 @@ jobs:
         run: python3 -m unittest discover -s backend/tools/tests -p "test_production_migration_preflight.py" -v
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
@@ -107,7 +107,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
