@@ -156,7 +156,7 @@
       "name": "independent logical backup",
       "status": "PASS",
       "seconds": 1.21,
-      "evidence": "D:\\GitHub\\jiayou-production-engineering-evidence-20261116\\runs\\full-rehearsal-04\\backups\\20261116T120837Z-cdac7826.dump"
+      "evidence": "PRIVATE_QA_DIRECTORY\\backups\\20261116T120837Z-cdac7826.dump"
     },
     {
       "name": "atomic restore into absent independent database",
