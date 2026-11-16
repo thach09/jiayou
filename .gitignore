@@ -95,3 +95,7 @@ backups/
 
 # ccsm workspace marker (runtime state)
 .ccsm
+
+# Python release tooling caches; operator secrets/state must remain outside source.
+__pycache__/
+*.py[cod]

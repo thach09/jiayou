@@ -3,6 +3,8 @@
 # Credentials/config come from the operator environment or an external config tree;
 # no hosting account, domain, volume path or public address is embedded here.
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
   application:
     name: jiayou-backend
   datasource:
@@ -35,6 +37,8 @@ spring:
     placeholders:
       jiayouTargetId: ${JIAYOU_TARGET_ID:}
 app:
+  security:
+    refresh-cookie-secure: true
   jwt:
     secret: ${JIAYOU_JWT_SECRET:}
   cors:
@@ -43,3 +47,5 @@ management:
   endpoint:
     health:
       show-details: never
+server:
+  shutdown: graceful

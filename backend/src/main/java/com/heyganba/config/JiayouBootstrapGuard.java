@@ -86,6 +86,7 @@ public final class JiayouBootstrapGuard {
         require(value(e, "spring.flyway.clean-disabled").equals("true"), "clean forbidden");
         require(value(e, "spring.jpa.hibernate.ddl-auto").equals("validate"), "Hibernate must validate only");
         require(value(e, "spring.sql.init.mode").equals("never"), "SQL init forbidden");
+        require(e.getProperty("app.security.refresh-cookie-secure", "true").equals("true"), "Secure refresh cookies required");
         require(e.getProperty("spring.jpa.properties.hibernate.hbm2ddl.auto", "validate").equals("validate")
                 && !e.getProperty("spring.jpa.generate-ddl", "false").equals("true"), "alternate Hibernate DDL forbidden");
         for (String key : new String[]{"spring.datasource.hikari.connection-init-sql", "spring.flyway.init-sqls",

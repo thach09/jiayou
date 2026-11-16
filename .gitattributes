@@ -1,0 +1,2 @@
+deployment/**/*.sh text eol=lf
+frontend/deployment-required.sh text eol=lf
