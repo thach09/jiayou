@@ -3,7 +3,9 @@
 Review [PR68](https://github.com/thach09/jiayou/pull/68) and its dependent HTTPS QA PR.
 These are repository implementation decisions, not authorization to operate the Arch host.
 Workstream 5 requires owner approval before merge of new security/infrastructure decisions.
-Status: **PENDING OWNER APPROVAL**. Passing CI does not supply that approval.
+Status: **OWNER APPROVED**, 2026-11-16, explicit task response: approve these decisions
+and merge only when every applicable CI/provider gate passes. Passing CI alone does not
+supply that approval. The approval does not authorize production activation.
 
 1. Independent PostgreSQL16 instance and external volume, a cluster operator, a separate
    migration owner, and a runtime role without schema creation or protected metadata writes.

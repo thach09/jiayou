@@ -9,7 +9,7 @@ New local validation on 2026-11-16:
 | Check | Actual result |
 | --- | --- |
 | Canonical Compose/static contract | PASS; no services started by validator |
-| Release safety unit tests | 12 PASS, including foreign volume, target ACK, non-activating ingress, stopped-stack startup and incomplete rollback rejection |
+| Release safety unit tests | 13 PASS, including foreign volume, target ACK, non-activating ingress, stopped-stack startup, incomplete rollback rejection and wrong running-image rejection |
 | Maven clean verify | 566 total, 558 PASS, 8 opt-in SKIP, no failures/errors |
 | Secure-cookie guard class | 22 PASS |
 | Runtime dependency audit | 104 audited; two existing reachability exceptions retained |
@@ -21,7 +21,9 @@ New local validation on 2026-11-16:
 | Real PostgreSQL/HTTPS/recovery | PASS in the explicitly scoped local rehearsal; see below |
 
 The eight default backend skips are the opt-in PostgreSQL schema/bootstrap rehearsals;
-the dedicated GitHub jobs must execute their actual database cases. The manually gated
+the dedicated GitHub jobs executed 27 bootstrap/guard cases and 3 staging/schema cases
+with no skips or failures. The full PostgreSQL API suite also passed (566 total, 8 opt-in
+skips handled by those dedicated invocations). The manually gated
 legacy production source-history preflight intentionally does not run automatically.
 No source check is proof of a live legacy database's compatibility.
 
@@ -37,3 +39,7 @@ BOM/CRLF packaging; a fetch-normalized Host header in a negative test; and rewri
 read-only evidence file on Windows. Each was corrected, then a fresh full run executed.
 The fourth clean run passed 21 stages. These are disposable-target results, not Arch host
 or public production acceptance. See [DEPLOYMENT-REHEARSAL.md](DEPLOYMENT-REHEARSAL.md).
+The fifth clean local run also passed with strict certificate-chain/hostname error-code
+assertions. Initial GitHub rehearsal failed before app startup; an explicit observed subnet
+was added for runner compatibility. The subsequent GitHub rehearsal passed all 21 stages.
+Both failed and passing run URLs remain documented; no failure is hidden.

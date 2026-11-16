@@ -4,6 +4,17 @@ Rehearsed source: `a97b694` (full SHA in [the sanitized receipt](release-enginee
 Executed 2026-11-16 using an existing local Linux-container Docker Desktop engine.
 No host login, public networking, provider modification or Ganbarou access occurred.
 
+GitHub reproduction: [initial failed run](https://github.com/thach09/jiayou/actions/runs/43864926619)
+stopped during Compose startup after five stages. The driver now explicitly declares
+the subnet observed from a new owned Docker allocation probe, supporting Linux engine
+static peer addresses without guessing a host subnet. [The subsequent run](https://github.com/thach09/jiayou/actions/runs/43865818781)
+passed all 21 stages on a disposable GitHub-hosted Ubuntu runner with TLS and the ordinary
+Chromium sandbox enabled. Its exact PR merge-snapshot SHA/image IDs and timings are in
+[the GitHub receipt](release-engineering-evidence/github-rehearsal.json). Raw runner
+diagnostics were not uploaded; this records the observed failure phase and tested remedy,
+not an invented daemon error message. The owned empty allocation probe alone is removed;
+all preexisting resources remain outside the driver's mutation scope.
+
 All 21 recorded stages passed: canonical Compose, clean production/browser image builds,
 private CA issuance, first PostgreSQL initialization/grants, production-profile startup,
 private HTTPS edge, actual API/PG datasource binding, real browser desktop/mobile auth,
