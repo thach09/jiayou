@@ -4,6 +4,13 @@ Baseline: `60cf1a02892d851adc7d70cfb194bd8371c35ad4` (PR66/67).
 Container/bootstrap candidate: [PR68](https://github.com/thach09/jiayou/pull/68).
 The production operator procedure is [PRODUCTION-DEPLOYMENT.md](PRODUCTION-DEPLOYMENT.md).
 
+PR68/69 are now merged. Fresh release-main validation on 2026-11-17 at
+`ad04ffc185a414035088cc631a79e7e325569060` passed every applicable check, including real
+HTTPS rehearsal. See [exact CI jobs/results](release-engineering-evidence/release-main-ci.json)
+and [release image/rehearsal receipt](release-engineering-evidence/release-main-rehearsal.json).
+The default-suite skips, dedicated opt-in executions, historical dictionary skip and
+retained advisory reachability exceptions below remain explicit.
+
 New local validation on 2026-11-16:
 
 | Check | Actual result |
