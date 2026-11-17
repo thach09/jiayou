@@ -9,7 +9,7 @@
 .dashboard {
   display: grid;
   gap: 20px;
-  max-width: 1440px;
+  width: 100%;
   margin-inline: auto;
   font-family: var(--font-sans);
 }
@@ -511,6 +511,15 @@
   50% {
     filter: drop-shadow(0 0 20px #E9BC78);
   }
+}
+
+/* Wide desktops give the roadmap its own column beside the overview. */
+@media (min-width: 2400px) {
+  .dashboard { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 28px; }
+  .dashboard > * { grid-column: 1 / -1; }
+  .dashboard-three { grid-column: 1; }
+  .dashboard-roadmap { grid-column: 2; }
+  .dashboard-roadmap-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 /* Responsive Breakpoints */

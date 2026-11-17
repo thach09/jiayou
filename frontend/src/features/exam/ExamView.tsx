@@ -12,7 +12,6 @@ import confetti from 'canvas-confetti';
 import { FeedbackAlert } from '../../components/FeedbackAlert';
 import type { FeedbackType } from '../../components/FeedbackAlert';
 import { SubmitButton } from '../../components/SubmitButton';
-import { MascotBadge } from '../../components/MascotBadge';
 import { RedSealStamp } from '../../components/RedSealStamp';
 import { speakChinese } from '../../services/chineseSpeech';
 import { Modal } from '../../components/Modal';
@@ -375,7 +374,7 @@ export const ExamView: React.FC = () => {
   const isHskPassed = scaledHskScore >= passingScore;
 
   return (
-    <div className="mx-auto flex w-full max-w-[1100px] flex-col">
+    <div className={`mx-auto flex w-full flex-col ${phase === 'IDLE' ? '' : 'max-w-[1100px]'}`}>
       {/* Station Header */}
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-6">
         <div>
@@ -426,9 +425,9 @@ export const ExamView: React.FC = () => {
       )}
 
       {phase === 'IDLE' && resumeState === 'none' && (
-        <>
+        <div className="mt-8 grid gap-x-10 gap-y-8 min-[1800px]:grid-cols-2 [&>section]:min-w-0">
           {/* Exam Setup Card */}
-          <div className="mt-8 min-w-0 bg-card p-6">
+          <div className="min-w-0 bg-card p-6">
             <div className="flex flex-col gap-5">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-rule pb-4">
                 <div>
@@ -490,50 +489,38 @@ export const ExamView: React.FC = () => {
             </div>
           </div>
 
-          {/* Mascot & Heatmap */}
-          <div className="mt-10 grid gap-10 min-[1101px]:grid-cols-2">
-            <section>
-              <h3 className={sectionTitleClass}>Mascot &amp; điều kiện tính streak</h3>
-              <div className="mt-4">
-                <MascotBadge longestStreak={streak?.longestStreak ?? 0} currentStreak={streak?.currentStreak ?? 0} />
-              </div>
-              <p className="mt-3 text-[11.5px] leading-[1.8] text-fg-38">
-                Một ngày được tính streak khi: hoàn thành 1 lượt thi thử HSK, ôn ≥ {streak?.minSrsReviewsForStreak ?? 10} lượt SRS, hoặc làm bài tập ngữ pháp.
-              </p>
-            </section>
-
-            <section>
-              <h3 className={sectionTitleClass}>Lịch hoạt động ({heatmap.length} ngày gần nhất)</h3>
-              <div className="mt-4 flex flex-wrap gap-[3px]">
-                {heatmap.map((day) => (
-                  <span
-                    key={day.date}
-                    className={`h-[12px] w-[12px] bg-fg ${day.restored?'protected-heat-cell':''}`}
-                    style={{ opacity: HEAT_OPACITY[heatLevel(day.itemCount)] }}
-                    title={`${day.date}: ${day.itemCount} hoạt động, ${day.correctCount} câu đúng${day.restored?' · Ngày bảo vệ chuỗi, không cộng hoạt động học':''}`}
-                  />
-                ))}
-              </div>
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-fg-38">
-                <span>Ít</span>
-                {HEAT_OPACITY.map((opacity) => (
-                  <span key={opacity} className="h-[10px] w-[10px] bg-fg" style={{ opacity }} />
-                ))}
-                <span>Nhiều</span>
-                <span className="ml-2">Múi giờ tính streak: {streak?.zone ?? 'Asia/Ho_Chi_Minh'}</span>
-              </div>
-            </section>
-          </div>
+          {/* Activity remains independent of the dashboard companion. */}
+          <section>
+            <h3 className={sectionTitleClass}>Lịch hoạt động ({heatmap.length} ngày gần nhất)</h3>
+            <div className="mt-4 grid grid-cols-[repeat(26,minmax(0,1fr))] gap-[3px] max-[640px]:grid-cols-[repeat(13,minmax(0,1fr))]">
+              {heatmap.map((day) => (
+                <span
+                  key={day.date}
+                  className={`aspect-square w-full bg-fg ${day.restored?'protected-heat-cell':''}`}
+                  style={{ opacity: HEAT_OPACITY[heatLevel(day.itemCount)] }}
+                  title={`${day.date}: ${day.itemCount} hoạt động, ${day.correctCount} câu đúng${day.restored?' · Ngày bảo vệ chuỗi, không cộng hoạt động học':''}`}
+                />
+              ))}
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-fg-38">
+              <span>Ít</span>
+              {HEAT_OPACITY.map((opacity) => (
+                <span key={opacity} className="h-[10px] w-[10px] bg-fg" style={{ opacity }} />
+              ))}
+              <span>Nhiều</span>
+              <span className="ml-2">Múi giờ tính streak: {streak?.zone ?? 'Asia/Ho_Chi_Minh'}</span>
+            </div>
+          </section>
 
           {/* Leaderboard */}
-          <section className="mt-10 border-t border-rule pt-6">
+          <section className="border-t border-rule pt-6">
             <div className="flex flex-wrap items-baseline justify-between gap-3">
               <h3 className={sectionTitleClass}>Bảng xếp hạng ({leaderboard?.scope ?? 'ALL'})</h3>
               {leaderboard && <span className="text-[11px] text-fg-38">{leaderboard.pointsFormula}</span>}
             </div>
 
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full border-collapse text-[12.5px]">
+              <table className="w-full min-w-[640px] border-collapse text-[12.5px]">
                 <thead>
                   <tr>
                     <th className={thClass}>#</th>
@@ -574,10 +561,10 @@ export const ExamView: React.FC = () => {
           </section>
 
           {/* Exam History */}
-          <section className="mt-10 border-t border-rule pt-6">
+          <section className="border-t border-rule pt-6">
             <h3 className={sectionTitleClass}>Lịch sử thi thử</h3>
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full border-collapse text-[12.5px]">
+              <table className="w-full min-w-[640px] border-collapse text-[12.5px]">
                 <thead>
                   <tr>
                     <th className={thClass}>Bài luyện</th>
@@ -619,7 +606,7 @@ export const ExamView: React.FC = () => {
               </table>
             </div>
           </section>
-        </>
+        </div>
       )}
 
       {/* Taking Exam Phase */}

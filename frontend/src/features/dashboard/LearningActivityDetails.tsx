@@ -173,10 +173,10 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
         className="overflow-x-auto pb-2 [scrollbar-width:thin] select-none"
       >
         <div
-          className="inline-grid gap-[2.5px] items-center"
+          className="grid min-w-[700px] w-full gap-[3px] items-center"
           style={{
-            gridTemplateColumns: `22px repeat(${weeks.length || 53}, 10.5px)`,
-            gridTemplateRows: `18px repeat(7, 10.5px)`,
+            gridTemplateColumns: `22px repeat(${weeks.length || 53}, minmax(0, 1fr))`,
+            gridTemplateRows: `22px repeat(7, auto)`,
           }}
         >
           {/* Row 1: Month labels */}
@@ -184,7 +184,7 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
             <span
               key={colIdx}
               style={{ gridColumn: colIdx + 2, gridRow: 1 }}
-              className="text-[9.5px] font-normal text-fg-60/70 whitespace-nowrap self-end pb-0.5 leading-none"
+              className="text-[11px] font-normal text-fg-60 whitespace-nowrap self-end pb-0.5 leading-none"
             >
               {label}
             </span>
@@ -193,21 +193,21 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
           {/* Column 1: Alternating day labels (T2 = Mon, T4 = Wed, T6 = Fri) */}
           <span
             style={{ gridColumn: 1, gridRow: 2 }}
-            className="text-[9px] text-fg-60/50 pr-1 text-right self-center leading-none"
+            className="text-[10px] text-fg-60 pr-1 text-right self-center leading-none"
             aria-hidden="true"
           >
             T2
           </span>
           <span
             style={{ gridColumn: 1, gridRow: 4 }}
-            className="text-[9px] text-fg-60/50 pr-1 text-right self-center leading-none"
+            className="text-[10px] text-fg-60 pr-1 text-right self-center leading-none"
             aria-hidden="true"
           >
             T4
           </span>
           <span
             style={{ gridColumn: 1, gridRow: 6 }}
-            className="text-[9px] text-fg-60/50 pr-1 text-right self-center leading-none"
+            className="text-[10px] text-fg-60 pr-1 text-right self-center leading-none"
             aria-hidden="true"
           >
             T6
@@ -221,7 +221,7 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
                   <div
                     key={`${wIdx}-${dIdx}`}
                     style={{ gridColumn: wIdx + 2, gridRow: dIdx + 2 }}
-                    className="w-[10.5px] h-[10.5px]"
+                    className="aspect-square w-full"
                   />
                 );
               }
@@ -231,7 +231,7 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
                 <i
                   key={`${wIdx}-${dIdx}`}
                   style={{ gridColumn: wIdx + 2, gridRow: dIdx + 2 }}
-                  className={`block w-[10.5px] h-[10.5px] rounded-[2px] transition-transform hover:scale-150 hover:z-20 cursor-pointer ${
+                  className={`block aspect-square w-full rounded-[2px] transition-transform hover:scale-150 hover:z-20 cursor-pointer ${
                     isProtected
                       ? 'border border-dashed border-gold-soft bg-gold-soft/25'
                       : CELL_LEVELS[lvl]
@@ -315,7 +315,7 @@ export function LearningActivityDetails() {
   const recent = days.slice(-7);
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1fr_220px] items-start">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_240px] items-stretch">
       <section className="min-w-0" aria-label="Bản đồ nhiệt hoạt động học 1 năm">
         <Tracker days={days} />
       </section>

@@ -142,6 +142,7 @@ describe('HSK Mock Exam Engine (ExamView)', () => {
     );
 
     // Start exam
+    expect(screen.queryByText(/Mascot &/)).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: /Bắt đầu thi thử/ }));
 
     // Verify question 0 appears with listening section header
