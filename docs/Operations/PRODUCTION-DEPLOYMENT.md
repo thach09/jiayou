@@ -5,6 +5,13 @@ Build locally from one clean, immutable Git commit. No registry publishing is re
 V8.1 is already approved/merged through PR66/67; do not re-merge historical UI branches.
 Actual activation on the shared Arch host still requires separate owner authorization.
 
+Reviewed immutable release source after [PR68](https://github.com/thach09/jiayou/pull/68)
+and [PR69](https://github.com/thach09/jiayou/pull/69):
+[`ad04ffc185a414035088cc631a79e7e325569060`](https://github.com/thach09/jiayou/commit/ad04ffc185a414035088cc631a79e7e325569060).
+The subsequent handover receipt is documentation only; it does not change application or
+deployment source. See [release gates](FINAL-RELEASE-GATES.md) and the short
+[Anh Hưng handover](ANH-HUNG-HANDOVER.md). Actual deployment remains unauthorized.
+
 ## Required host-owned inputs
 
 Prepare Git, Python >=3.12, a Linux Docker engine with Compose, sufficient measured

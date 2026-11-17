@@ -4,6 +4,12 @@ Rehearsed source: `a97b694` (full SHA in [the sanitized receipt](release-enginee
 Executed 2026-11-16 using an existing local Linux-container Docker Desktop engine.
 No host login, public networking, provider modification or Ganbarou access occurred.
 
+Final immutable release reproduction, 2026-11-17: [release-main run](https://github.com/thach09/jiayou/actions/runs/44007859307)
+passed all 21 stages at `ad04ffc185a414035088cc631a79e7e325569060`.
+[The receipt](release-engineering-evidence/release-main-rehearsal.json) records the actual
+source, image identities, exit-code summaries and timings; its downloaded artifact archive
+SHA-256 was independently checked against GitHub's artifact digest.
+
 GitHub reproduction: [initial failed run](https://github.com/thach09/jiayou/actions/runs/43864926619)
 stopped during Compose startup after five stages. The driver now explicitly declares
 the subnet observed from a new owned Docker allocation probe, supporting Linux engine

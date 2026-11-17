@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-17T03:06:03.333Z",
+  "blueprint": {
+    "id": "exs-das8sc8jo6nc73anlsgg",
+    "autoSync": false,
+    "status": "paused",
+    "branch": "main"
+  },
+  "services": [
+    {
+      "id": "srv-dasbnfh7lnhs738gmm30",
+      "branch": "develop",
+      "autoDeploy": "no",
+      "autoDeployTrigger": "off",
+      "prPreviews": "off"
+    },
+    {
+      "id": "srv-das95jh7lnhs7385mim0",
+      "branch": "main",
+      "autoDeploy": "no",
+      "autoDeployTrigger": "off",
+      "prPreviews": "off"
+    }
+  ],
+  "vercelMatches": 0,
+  "vercelDeployments": 0,
+  "githubWebhooks": 0,
+  "githubBranchProtection": {
+    "strictRequiredChecks": true,
+    "enforceAdmins": true,
+    "forcePushAllowed": false
+  },
+  "installedApps": {
+    "lastOwnerAuthenticatedInspection": "2026-11-16",
+    "renderAndVercelSelection": "Only thach09/cinevora; Jiayou excluded",
+    "codex": "All repositories; no direct deployment permission",
+    "currentBrowserSession": "Chrome unavailable on resumption; no settings changed"
+  },
+  "scope": "Live provider API settings and deployment history rechecked on resumption. Installed App scope retains its separately timestamped owner-authenticated observation; no claim of a fresh browser observation on 2026-11-17. No universal claim about unknown credential holders.",
+  "providerChanges": 0
+}

@@ -1,5 +1,10 @@
 # Jiayou — handover to anh Hưng
 
+Reviewed production engineering source: [`ad04ffc185a414035088cc631a79e7e325569060`](https://github.com/thach09/jiayou/tree/ad04ffc185a414035088cc631a79e7e325569060),
+merged through PR68/69. Start with the short [operator handover](Operations/ANH-HUNG-HANDOVER.md)
+and [release gates](Operations/FINAL-RELEASE-GATES.md). Engineering handover does not authorize
+host access, production activation or public content publication.
+
 Ganbarou remains a separate running application at heyganba.site. The owner confirms
 this repository is not a source/update dependency of that running laptop deployment.
 No host login, deployment, public route, DNS change or live DB write is part of repository

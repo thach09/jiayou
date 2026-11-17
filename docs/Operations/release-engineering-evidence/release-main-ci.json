@@ -1,0 +1,87 @@
+{
+  "verifiedAt": "2026-11-17T03:11:25.448801+00:00",
+  "repository": "thach09/jiayou",
+  "repositoryId": 1389493892,
+  "releaseSha": "ad04ffc185a414035088cc631a79e7e325569060",
+  "checks": [
+    {
+      "name": "Backend Production Migration Preflight",
+      "status": "completed",
+      "conclusion": "skipped",
+      "html_url": "https://github.com/thach09/jiayou/actions/runs/44007859294/job/133788748014"
+    },
+    {
+      "name": "Backend Migration Check (PostgreSQL + Flyway)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/thach09/jiayou/actions/runs/44007859294/job/133787969139"
+    },
+    {
+      "name": "Backend Build & Test (H2)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/thach09/jiayou/actions/runs/44007859294/job/133787416071"
+    },
+    {
+      "name": "Frontend Lint & Build",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/thach09/jiayou/actions/runs/44007859294/job/133787415683"
+    },
+    {
+      "name": "Disposable PostgreSQL HTTPS release rehearsal",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/thach09/jiayou/actions/runs/44007859307/job/133787415405"
+    },
+    {
+      "name": "Jiayou schema-only bootstrap (PostgreSQL)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/thach09/jiayou/actions/runs/44007859368/job/133787415386"
+    },
+    {
+      "name": "Container build and isolated startup checks",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/thach09/jiayou/actions/runs/44007859208/job/133787415068"
+    }
+  ],
+  "result": "PASS",
+  "mergeMethod": "merge",
+  "mergedPRs": [
+    68,
+    69
+  ],
+  "ownerDesignApproval": "Explicitly approved in task conversation before merge",
+  "defaultBackendSuite": {
+    "total": 566,
+    "passed": 558,
+    "optInSkipped": 8
+  },
+  "dedicatedBootstrap": {
+    "passed": 27,
+    "skipped": 0
+  },
+  "dedicatedPostgresSchema": {
+    "passed": 3,
+    "skipped": 0
+  },
+  "historicalDictionaryAudit": {
+    "total": 24,
+    "passed": 23,
+    "skipped": 1
+  },
+  "frontend": {
+    "vitestPassed": 323,
+    "nodePassed": 19,
+    "fullAuditVulnerabilities": 0
+  },
+  "runtimeDependencies": 104,
+  "retainedReachabilityExceptions": [
+    "GHSA-j9f9-w8pj-32f8: SSE view fragments disabled",
+    "GHSA-pc63-qcmh-9cmg: XsltView disabled"
+  ],
+  "sourceHasNoUiDependencyMigrationChanges": true,
+  "publicRelease": "NO-GO"
+}

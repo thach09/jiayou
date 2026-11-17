@@ -1,0 +1,15 @@
+{
+  "atUtc": "2026-11-17T03:06:11.607541+00:00",
+  "originalCheckouts": 28,
+  "oldLocalRefs": 36,
+  "refDifferences": [],
+  "historicalStatusRecordsPreserved": 138,
+  "historicalHashCount": 1031,
+  "hashDifferences": [],
+  "historicalUntrackedMigrationDirectoryFiles": 31,
+  "historicalUntrackedSqlFiles": 18,
+  "originalArchiveHead": "24e2f0796e232a1340dc84017901903f6e1ddbf6",
+  "result": "PASS",
+  "note": "The historical dirty state was previously preserved in an authorized archive commit; no dirty worktree reconstruction is performed.",
+  "scope": "All original Git worktrees/semantic indexes unchanged before the separately authorized final-checkout update; old local branch refs and all captured file hashes match."
+}
