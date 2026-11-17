@@ -1,0 +1,30 @@
+name: Jiayou disposable release rehearsal
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rehearsal:
+    name: Disposable PostgreSQL HTTPS release rehearsal
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rehearse immutable source without publishing images or ports
+        run: python3 deployment/qa/rehearse.py --context default --source-sha "$GITHUB_SHA" --output "$RUNNER_TEMP/jiayou-rehearsal"
+      - name: Upload sanitized receipts only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: disposable-release-receipts
+          path: |
+            ${{ runner.temp }}/jiayou-rehearsal/summary.json
+            ${{ runner.temp }}/jiayou-rehearsal/commands.json
+          if-no-files-found: warn

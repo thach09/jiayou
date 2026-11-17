@@ -1,0 +1,270 @@
+{
+  "purpose": "disposable-production-mode-release-rehearsal",
+  "sourceSha": "62b85560162db4384cb1ccf9f736f1a366224cbf",
+  "startedAt": "2026-11-16T12:21:32.241241+00:00",
+  "stages": [
+    {
+      "name": "canonical Compose validation",
+      "status": "PASS",
+      "seconds": 0.101,
+      "evidence": {
+        "privatePorts": true,
+        "externalSecretFiles": true
+      }
+    },
+    {
+      "name": "clean immutable production image builds",
+      "status": "PASS",
+      "seconds": 50.957,
+      "evidence": {
+        "releaseSha": "62b85560162db4384cb1ccf9f736f1a366224cbf",
+        "targetId": "6ed970de-46e5-48e5-b749-724ee26eb994",
+        "project": "jiayou-releaseqa-5c9fd4028fd1",
+        "database": "jiayou_rehearsal",
+        "schemaVersion": 2,
+        "contract": 1,
+        "images": {
+          "backend": {
+            "reference": "jiayou-backend:62b85560162db4384cb1ccf9f736f1a366224cbf",
+            "id": "sha256:3cbf490bc4ae31e1c7c7b3fb566383b0c58059a27418d520a2c7e2d04c535202"
+          },
+          "frontend": {
+            "reference": "jiayou-frontend:62b85560162db4384cb1ccf9f736f1a366224cbf",
+            "id": "sha256:487af0df00f8185569923205e738d507d957b18aeb6bad854c256c50fc5e4260"
+          }
+        },
+        "atUtc": "2026-11-16T12:22:24.168845+00:00"
+      }
+    },
+    {
+      "name": "sandboxed QA browser image build",
+      "status": "PASS",
+      "seconds": 39.759,
+      "evidence": 0
+    },
+    {
+      "name": "private QA CA issuance",
+      "status": "PASS",
+      "seconds": 0.762,
+      "evidence": 0
+    },
+    {
+      "name": "first PostgreSQL bootstrap and least-privilege grants",
+      "status": "PASS",
+      "seconds": 15.518,
+      "evidence": {
+        "schemaVersion": 2,
+        "runtimeDdl": false,
+        "protectedMetadataWrites": false,
+        "noAdminOrCurriculumSeed": true
+      }
+    },
+    {
+      "name": "production-profile Compose startup",
+      "status": "PASS",
+      "seconds": 24.99,
+      "evidence": {
+        "targetId": "6ed970de-46e5-48e5-b749-724ee26eb994",
+        "releaseSha": "62b85560162db4384cb1ccf9f736f1a366224cbf",
+        "healthy": [
+          "postgres",
+          "backend",
+          "frontend"
+        ],
+        "runtimeRoleBound": true,
+        "frontendCookieArtifactVerified": true
+      }
+    },
+    {
+      "name": "same-origin HTTPS ingress startup",
+      "status": "PASS",
+      "seconds": 8.167,
+      "evidence": 0
+    },
+    {
+      "name": "independent API/PostgreSQL binding verification",
+      "status": "PASS",
+      "seconds": 1.571,
+      "evidence": {
+        "actualDatasourceConnection": true,
+        "newProject": "jiayou-releaseqa-5c9fd4028fd1",
+        "targetId": "6ed970de-46e5-48e5-b749-724ee26eb994",
+        "recordSha256": "66193bb1a0bee47148bc95f13c9ded671b36ff29187d86a997139bd5fbea5195"
+      }
+    },
+    {
+      "name": "real HTTPS auth browser desktop/mobile",
+      "status": "PASS",
+      "seconds": 6.868,
+      "evidence": {
+        "exitCode": 0,
+        "safeSummary": [
+          "Cookie browser smoke passed on verified HTTPS QA: secure refresh, recovery, layout and logout cleanup."
+        ]
+      }
+    },
+    {
+      "name": "real HTTPS ownership CSRF rotation and revocation",
+      "status": "PASS",
+      "seconds": 1.34,
+      "evidence": {
+        "exitCode": 0,
+        "safeSummary": [
+          "{\"suite\":\"Real HTTPS API ownership/CSRF/rotation/revocation/persistence\",\"mode\":\"setup\",\"checks\":23,\"status\":\"PASS\",\"contentPublication\":\"NOT PERFORMED\"}"
+        ]
+      }
+    },
+    {
+      "name": "controlled PostgreSQL/backend restart",
+      "status": "PASS",
+      "seconds": 23.956,
+      "evidence": {
+        "targetId": "6ed970de-46e5-48e5-b749-724ee26eb994",
+        "releaseSha": "62b85560162db4384cb1ccf9f736f1a366224cbf",
+        "healthy": [
+          "postgres",
+          "backend",
+          "frontend"
+        ],
+        "runtimeRoleBound": true,
+        "frontendCookieArtifactVerified": true
+      }
+    },
+    {
+      "name": "real API persistence after restart",
+      "status": "PASS",
+      "seconds": 1.519,
+      "evidence": {
+        "exitCode": 0,
+        "safeSummary": [
+          "{\"suite\":\"Real HTTPS API ownership/CSRF/rotation/revocation/persistence\",\"mode\":\"resume\",\"checks\":21,\"status\":\"PASS\",\"contentPublication\":\"NOT PERFORMED\"}"
+        ]
+      }
+    },
+    {
+      "name": "fail-closed bootstrap negative cases",
+      "status": "PASS",
+      "seconds": 9.611,
+      "evidence": {
+        "repeatedInitialize": "REJECTED",
+        "wrongTarget": "REJECTED",
+        "foreignSchema": "REJECTED",
+        "activeDataUnchanged": true
+      }
+    },
+    {
+      "name": "independent logical backup",
+      "status": "PASS",
+      "seconds": 0.724,
+      "evidence": "GITHUB_RUNNER_PRIVATE_QA_DIRECTORY/backups/20261116T122439Z-16fcd22f.dump"
+    },
+    {
+      "name": "atomic restore into absent independent database",
+      "status": "PASS",
+      "seconds": 2.645,
+      "evidence": {
+        "restoredDatabase": "jiayou_restored",
+        "targetId": "6ed970de-46e5-48e5-b749-724ee26eb994",
+        "backupSha256": "176a3f113f73883b851e20ef0ff645380bdc0e2e1db61d43ebd34a8919a55755",
+        "activeDatabaseUnchanged": true
+      }
+    },
+    {
+      "name": "restored database application validation",
+      "status": "PASS",
+      "seconds": 31.205,
+      "evidence": {
+        "targetId": "6ed970de-46e5-48e5-b749-724ee26eb994",
+        "releaseSha": "62b85560162db4384cb1ccf9f736f1a366224cbf",
+        "healthy": [
+          "postgres",
+          "backend",
+          "frontend"
+        ],
+        "runtimeRoleBound": true,
+        "frontendCookieArtifactVerified": true
+      }
+    },
+    {
+      "name": "restored API binding",
+      "status": "PASS",
+      "seconds": 1.629,
+      "evidence": {
+        "actualDatasourceConnection": true,
+        "newProject": "jiayou-releaseqa-5c9fd4028fd1",
+        "targetId": "6ed970de-46e5-48e5-b749-724ee26eb994",
+        "recordSha256": "a6bd5a592125d8a8100bbc384680d7c05e287086a79bd143df85550967db213c"
+      }
+    },
+    {
+      "name": "real restored account/notebook state",
+      "status": "PASS",
+      "seconds": 1.498,
+      "evidence": {
+        "exitCode": 0,
+        "safeSummary": [
+          "{\"suite\":\"Real HTTPS API ownership/CSRF/rotation/revocation/persistence\",\"mode\":\"resume\",\"checks\":21,\"status\":\"PASS\",\"contentPublication\":\"NOT PERFORMED\"}"
+        ]
+      }
+    },
+    {
+      "name": "controlled configuration rollback to known-good state",
+      "status": "PASS",
+      "seconds": 31.236,
+      "evidence": {
+        "targetId": "6ed970de-46e5-48e5-b749-724ee26eb994",
+        "releaseSha": "62b85560162db4384cb1ccf9f736f1a366224cbf",
+        "healthy": [
+          "postgres",
+          "backend",
+          "frontend"
+        ],
+        "runtimeRoleBound": true,
+        "frontendCookieArtifactVerified": true
+      }
+    },
+    {
+      "name": "rollback API binding",
+      "status": "PASS",
+      "seconds": 1.657,
+      "evidence": {
+        "actualDatasourceConnection": true,
+        "newProject": "jiayou-releaseqa-5c9fd4028fd1",
+        "targetId": "6ed970de-46e5-48e5-b749-724ee26eb994",
+        "recordSha256": "cc0f6594845619cef0dbf0ebf8d713425b28e17c9ab12b63e3bdd8cb029e3a85"
+      }
+    },
+    {
+      "name": "real account/notebook state after rollback",
+      "status": "PASS",
+      "seconds": 1.511,
+      "evidence": {
+        "exitCode": 0,
+        "safeSummary": [
+          "{\"suite\":\"Real HTTPS API ownership/CSRF/rotation/revocation/persistence\",\"mode\":\"resume\",\"checks\":21,\"status\":\"PASS\",\"contentPublication\":\"NOT PERFORMED\"}"
+        ]
+      }
+    }
+  ],
+  "productionAccess": false,
+  "publicNetworking": false,
+  "curriculumPublication": "NOT PERFORMED",
+  "engineEvidence": {
+    "localEndpoint": true,
+    "linuxContainers": true,
+    "verifiedSurface": "GitHub-hosted runner",
+    "preexistingContainers": 0,
+    "memoryBytes": 16759304192
+  },
+  "result": "PASS",
+  "limitations": [
+    "No authorized learner corpus; SRS/HSK/curriculum E2E BLOCKED",
+    "No Arch host/live ingress/capacity/off-host backup acceptance",
+    "Configuration rollback rehearsed; cross-version artifact rollback requires two compatible approved releases",
+    "Raw dumps and QA credentials must not be uploaded; sanitized reports only"
+  ],
+  "finishedAt": "2026-11-16T12:25:52.625116+00:00",
+  "workflowRun": "https://github.com/thach09/jiayou/actions/runs/43865818781",
+  "artifactId": 14225107684,
+  "artifactZipSha256": "c219d54529f949c8a15970a1d3d0fa7f4aa8f2da8a6390b3ed6c49cb3e49720c"
+}

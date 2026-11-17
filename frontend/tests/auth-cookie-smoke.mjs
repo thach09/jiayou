@@ -27,7 +27,8 @@ try {
   assert.equal(createHash('sha256').update(recordBytes).digest('hex'), process.env.AUDIT_ISOLATION_SHA256);
   const record = JSON.parse(recordBytes.toString('utf8'));
   assert.equal(record.purpose, 'jiayou-disposable-auth-cookie-qa');
-  assert.equal(record.mainSha, 'cd5ed256890038dd64511562da5e10d41a5515d9');
+  assert.match(process.env.AUDIT_SOURCE_SHA || '', /^[a-f0-9]{40}$/);
+  assert.equal(record.mainSha, process.env.AUDIT_SOURCE_SHA);
   assert.equal(record.webUrl, web.href);
   assert.equal(record.apiUrl, api.href);
   assert.equal(record.disposablePostgresql, true);
@@ -59,7 +60,8 @@ try {
     response.url() === `${api.href}/auth/${path}` && response.request().method() === 'POST');
   const assertNoPersistedJwt = async () => assert.ok(await page.evaluate(() =>
     !localStorage.getItem('heyganba_access_token') && !localStorage.getItem('heyganba_refresh_token')
-    && !/accessToken|refreshToken/.test(localStorage.getItem('heyganba_user') || '')));
+    && !/accessToken|refreshToken/.test(localStorage.getItem('heyganba_user') || '')
+    && !sessionStorage.getItem('heyganba_access_token') && !sessionStorage.getItem('heyganba_refresh_token')));
 
   await page.setViewport({ width: 1440, height: 1000 });
   await page.goto(web.href, { waitUntil: 'networkidle0' });
