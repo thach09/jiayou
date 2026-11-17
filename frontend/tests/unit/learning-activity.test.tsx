@@ -20,7 +20,12 @@ test('requests 365 days, keeps the newest seven totals and labels lifetime learn
   const chart = await screen.findByRole('region', { name: 'Bản đồ nhiệt hoạt động học 1 năm' });
   expect(fixture.heatmap).toHaveBeenCalledWith(365, expect.objectContaining({ signal: expect.any(AbortSignal) }));
   expect(chart.querySelectorAll('i[title]').length).toBe(365);
-  const months = [...chart.querySelectorAll('span')].filter(e => /^Thg /.test(e.textContent ?? ''));
+  expect(within(chart).getByText('Mon')).toBeTruthy();
+  expect(within(chart).getByText('Wed')).toBeTruthy();
+  expect(within(chart).getByText('Fri')).toBeTruthy();
+  expect(within(chart).getByText('Jan')).toBeTruthy();
+  const months = [...chart.querySelectorAll('span')].filter(e => /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/.test(e.textContent ?? ''));
+  expect(months.length).toBeGreaterThanOrEqual(12);
   for (let i = 1; i < months.length; i++) {
     expect(Number((months[i] as HTMLElement).style.gridColumn) - Number((months[i - 1] as HTMLElement).style.gridColumn)).toBeGreaterThanOrEqual(3);
   }

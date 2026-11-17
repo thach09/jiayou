@@ -350,16 +350,18 @@ function DashboardSession() {
             /* Guest progress remains unknown until a session is available. */
             <div className="flex flex-col justify-between flex-1 mt-4">
               <div className="flex items-center justify-around gap-4 flex-wrap">
-                <div
-                  className="dashboard-donut"
-                  style={{ '--progress': '0%' } as CSSProperties}
-                  role="img"
-                  aria-label="Đăng nhập để xem tiến độ"
-                >
-                  <div>
-                    <strong className="text-2xl font-semibold text-fg">—</strong>
-                    <span className="dashboard-subtle text-[11px] font-medium">Chưa có dữ liệu</span>
+                <div className="flex shrink-0 flex-col items-center gap-2">
+                  <div
+                    className="dashboard-donut"
+                    style={{ '--progress': '0%' } as CSSProperties}
+                    role="img"
+                    aria-label="Đăng nhập để xem tiến độ"
+                  >
+                    <div>
+                      <strong className="text-2xl font-semibold text-fg">—</strong>
+                    </div>
                   </div>
+                  <p className="dashboard-subtle text-center text-xs">Chưa có dữ liệu</p>
                 </div>
                 <dl className="space-y-3 text-xs">
                   <div className="flex items-center gap-2.5 text-fg">
@@ -380,24 +382,25 @@ function DashboardSession() {
             /* Authenticated Progress with Genuine Backend Metrics */
             <div className="flex flex-col justify-between flex-1 mt-4">
               <div className="flex items-center justify-around gap-4 flex-wrap">
-                <div
-                  className="dashboard-donut"
-                  style={{ '--progress': `${overall ?? 0}%` } as CSSProperties}
-                  role="img"
-                  aria-label={
-                    overall === null
-                      ? 'Chưa có học liệu đã phát hành'
-                      : `${overall}% tiến độ học liệu hiện có`
-                  }
-                >
-                  <div>
-                    <strong className="text-2xl font-semibold text-fg">
-                      {overall === null ? '—' : `${overall}%`}
-                    </strong>
-                    <span className="dashboard-subtle text-[11px] font-medium">
-                      {overall === null ? 'Chưa có dữ liệu' : 'Đã luyện tập'}
-                    </span>
+                <div className="flex shrink-0 flex-col items-center gap-2">
+                  <div
+                    className="dashboard-donut"
+                    style={{ '--progress': `${overall ?? 0}%` } as CSSProperties}
+                    role="img"
+                    aria-label={
+                      overall === null
+                        ? 'Chưa có học liệu đã phát hành'
+                        : `${overall}% tiến độ học liệu hiện có`
+                    }
+                  >
+                    <div>
+                      <strong className="text-2xl font-semibold text-fg">
+                        {overall === null ? '—' : `${overall}%`}
+                      </strong>
+                      {overall !== null && <span className="dashboard-subtle text-[11px] font-medium">Đã luyện tập</span>}
+                    </div>
                   </div>
+                  {overall === null && <p className="dashboard-subtle text-center text-xs">Chưa có dữ liệu</p>}
                 </div>
 
                 <dl className="space-y-3 text-xs">

@@ -17,18 +17,18 @@ const CELL_LEVELS = [
 ];
 
 const MONTH_NAMES = [
-  'Thg 1',
-  'Thg 2',
-  'Thg 3',
-  'Thg 4',
-  'Thg 5',
-  'Thg 6',
-  'Thg 7',
-  'Thg 8',
-  'Thg 9',
-  'Thg 10',
-  'Thg 11',
-  'Thg 12',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
 
 const formatNumber = (value: number) => value.toLocaleString('vi-VN');
@@ -175,7 +175,7 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
         <div
           className="grid min-w-[700px] w-full gap-[3px] items-center"
           style={{
-            gridTemplateColumns: `22px repeat(${weeks.length || 53}, minmax(0, 1fr))`,
+            gridTemplateColumns: `32px repeat(${weeks.length || 53}, minmax(0, 1fr))`,
             gridTemplateRows: `22px repeat(7, auto)`,
           }}
         >
@@ -196,21 +196,21 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
             className="text-[10px] text-fg-60 pr-1 text-right self-center leading-none"
             aria-hidden="true"
           >
-            T2
+            Mon
           </span>
           <span
             style={{ gridColumn: 1, gridRow: 4 }}
             className="text-[10px] text-fg-60 pr-1 text-right self-center leading-none"
             aria-hidden="true"
           >
-            T4
+            Wed
           </span>
           <span
             style={{ gridColumn: 1, gridRow: 6 }}
             className="text-[10px] text-fg-60 pr-1 text-right self-center leading-none"
             aria-hidden="true"
           >
-            T6
+            Fri
           </span>
 
           {/* Rows 2-8, Columns 2-(weeks+1): 365 Days Cells */}
