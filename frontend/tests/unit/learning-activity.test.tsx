@@ -8,24 +8,25 @@ vi.mock('../../src/features/progress/api', () => ({ progressApi: { heatmap: fixt
 vi.mock('../../src/features/flashcard/api', () => ({ flashcardApi: { stats: fixture.stats } }));
 beforeEach(() => { vi.clearAllMocks(); });
 
-test('requests 365 days, keeps the newest seven totals and labels lifetime learned words separately', async () => {
-  const days = Array.from({ length: 365 }, (_, i) => ({
+test('shows the current calendar year without changing the last seven days or lifetime totals', async () => {
+  const days = Array.from({ length: 366 }, (_, i) => ({
     date: new Date(Date.UTC(2025, 10, 17 + i)).toISOString().slice(0, 10),
-    itemCount: i < 358 ? 100 : 2,
-    correctCount: i < 358 ? 90 : 1,
+    itemCount: i < 359 ? 100 : 2,
+    correctCount: i < 359 ? 90 : 1,
   }));
   fixture.heatmap.mockResolvedValue({ success: true, data: days });
   fixture.stats.mockResolvedValue({ success: true, data: { learnedWords: 42 } });
   render(<LearningActivityDetails />);
   const chart = await screen.findByRole('region', { name: 'Bản đồ nhiệt hoạt động học 1 năm' });
-  expect(fixture.heatmap).toHaveBeenCalledWith(365, expect.objectContaining({ signal: expect.any(AbortSignal) }));
-  expect(chart.querySelectorAll('i[title]').length).toBe(365);
+  expect(fixture.heatmap).toHaveBeenCalledWith(366, expect.objectContaining({ signal: expect.any(AbortSignal) }));
+  expect(chart.querySelectorAll('i[title]').length).toBe(321);
+  expect(within(chart).getByText('31.414 lượt học trong năm 2026')).toBeTruthy();
   expect(within(chart).getByText('Mon')).toBeTruthy();
   expect(within(chart).getByText('Wed')).toBeTruthy();
   expect(within(chart).getByText('Fri')).toBeTruthy();
   expect(within(chart).getByText('Jan')).toBeTruthy();
   const months = [...chart.querySelectorAll('span')].filter(e => /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/.test(e.textContent ?? ''));
-  expect(months.length).toBeGreaterThanOrEqual(12);
+  expect(months.map(e => e.textContent)).toEqual(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
   for (let i = 1; i < months.length; i++) {
     expect(Number((months[i] as HTMLElement).style.gridColumn) - Number((months[i - 1] as HTMLElement).style.gridColumn)).toBeGreaterThanOrEqual(3);
   }

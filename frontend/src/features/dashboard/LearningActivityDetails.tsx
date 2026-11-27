@@ -5,8 +5,8 @@ import { progressApi } from '../progress/api';
 import { flashcardApi } from '../flashcard/api';
 import type { HeatmapDay } from '../progress/types';
 
-/** 1 full year = 365 days (fits backend @Max(366) validation) */
-const TRACKER_DAYS = 365;
+/** Fetch enough history for any calendar year, including leap years. */
+const TRACKER_DAYS = 366;
 
 const CELL_LEVELS = [
   'bg-heat-empty border border-heat-border/40',
@@ -76,74 +76,57 @@ const StatRow: React.FC<{ label: string; value: number | null }> = ({
 const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to the newest days (rightmost) on mobile / tablet
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
-    }
-  }, [days]);
-
-  // Transform 365 days into 52-53 weekly columns (Monday -> Sunday)
-  const { weeks, monthLabels, totalYearItems } = useMemo(() => {
-    if (!days || days.length === 0 || !days[0]) {
-      return { weeks: [], monthLabels: [], totalYearItems: 0 };
+  // The last date comes from the server's study timezone, not the browser clock.
+  const latest = days.at(-1);
+  const year = latest ? toLocalDate(latest.date).getFullYear() : null;
+  const { weeks, monthLabels, totalYearItems, latestColumn, maxItems } = useMemo(() => {
+    if (year === null) {
+      return { weeks: [], monthLabels: [], totalYearItems: 0, latestColumn: 0, maxItems: 1 };
     }
 
-    const firstDate = toLocalDate(days[0].date);
-    const startPad = mondayFirstIndex(firstDate);
-
-    const weekList: (HeatmapDay | null)[][] = [];
-    let currentWeek: (HeatmapDay | null)[] = [];
-
-    // Pad beginning of first week so column starts on Monday
-    for (let p = 0; p < startPad; p++) {
-      currentWeek.push(null);
-    }
-
+    const first = new Date(year, 0, 1);
+    const startPad = mondayFirstIndex(first);
+    const dayOfYear = (date: Date) =>
+      (Date.UTC(year, date.getMonth(), date.getDate()) - Date.UTC(year, 0, 1)) / 86_400_000;
+    const daysInYear = dayOfYear(new Date(year, 11, 31)) + 1;
+    const slots: (HeatmapDay | null)[] = Array(Math.ceil((startPad + daysInYear) / 7) * 7).fill(null);
     let total = 0;
-    for (const d of days) {
-      currentWeek.push(d);
-      total += d?.itemCount || 0;
-      if (currentWeek.length === 7) {
-        weekList.push(currentWeek);
-        currentWeek = [];
-      }
+    let newest = 0;
+    let max = 1;
+    for (const day of days) {
+      const date = toLocalDate(day.date);
+      if (date.getFullYear() !== year) continue;
+      const index = startPad + dayOfYear(date);
+      slots[index] = day;
+      total += day.itemCount;
+      max = Math.max(max, day.itemCount);
+      newest = Math.max(newest, index);
     }
+    return {
+      weeks: Array.from({ length: slots.length / 7 }, (_, i) => slots.slice(i * 7, i * 7 + 7)),
+      monthLabels: MONTH_NAMES.map((label, month) => ({
+        label, colIdx: Math.floor((startPad + dayOfYear(new Date(year, month, 1))) / 7),
+      })),
+      totalYearItems: total,
+      latestColumn: Math.floor(newest / 7),
+      maxItems: max,
+    };
+  }, [days, year]);
 
-    if (currentWeek.length > 0) {
-      while (currentWeek.length < 7) {
-        currentWeek.push(null);
-      }
-      weekList.push(currentWeek);
+  useEffect(() => {
+    const scroller = scrollRef.current;
+    const current = scroller?.querySelector<HTMLElement>('[data-latest-week]');
+    if (scroller && current) {
+      scroller.scrollLeft += Math.max(0, current.getBoundingClientRect().right - scroller.getBoundingClientRect().right + 6);
     }
+  }, [latestColumn, year]);
 
-    // Determine month labels aligned with week columns
-    const labels: { colIdx: number; label: string }[] = [];
-    let lastMonth = -1;
+  const level = (count: number) =>
+    count <= 0 ? 0 : Math.min(4, Math.ceil((count / maxItems) * 4));
 
-    weekList.forEach((week, colIdx) => {
-      const firstValid = week.find((item) => item !== null);
-      if (!firstValid) return;
-      const m = toLocalDate(firstValid.date).getMonth();
-      if (m !== lastMonth) {
-        // Omit a short partial starting month rather than overlap the next label.
-        if (labels.length > 0 && colIdx - labels[labels.length - 1].colIdx < 3) {
-          labels.pop();
-        }
-        labels.push({ colIdx, label: MONTH_NAMES[m] });
-        lastMonth = m;
-      }
-    });
-
-    return { weeks: weekList, monthLabels: labels, totalYearItems: total };
-  }, [days]);
-
-  const level = useMemo(() => {
-    const validDays = Array.isArray(days) ? days : [];
-    const max = Math.max(1, ...validDays.map((day) => day?.itemCount || 0));
-    return (count: number) =>
-      count <= 0 ? 0 : Math.min(4, Math.ceil((count / max) * 4));
-  }, [days]);
+  if (year === null) {
+    return <p role="status" className="dashboard-subtle">Chưa có dữ liệu hoạt động.</p>;
+  }
 
   return (
     <div>
@@ -151,7 +134,7 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
       <div className="flex items-center justify-between gap-4 flex-wrap pb-3">
         <div className="flex items-center gap-2">
           <span className="text-[13px] font-medium text-fg">
-            {formatNumber(totalYearItems)} lượt học trong năm qua
+            {formatNumber(totalYearItems)} lượt học trong năm {year}
           </span>
         </div>
         <div className="inline-flex items-center gap-1.5 text-[10.5px] text-fg-60">
@@ -167,10 +150,10 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
         </div>
       </div>
 
-      {/* GitHub-Style 53-Week Unified Grid */}
+      {/* Calendar grid with blank future dates */}
       <div
         ref={scrollRef}
-        className="overflow-x-auto pb-2 [scrollbar-width:thin] select-none"
+        className="overflow-x-auto relative pb-2 [scrollbar-width:thin] select-none"
       >
         <div
           className="grid min-w-[700px] w-full gap-[3px] items-center"
@@ -213,7 +196,7 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
             Fri
           </span>
 
-          {/* Rows 2-8, Columns 2-(weeks+1): 365 Days Cells */}
+          {/* Rows 2-8, Columns 2-(weeks+1): Calendar cells */}
           {weeks.map((week, wIdx) =>
             week.map((cell, dIdx) => {
               if (!cell) {
@@ -230,6 +213,7 @@ const Tracker: React.FC<{ days: HeatmapDay[] }> = ({ days }) => {
               return (
                 <i
                   key={`${wIdx}-${dIdx}`}
+                  data-latest-week={cell === latest ? true : undefined}
                   style={{ gridColumn: wIdx + 2, gridRow: dIdx + 2 }}
                   className={`block aspect-square w-full rounded-[2px] transition-transform hover:scale-150 hover:z-20 cursor-pointer ${
                     isProtected
