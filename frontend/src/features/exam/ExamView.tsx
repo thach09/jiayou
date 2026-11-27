@@ -2,7 +2,6 @@ import { useRequestScope } from '../../lib/hooks/useRequestScope';
 import { progressApi } from '../progress/api';
 import { examApi } from './api';
 import { clearActiveAttempt, readActiveAttempt, saveActiveAttempt } from './activeAttempt';
-import type { HeatmapDay } from '../progress/types';
 import type { ExamQuestion, ExamDto, ExamResultDto, ExamHistoryDto, StreakDto, LeaderboardDto } from './types';
 import { useAuth } from '../../app/useAuth';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -12,7 +11,6 @@ import confetti from 'canvas-confetti';
 import { FeedbackAlert } from '../../components/FeedbackAlert';
 import type { FeedbackType } from '../../components/FeedbackAlert';
 import { SubmitButton } from '../../components/SubmitButton';
-import { MascotBadge } from '../../components/MascotBadge';
 import { RedSealStamp } from '../../components/RedSealStamp';
 import { speakChinese } from '../../services/chineseSpeech';
 import { Modal } from '../../components/Modal';
@@ -22,14 +20,12 @@ type Phase = 'IDLE' | 'TAKING' | 'RESULT';
 
 const QUESTION_COUNT_OPTIONS = [10, 20, 30];
 const DURATION_OPTIONS = [15, 20, 35];
-const HEATMAP_DAYS = 91;
-const HEAT_OPACITY = [0.06, 0.22, 0.44, 0.66, 0.9];
 
 const labelClass = 'text-[10.5px] font-semibold uppercase tracking-[0.18em] text-fg-38';
 const sectionTitleClass = 'text-[13px] font-semibold text-fg';
-const thClass = 'border-b border-rule pb-2 text-left text-[10.5px] font-semibold uppercase tracking-[0.14em] text-fg-38';
+const thClass = 'border-b border-rule pb-2 pr-6 last:pr-0 whitespace-nowrap text-left text-[10.5px] font-semibold uppercase tracking-[0.14em] text-fg-38';
 const thNumClass = `${thClass} text-right`;
-const tdClass = 'border-b border-rule py-2 text-fg-60';
+const tdClass = 'border-b border-rule py-2 pr-6 last:pr-0 text-fg-60';
 const tdNumClass = `${tdClass} text-right tabular-nums`;
 
 const chipClass = (active: boolean) =>
@@ -52,14 +48,6 @@ const formatClock = (seconds: number) => {
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 };
 
-const heatLevel = (count: number) => {
-  if (count <= 0) return 0;
-  if (count < 3) return 1;
-  if (count < 8) return 2;
-  if (count < 15) return 3;
-  return 4;
-};
-
 export const ExamView: React.FC = () => {
   const { user, requireLogin: onRequireLogin } = useAuth();
   const userId = user?.userId;
@@ -75,7 +63,6 @@ export const ExamView: React.FC = () => {
   const [result, setResult] = useState<ExamResultDto | null>(null);
   const [history, setHistory] = useState<ExamHistoryDto[]>([]);
   const [streak, setStreak] = useState<StreakDto | null>(null);
-  const [heatmap, setHeatmap] = useState<HeatmapDay[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardDto | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -104,16 +91,14 @@ export const ExamView: React.FC = () => {
       Promise.all([
         examApi.history({ signal }),
         progressApi.streak({ signal }),
-        progressApi.heatmap(HEATMAP_DAYS, { signal }),
         examApi.leaderboard(null, { signal }),
       ])
     );
 
     if (!loaded) return;
-    const [h, s, m, l] = loaded;
+    const [h, s, l] = loaded;
     if (h.success && h.data) setHistory(h.data);
     if (s.success && s.data) setStreak(s.data);
-    if (m.success && m.data) setHeatmap(m.data);
     if (l.success && l.data) setLeaderboard(l.data);
   }, [userId, run]);
 
@@ -123,7 +108,6 @@ export const ExamView: React.FC = () => {
       queueMicrotask(() => {
         setHistory([]);
         setStreak(null);
-        setHeatmap([]);
         setLeaderboard(null);
       });
       return;
@@ -375,7 +359,7 @@ export const ExamView: React.FC = () => {
   const isHskPassed = scaledHskScore >= passingScore;
 
   return (
-    <div className="mx-auto flex w-full max-w-[1100px] flex-col">
+    <div className={`mx-auto flex w-full flex-col ${phase === 'IDLE' ? '' : 'max-w-[1100px]'}`}>
       {/* Station Header */}
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-6">
         <div>
@@ -426,9 +410,9 @@ export const ExamView: React.FC = () => {
       )}
 
       {phase === 'IDLE' && resumeState === 'none' && (
-        <>
+        <div className="mt-8 grid gap-x-10 gap-y-8 min-[1800px]:grid-cols-2 [&>section]:min-w-0">
           {/* Exam Setup Card */}
-          <div className="mt-8 min-w-0 bg-card p-6">
+          <div className="min-w-0 bg-card p-6 min-[1800px]:col-span-2">
             <div className="flex flex-col gap-5">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-rule pb-4">
                 <div>
@@ -490,50 +474,15 @@ export const ExamView: React.FC = () => {
             </div>
           </div>
 
-          {/* Mascot & Heatmap */}
-          <div className="mt-10 grid gap-10 min-[1101px]:grid-cols-2">
-            <section>
-              <h3 className={sectionTitleClass}>Mascot &amp; điều kiện tính streak</h3>
-              <div className="mt-4">
-                <MascotBadge longestStreak={streak?.longestStreak ?? 0} currentStreak={streak?.currentStreak ?? 0} />
-              </div>
-              <p className="mt-3 text-[11.5px] leading-[1.8] text-fg-38">
-                Một ngày được tính streak khi: hoàn thành 1 lượt thi thử HSK, ôn ≥ {streak?.minSrsReviewsForStreak ?? 10} lượt SRS, hoặc làm bài tập ngữ pháp.
-              </p>
-            </section>
-
-            <section>
-              <h3 className={sectionTitleClass}>Lịch hoạt động ({heatmap.length} ngày gần nhất)</h3>
-              <div className="mt-4 flex flex-wrap gap-[3px]">
-                {heatmap.map((day) => (
-                  <span
-                    key={day.date}
-                    className={`h-[12px] w-[12px] bg-fg ${day.restored?'protected-heat-cell':''}`}
-                    style={{ opacity: HEAT_OPACITY[heatLevel(day.itemCount)] }}
-                    title={`${day.date}: ${day.itemCount} hoạt động, ${day.correctCount} câu đúng${day.restored?' · Ngày bảo vệ chuỗi, không cộng hoạt động học':''}`}
-                  />
-                ))}
-              </div>
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-fg-38">
-                <span>Ít</span>
-                {HEAT_OPACITY.map((opacity) => (
-                  <span key={opacity} className="h-[10px] w-[10px] bg-fg" style={{ opacity }} />
-                ))}
-                <span>Nhiều</span>
-                <span className="ml-2">Múi giờ tính streak: {streak?.zone ?? 'Asia/Ho_Chi_Minh'}</span>
-              </div>
-            </section>
-          </div>
-
           {/* Leaderboard */}
-          <section className="mt-10 border-t border-rule pt-6">
+          <section className="border-t border-rule pt-6">
             <div className="flex flex-wrap items-baseline justify-between gap-3">
               <h3 className={sectionTitleClass}>Bảng xếp hạng ({leaderboard?.scope ?? 'ALL'})</h3>
               {leaderboard && <span className="text-[11px] text-fg-38">{leaderboard.pointsFormula}</span>}
             </div>
 
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full border-collapse text-[12.5px]">
+              <table className="w-full min-w-[640px] border-collapse text-[12.5px]">
                 <thead>
                   <tr>
                     <th className={thClass}>#</th>
@@ -574,10 +523,10 @@ export const ExamView: React.FC = () => {
           </section>
 
           {/* Exam History */}
-          <section className="mt-10 border-t border-rule pt-6">
+          <section className="border-t border-rule pt-6">
             <h3 className={sectionTitleClass}>Lịch sử thi thử</h3>
             <div className="mt-4 overflow-x-auto">
-              <table className="w-full border-collapse text-[12.5px]">
+              <table className="w-full min-w-[640px] border-collapse text-[12.5px]">
                 <thead>
                   <tr>
                     <th className={thClass}>Bài luyện</th>
@@ -619,7 +568,7 @@ export const ExamView: React.FC = () => {
               </table>
             </div>
           </section>
-        </>
+        </div>
       )}
 
       {/* Taking Exam Phase */}
